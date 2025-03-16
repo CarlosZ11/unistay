@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:unistay/ui/colors/colors.dart';
 import 'package:unistay/ui/widgets/email_text_field.dart';
-
-import '../../widgets/pass_text_field.dart';
+import 'package:unistay/ui/widgets/pass_text_field.dart';
+import 'package:get/get.dart';
+import 'package:unistay/domain/controllers/auth_controller.dart';
 
 class LogInPage extends StatefulWidget {
   const LogInPage({super.key});
@@ -13,21 +14,28 @@ class LogInPage extends StatefulWidget {
 }
 
 class _LogInPageState extends State<LogInPage> {
-
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final AuthController authController = Get.put(AuthController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Padding(
-        padding: const EdgeInsets.only(top: 20.0,),
+        padding: const EdgeInsets.only(
+          top: 20.0,
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Image.asset('lib/assets/Logo.png', width: 300,),
-            const SizedBox(height: 15,),
+            Image.asset(
+              'lib/assets/Logo.png',
+              width: 300,
+            ),
+            const SizedBox(
+              height: 15,
+            ),
             Expanded(
               child: SingleChildScrollView(
                 child: Padding(
@@ -37,14 +45,13 @@ class _LogInPageState extends State<LogInPage> {
                       Text(
                         'Bienvenido',
                         style: GoogleFonts.saira(
-                          fontSize: 40,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.primary,
-                          height: 1.2
-                        ),
+                            fontSize: 40,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primary,
+                            height: 1.2),
                       ),
                       Text(
-                        '¡Tu mejor opción en la busqueda de tu hogar!',
+                        '¡Tu mejor opción en la búsqueda de tu hogar!',
                         style: GoogleFonts.saira(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
@@ -52,7 +59,9 @@ class _LogInPageState extends State<LogInPage> {
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 25,),
+                      const SizedBox(
+                        height: 25,
+                      ),
                       EmailTextFormField(controller: emailController),
                       const SizedBox(height: 20),
                       PassTextFormField(controller: passwordController),
@@ -71,7 +80,7 @@ class _LogInPageState extends State<LogInPage> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            padding: EdgeInsets.symmetric(horizontal: 5),
+                            padding: const EdgeInsets.symmetric(horizontal: 5),
                           ),
                           child: Text(
                             '¿Olvidaste tu contraseña?',
@@ -88,7 +97,10 @@ class _LogInPageState extends State<LogInPage> {
                         height: 50,
                         child: ElevatedButton(
                           onPressed: () async {
-                            // login();
+                            authController.loginUser(
+                              emailController.text.trim(),
+                              passwordController.text.trim(),
+                            );
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary,
@@ -96,14 +108,17 @@ class _LogInPageState extends State<LogInPage> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          child: Text(
-                            'Iniciar sesión',
-                            style: GoogleFonts.saira(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
-                          ),
+                          child: Obx(() => authController.isLoading.value
+                              ? const CircularProgressIndicator(
+                                  color: Colors.white)
+                              : Text(
+                                  'Iniciar sesión',
+                                  style: GoogleFonts.saira(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                  ),
+                                )),
                         ),
                       ),
                     ],
