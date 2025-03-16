@@ -3,16 +3,24 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 import '../colors/colors.dart';
 
-class EmailTextFormField extends StatelessWidget {
+class PassTextFormField extends StatefulWidget {
   final TextEditingController controller;
 
-  const EmailTextFormField({super.key, required this.controller});
+  const PassTextFormField({super.key, required this.controller});
+
+  @override
+  _PassTextFormFieldState createState() => _PassTextFormFieldState();
+}
+
+class _PassTextFormFieldState extends State<PassTextFormField> {
+  bool _obscureText = true;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      controller: controller,
+      controller: widget.controller,
       style: GoogleFonts.montserrat(fontSize: 15),
+      obscureText: _obscureText,
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.grey[200],
@@ -25,8 +33,19 @@ class EmailTextFormField extends StatelessWidget {
           borderSide: const BorderSide(color: AppColors.primary),
           borderRadius: BorderRadius.circular(10.0),
         ),
-        prefixIcon: const Icon(HugeIcons.strokeRoundedMail02, color: AppColors.primary),
-        labelText: "Correo electrónico",
+        prefixIcon: const Icon(HugeIcons.strokeRoundedSquareLockPassword, color: AppColors.primary),
+        suffixIcon: IconButton(
+          icon: Icon(
+            _obscureText ? HugeIcons.strokeRoundedViewOff : HugeIcons.strokeRoundedView,
+            color: Colors.grey,
+          ),
+          onPressed: () {
+            setState(() {
+              _obscureText = !_obscureText;
+            });
+          },
+        ),
+        labelText: "Contraseña",
         labelStyle: GoogleFonts.saira(color: AppColors.primary, fontSize: 16),
       ),
     );

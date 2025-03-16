@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:unistay/ui/colors/colors.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
@@ -34,14 +35,26 @@ class _WelcomePageState extends State<WelcomePage> {
                 color: Colors.white
               ),
             ),
+            Text(
+              '¡Tu mejor opción en la busqueda de\ntu hogar!',
+              style: GoogleFonts.montserrat(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: AppColors.primary,
+                height: 1.2
+                
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const Spacer(flex: 3,),
             Container(
-              padding: const EdgeInsets.only(top:20, left: 30, right: 30),
+              padding: const EdgeInsets.only(bottom:45, left: 30, right: 30),
               child: SizedBox(
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, '/LogInPage');
+                    Navigator.pushNamed(context, '/SignInPage');
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xff2D336B),
@@ -57,53 +70,6 @@ class _WelcomePageState extends State<WelcomePage> {
                       fontWeight: FontWeight.w500,
                       color: Colors.white,
                     )
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 40,),
-            Text(
-              'Acceso rápido con',
-              style: GoogleFonts.saira(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xff2B0548),
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.only(top:20, left: 30, right: 30),
-              child: SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: () {
-                    
-                  },
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(9), // Borde menos ovalado
-                    ),
-                    padding: EdgeInsets.zero, // Elimina el padding interno
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Image(
-                        image: AssetImage('lib/assets/google.png'),
-                        fit: BoxFit.contain,
-                        width: 30,
-                        height: 30,
-                      ),
-                      const SizedBox(width: 18,),
-                      Text(
-                        'Google',
-                        style: GoogleFonts.saira(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: const Color(0xff2D336B),
-                        )
-                      ),
-                    ],
                   ),
                 ),
               ),

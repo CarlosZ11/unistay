@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:unistay/ui/pages/auth/login.dart';
+import 'package:unistay/ui/pages/auth/forgot_password.dart';
+import 'package:unistay/ui/pages/auth/signin.dart';
+import 'package:unistay/ui/pages/auth/signup.dart';
 import 'package:unistay/ui/pages/welcome/welcome.dart';
 
 class MyApp extends StatelessWidget {
@@ -15,7 +17,9 @@ class MyApp extends StatelessWidget {
       initialRoute: '/WelcomePage',
       routes: {
         '/WelcomePage':(context) => const WelcomePage(),
-        '/LogInPage':(context) => const LogInPage(),
+        '/SignInPage':(context) => const LogInPage(),
+        '/SignUpPage':(context) => const SignUpPage(),
+        '/ForgotPasswordPage':(context) => const ForgotPassword(),
       },
     );
   }
