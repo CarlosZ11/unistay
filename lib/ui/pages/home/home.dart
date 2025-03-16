@@ -19,10 +19,11 @@ class _HomePageState extends State<HomePage> {
     // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: AppColors.background,
         title: const Text('Home'),
         actions: <Widget>[
           IconButton(
-            icon: const Icon(Icons.account_balance_rounded),
+            icon: const Icon(Icons.account_circle_outlined),
             onPressed: () {},
           )
         ],
@@ -31,6 +32,7 @@ class _HomePageState extends State<HomePage> {
         child: Text("Home"),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: AppColors.background,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
