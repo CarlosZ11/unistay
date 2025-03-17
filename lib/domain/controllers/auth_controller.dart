@@ -12,7 +12,7 @@ class AuthController extends GetxController {
 
     if (response != null && response.user != null) {
       Get.snackbar('Registro exitoso', 'Bienvenido a UniStay');
-      Get.offNamed('/HomePage'); // Redirigir al login
+      Get.offNamed('/HomePage'); // Redirigir al HomePage
     } else {
       Get.snackbar('Error', 'No se pudo registrar el usuario');
     }
