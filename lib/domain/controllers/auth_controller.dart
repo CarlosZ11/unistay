@@ -5,31 +5,60 @@ class AuthController extends GetxController {
   final AuthService _authService = AuthService();
   var isLoading = false.obs;
 
-  // Método para registrarse
-  Future<void> registerUser(String email, String password) async {
-    isLoading.value = true;
-    final response = await _authService.signUp(email, password);
-
-    if (response != null && response.user != null) {
-      Get.snackbar('Registro exitoso', 'Bienvenido a UniStay');
-      Get.offNamed('/HomePage'); // Redirigir al HomePage
-    } else {
-      Get.snackbar('Error', 'No se pudo registrar el usuario');
-    }
-    isLoading.value = false;
+  bool isValidEmail(String email) {
+    return RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
+        .hasMatch(email);
   }
 
-  // Método para iniciar sesión
-  Future<void> loginUser(String email, String password) async {
-    isLoading.value = true;
-    final response = await _authService.signIn(email, password);
+  bool isValidPassword(String password) {
+    return password.length >= 6;
+  }
 
-    if (response != null && response.user != null) {
-      Get.snackbar('Inicio de sesión', 'Bienvenido de nuevo');
-      Get.offNamed('/HomePage'); // Redirigir a la pantalla principal
-    } else {
-      Get.snackbar('Error', 'Credenciales incorrectas');
+  Future<void> registerUser(String email, String password) async {
+    if (!isValidEmail(email)) {
+      Get.snackbar('Error', 'Correo electrónico no válido');
+      return;
     }
-    isLoading.value = false;
+    if (!isValidPassword(password)) {
+      Get.snackbar('Error', 'La contraseña debe tener al menos 6 caracteres');
+      return;
+    }
+
+    isLoading.value = true;
+    try {
+      final response = await _authService.signUp(email, password);
+      if (response != null && response.user != null) {
+        Get.snackbar('Registro exitoso', 'Bienvenido a UniStay');
+        Get.offNamed('/HomePage');
+      }
+    } catch (e) {
+      Get.snackbar('Error', e.toString().replaceAll('Exception: ', ''));
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> loginUser(String email, String password) async {
+    if (!isValidEmail(email)) {
+      Get.snackbar('Error', 'Correo electrónico no válido');
+      return;
+    }
+    if (!isValidPassword(password)) {
+      Get.snackbar('Error', 'La contraseña debe tener al menos 6 caracteres');
+      return;
+    }
+
+    isLoading.value = true;
+    try {
+      final response = await _authService.signIn(email, password);
+      if (response != null && response.user != null) {
+        Get.snackbar('Inicio de sesión', 'Bienvenido de nuevo');
+        Get.offNamed('/HomePage');
+      }
+    } catch (e) {
+      Get.snackbar('Error', e.toString().replaceAll('Exception: ', ''));
+    } finally {
+      isLoading.value = false;
+    }
   }
 }
