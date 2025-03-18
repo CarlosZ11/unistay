@@ -64,7 +64,10 @@ class _LogInPageState extends State<LogInPage> {
                       ),
                       EmailTextFormField(controller: emailController),
                       const SizedBox(height: 20),
-                      PassTextFormField(controller: passwordController),
+                      PassTextFormField(
+                        controller: passwordController,
+                        labelText: "Contraseña",
+                      ),
                       const SizedBox(height: 10),
                       Align(
                         alignment: Alignment.centerRight,

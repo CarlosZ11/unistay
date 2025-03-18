@@ -79,4 +79,30 @@ class AuthController extends GetxController {
     }
   }
 
+  
+  Future<void> updatePassword(String newPassword, String confirmPassword) async {
+    if (!isValidPassword(newPassword)) {
+      Get.snackbar('Error', 'La contraseña debe tener al menos 6 caracteres');
+      return;
+    }
+
+    if (newPassword != confirmPassword) {
+      Get.snackbar('Error', 'Las contraseñas no coinciden');
+      return;
+    }
+
+    isLoading.value = true;
+    try {
+      await _authService.updatePassword(newPassword);
+      Get.snackbar('Éxito', 'Tu contraseña ha sido actualizada.');
+      Get.offNamed('/SignInPage');
+    } catch (e) {
+      Get.snackbar('Error', e.toString().replaceAll('Exception: ', ''));
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+
+
 }

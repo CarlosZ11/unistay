@@ -46,7 +46,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 10,),
+                const SizedBox(height: 20,),
                 EmailTextFormField(controller: _emailController),
                 const SizedBox(height: 50,),
                 Container(
@@ -59,7 +59,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                       backgroundColor: AppColors.primary,
                     ),
                     onPressed: () async {
+
                       _authController.forgotPassword(_emailController.text.trim());
+                      _emailController.clear();
                     },
                     child: Text(
                       'Restablecer contraseña',

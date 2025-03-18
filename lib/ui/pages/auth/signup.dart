@@ -64,7 +64,10 @@ class _SignUpPageState extends State<SignUpPage> {
                       ),
                       EmailTextFormField(controller: emailController),
                       const SizedBox(height: 20),
-                      PassTextFormField(controller: passwordController),
+                     PassTextFormField(
+                        controller: passwordController,
+                        labelText: "Contraseña",
+                      ),
                       const SizedBox(height: 40),
                       SizedBox(
                         width: double.infinity,

@@ -52,14 +52,30 @@ class AuthService {
     }
   }
 
-  // Restablecimiento de contraseña con correo
+  // Restablecer contraseña con correo
   Future<void> resetPassword(String email) async {
     try {
-      await _supabase.auth.resetPasswordForEmail(email);
+      await _supabase.auth.resetPasswordForEmail(
+        email,
+        redirectTo: 'unistay://password-reset', 
+      );
     } on AuthException catch (e) {
       throw Exception("Error al enviar correo de recuperación: ${e.message}");
     } catch (e) {
       throw Exception("Error inesperado al restablecer contraseña.");
+    }
+  }
+
+  // Método para cambiar la contraseña después de recibir el deep link
+  Future<void> updatePassword(String newPassword) async {
+    try {
+      await _supabase.auth.updateUser(
+        UserAttributes(password: newPassword),
+      );
+    } on AuthException catch (e) {
+      throw Exception("Error al actualizar contraseña: ${e.message}");
+    } catch (e) {
+      throw Exception("Error inesperado al actualizar la contraseña.");
     }
   }
 

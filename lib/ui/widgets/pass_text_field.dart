@@ -5,8 +5,9 @@ import '../colors/colors.dart';
 
 class PassTextFormField extends StatefulWidget {
   final TextEditingController controller;
+  final String labelText; // Nuevo parámetro
 
-  const PassTextFormField({super.key, required this.controller});
+  const PassTextFormField({super.key, required this.controller, required this.labelText});
 
   @override
   _PassTextFormFieldState createState() => _PassTextFormFieldState();
@@ -37,7 +38,7 @@ class _PassTextFormFieldState extends State<PassTextFormField> {
         suffixIcon: IconButton(
           icon: Icon(
             _obscureText ? HugeIcons.strokeRoundedViewOff : HugeIcons.strokeRoundedView,
-            color: Colors.grey,
+            color: _obscureText ? Colors.grey : AppColors.primary,
           ),
           onPressed: () {
             setState(() {
@@ -45,7 +46,7 @@ class _PassTextFormFieldState extends State<PassTextFormField> {
             });
           },
         ),
-        labelText: "Contraseña",
+        labelText: widget.labelText, // Usa el label proporcionado
         labelStyle: GoogleFonts.saira(color: AppColors.primary, fontSize: 16),
       ),
     );

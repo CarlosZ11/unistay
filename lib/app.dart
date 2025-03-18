@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:unistay/data/services/deep_link_handler.dart';
 import 'package:unistay/ui/colors/colors.dart';
+import 'package:unistay/ui/pages/auth/reset_password.dart';
 import 'package:unistay/ui/pages/auth/forgot_password.dart';
 import 'package:unistay/ui/pages/auth/signin.dart';
 import 'package:unistay/ui/pages/auth/signup.dart';
@@ -13,6 +15,9 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+
+    DeepLinkHandler().initDeepLinkListener();
+
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -29,6 +34,7 @@ class MyApp extends StatelessWidget {
         '/SignInPage': (context) => const LogInPage(),
         '/SignUpPage': (context) => const SignUpPage(),
         '/ForgotPasswordPage': (context) => const ForgotPassword(),
+        '/ResetPasswordPage': (context) => const ResetPasswordPage(),
         '/HomePage': (context) => const HomePage(),
       },
     );
