@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.unistayapp.unistay"
+    namespace "com.unistayapp.unistay"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
