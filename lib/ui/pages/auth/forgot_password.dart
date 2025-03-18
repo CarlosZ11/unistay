@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:unistay/domain/controllers/auth_controller.dart';
 import 'package:unistay/ui/colors/colors.dart';
 import 'package:unistay/ui/widgets/email_text_field.dart';
 
@@ -13,6 +15,7 @@ class ForgotPassword extends StatefulWidget {
 class _ForgotPasswordState extends State<ForgotPassword> {
 
   final TextEditingController _emailController = TextEditingController();
+  final AuthController _authController = Get.find<AuthController>();
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +59,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                       backgroundColor: AppColors.primary,
                     ),
                     onPressed: () async {
-                      
+                      _authController.forgotPassword(_emailController.text.trim());
                     },
                     child: Text(
                       'Restablecer contraseña',

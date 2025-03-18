@@ -51,4 +51,16 @@ class AuthService {
       throw Exception("Error inesperado en el inicio de sesión.");
     }
   }
+
+  // Restablecimiento de contraseña con correo
+  Future<void> resetPassword(String email) async {
+    try {
+      await _supabase.auth.resetPasswordForEmail(email);
+    } on AuthException catch (e) {
+      throw Exception("Error al enviar correo de recuperación: ${e.message}");
+    } catch (e) {
+      throw Exception("Error inesperado al restablecer contraseña.");
+    }
+  }
+
 }

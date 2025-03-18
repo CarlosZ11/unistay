@@ -61,4 +61,22 @@ class AuthController extends GetxController {
       isLoading.value = false;
     }
   }
+
+  Future<void> forgotPassword(String email) async {
+    if (!isValidEmail(email)) {
+      Get.snackbar('Error', 'Correo electrónico no válido');
+      return;
+    }
+
+    isLoading.value = true;
+    try {
+      await _authService.resetPassword(email);
+      Get.snackbar('Correo enviado', 'Revisa tu correo para restablecer tu contraseña.');
+    } catch (e) {
+      Get.snackbar('Error', e.toString().replaceAll('Exception: ', ''));
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
 }
