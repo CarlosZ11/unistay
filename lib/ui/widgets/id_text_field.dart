@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
+
 import '../colors/colors.dart';
 
-class EmailTextFormField extends StatelessWidget {
+class IdTextFormField extends StatelessWidget {
   final TextEditingController controller;
-
-  const EmailTextFormField({super.key, required this.controller});
+  
+  const IdTextFormField({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -27,8 +28,8 @@ class EmailTextFormField extends StatelessWidget {
             borderSide: const BorderSide(color: AppColors.primary),
             borderRadius: BorderRadius.circular(10.0),
           ),
-          prefixIcon: const Icon(HugeIcons.strokeRoundedMail02, color: AppColors.primary),
-          labelText: "Correo electrónico",
+          prefixIcon: const Icon(HugeIcons.strokeRoundedIdentityCard, color: AppColors.primary),
+          labelText: "Identificación",
           labelStyle: GoogleFonts.saira(color: AppColors.primary, fontSize: 16),
         ),
       ),
