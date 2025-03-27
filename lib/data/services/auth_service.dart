@@ -1,16 +1,36 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:unistay/domain/models/user_model.dart';
 
 class AuthService {
   final SupabaseClient _supabase = Supabase.instance.client;
 
-  // Registro de usuario con correo y contraseña
-  Future<AuthResponse?> signUp(String email, String password) async {
+  // Registro de usuario con todos los campos
+  Future<AuthResponse?> signUp(
+    String name,
+    String lastname,
+    String email,
+    String password,
+    String phone,
+    String identification, // Ahora es la clave primaria
+    String role,
+  ) async {
     try {
       final response =
           await _supabase.auth.signUp(email: email, password: password);
 
       if (response.user != null) {
-        await _saveUserEmailAndRegistrationTime(response.user!.id, email);
+        final user = UserModel(
+          identification: identification, // PRIMARY KEY
+          id: response.user!.id, // UUID de Supabase (ya no es PRIMARY)
+          name: name,
+          lastname: lastname,
+          email: email,
+          phone: phone,
+          role: role,
+          createdAt: DateTime.now().toIso8601String(),
+        );
+
+        await _saveUserData(user);
       }
 
       return response;
@@ -25,14 +45,18 @@ class AuthService {
     }
   }
 
-  // Guardar correo y fecha de registro en la tabla `users`
-  Future<void> _saveUserEmailAndRegistrationTime(
-      String userId, String email) async {
+  // Guardar usuario en la tabla `users`
+  Future<void> _saveUserData(UserModel user) async {
     try {
       await _supabase.from('users').upsert({
-        'id': userId,
-        'email': email,
-        'created_at': DateTime.now().toIso8601String(),
+        'identification': user.identification, // PRIMARY KEY
+        'id': user.id, // UUID de Supabase
+        'name': user.name,
+        'lastname': user.lastname,
+        'email': user.email,
+        'phone': user.phone,
+        'role': user.role,
+        'created_at': user.createdAt,
       });
     } catch (e) {
       print('Error al guardar los datos del usuario: $e');
@@ -57,7 +81,7 @@ class AuthService {
     try {
       await _supabase.auth.resetPasswordForEmail(
         email,
-        redirectTo: 'unistay://password-reset', 
+        redirectTo: 'unistay://password-reset',
       );
     } on AuthException catch (e) {
       throw Exception("Error al enviar correo de recuperación: ${e.message}");
@@ -78,5 +102,4 @@ class AuthService {
       throw Exception("Error inesperado al actualizar la contraseña.");
     }
   }
-
 }

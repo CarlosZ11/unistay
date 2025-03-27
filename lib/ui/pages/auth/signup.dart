@@ -26,16 +26,15 @@ class _SignUpPageState extends State<SignUpPage> {
   final idController = TextEditingController();
   final phoneController = TextEditingController();
   final AuthController authController = Get.put(AuthController());
-  String? selectedRole;
+
+  String? selectedRole; // Se almacena el rol seleccionado
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Padding(
-        padding: const EdgeInsets.only(
-          top: 20.0,
-        ),
+        padding: const EdgeInsets.only(top: 20.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -49,16 +48,17 @@ class _SignUpPageState extends State<SignUpPage> {
             Expanded(
               child: SingleChildScrollView(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 30,),
+                  padding: const EdgeInsets.symmetric(horizontal: 30),
                   child: Column(
                     children: [
                       Text(
                         'Bienvenido',
                         style: GoogleFonts.saira(
-                            fontSize: 40,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.primary,
-                            height: 1.2),
+                          fontSize: 40,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primary,
+                          height: 1.2,
+                        ),
                       ),
                       Text(
                         '¡Soy nuevo, registrar cuenta!',
@@ -69,7 +69,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 5,),
+                      const SizedBox(height: 5),
                       NameTextFormField(controller: nameController),
                       LastnameTextFormField(controller: lastnameController),
                       Row(
@@ -84,18 +84,27 @@ class _SignUpPageState extends State<SignUpPage> {
                                 decoration: InputDecoration(
                                   filled: true,
                                   fillColor: Colors.grey[200],
-                                  contentPadding: const EdgeInsets.symmetric(vertical: 15.0),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      vertical: 15.0),
                                   enabledBorder: OutlineInputBorder(
-                                    borderSide: const BorderSide(color: AppColors.primary),
+                                    borderSide: const BorderSide(
+                                        color: AppColors.primary),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
                                   focusedBorder: OutlineInputBorder(
-                                    borderSide: const BorderSide(color: AppColors.primary),
+                                    borderSide: const BorderSide(
+                                        color: AppColors.primary),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
-                                  prefixIcon: const Icon(HugeIcons.strokeRoundedIdentityCard, color: AppColors.primary),
+                                  prefixIcon: const Icon(
+                                    HugeIcons.strokeRoundedIdentityCard,
+                                    color: AppColors.primary,
+                                  ),
                                   labelText: "Identificación",
-                                  labelStyle: GoogleFonts.saira(color: AppColors.primary, fontSize: 16),
+                                  labelStyle: GoogleFonts.saira(
+                                    color: AppColors.primary,
+                                    fontSize: 16,
+                                  ),
                                 ),
                               ),
                             ),
@@ -107,28 +116,39 @@ class _SignUpPageState extends State<SignUpPage> {
                               padding: const EdgeInsets.symmetric(vertical: 9),
                               child: TextFormField(
                                 controller: phoneController,
-                                style: const TextStyle(fontFamily: 'Montserrat', fontSize: 15),
+                                style: GoogleFonts.montserrat(fontSize: 15),
                                 keyboardType: TextInputType.number,
-                                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly
+                                ],
                                 decoration: InputDecoration(
                                   filled: true,
                                   fillColor: Colors.grey[200],
-                                  contentPadding: const EdgeInsets.symmetric(vertical: 13.0),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      vertical: 13.0),
                                   enabledBorder: OutlineInputBorder(
-                                    borderSide: const BorderSide(color: AppColors.primary),
+                                    borderSide: const BorderSide(
+                                        color: AppColors.primary),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
                                   focusedBorder: OutlineInputBorder(
-                                    borderSide: const BorderSide(color: AppColors.primary),
+                                    borderSide: const BorderSide(
+                                        color: AppColors.primary),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
-                                  prefixIcon: const Icon(HugeIcons.strokeRoundedCall02, color: AppColors.primary),
+                                  prefixIcon: const Icon(
+                                    HugeIcons.strokeRoundedCall02,
+                                    color: AppColors.primary,
+                                  ),
                                   labelText: "Teléfono",
-                                  labelStyle: const TextStyle(fontFamily: 'Montserrat', color: AppColors.primary, fontSize: 14),
+                                  labelStyle: GoogleFonts.saira(
+                                    color: AppColors.primary,
+                                    fontSize: 14,
+                                  ),
                                 ),
                               ),
                             ),
-                          )
+                          ),
                         ],
                       ),
                       EmailTextFormField(controller: emailController),
@@ -136,20 +156,37 @@ class _SignUpPageState extends State<SignUpPage> {
                         controller: passwordController,
                         labelText: "Contraseña",
                       ),
-                      RoleDopdownField(onChanged: (value) {
-                        setState(() {
-                          selectedRole = value;
-                        });
-                      }),
+                      RoleDopdownField(
+                        onChanged: (value) {
+                          setState(() {
+                            selectedRole = value;
+                          });
+                        },
+                      ),
                       const SizedBox(height: 15),
                       SizedBox(
                         width: double.infinity,
                         height: 50,
                         child: ElevatedButton(
                           onPressed: () async {
+                            if (selectedRole == null) {
+                              Get.snackbar(
+                                "Error",
+                                "Por favor selecciona un rol",
+                                backgroundColor: Colors.red,
+                                colorText: Colors.white,
+                              );
+                              return;
+                            }
+
                             authController.registerUser(
-                              emailController.text.trim(),
-                              passwordController.text.trim(),
+                              name: nameController.text.trim(),
+                              lastname: lastnameController.text.trim(),
+                              email: emailController.text.trim(),
+                              password: passwordController.text.trim(),
+                              phone: phoneController.text.trim(),
+                              identification: idController.text.trim(),
+                              role: selectedRole!,
                             );
                           },
                           style: ElevatedButton.styleFrom(
@@ -158,17 +195,19 @@ class _SignUpPageState extends State<SignUpPage> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          child: Obx(() => authController.isLoading.value
-                              ? const CircularProgressIndicator(
-                                  color: Colors.white)
-                              : Text(
-                                  'Crear cuenta',
-                                  style: GoogleFonts.saira(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white,
+                          child: Obx(
+                            () => authController.isLoading.value
+                                ? const CircularProgressIndicator(
+                                    color: Colors.white)
+                                : Text(
+                                    'Crear cuenta',
+                                    style: GoogleFonts.saira(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                    ),
                                   ),
-                                )),
+                          ),
                         ),
                       ),
                     ],

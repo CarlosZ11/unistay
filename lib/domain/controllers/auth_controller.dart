@@ -5,46 +5,129 @@ class AuthController extends GetxController {
   final AuthService _authService = AuthService();
   var isLoading = false.obs;
 
+  // 🔹 Normaliza el texto eliminando espacios innecesarios
+  String normalizeText(String text) {
+    return text.trim().replaceAll(RegExp(r'\s+'), ' ');
+  }
+
+  // 🔹 Validar nombre y apellido (solo letras y espacios, mínimo 2 caracteres)
+  bool isValidName(String name) {
+    return RegExp(r"^[a-zA-ZÀ-ÿ\s]{2,50}$").hasMatch(name.trim());
+  }
+
+  // 🔹 Validar email
   bool isValidEmail(String email) {
     return RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
         .hasMatch(email);
   }
 
+  // 🔹 Validar contraseña (mínimo 8 caracteres, al menos una mayúscula, una minúscula, un número y un carácter especial)
   bool isValidPassword(String password) {
-    return password.length >= 6;
+    return RegExp(
+            r'^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#\$%\^&\*\-_]).{8,}$')
+        .hasMatch(password);
   }
 
-  Future<void> registerUser(String email, String password) async {
+  // 🔹 Validar teléfono (exactamente 10 dígitos numéricos)
+  bool isValidPhone(String phone) {
+    return RegExp(r"^\d{10}$").hasMatch(phone);
+  }
+
+  // 🔹 Validar cédula (8-10 dígitos numéricos)
+  bool isValidIdentification(String identification) {
+    return RegExp(r"^\d{8,10}$").hasMatch(identification);
+  }
+
+  // 🔹 Registro de usuario con validaciones mejoradas
+  Future<void> registerUser({
+    required String name,
+    required String lastname,
+    required String email,
+    required String password,
+    required String phone,
+    required String identification, // Clave primaria en Supabase
+    required String role,
+  }) async {
+    // Normalización de datos
+    name = normalizeText(name);
+    lastname = normalizeText(lastname);
+    email = email.trim().toLowerCase();
+
+    // Validaciones
+
+    if (name.isEmpty ||
+        lastname.isEmpty ||
+        email.isEmpty ||
+        password.isEmpty ||
+        phone.isEmpty ||
+        identification.isEmpty ||
+        role.isEmpty) {
+      Get.snackbar('Error', 'Todos los campos son obligatorios');
+      return;
+    }
+    if (!isValidName(name) || !isValidName(lastname)) {
+      Get.snackbar('Error',
+          'Nombre y apellido deben ser válidos (solo letras y espacios)');
+      return;
+    }
     if (!isValidEmail(email)) {
       Get.snackbar('Error', 'Correo electrónico no válido');
       return;
     }
     if (!isValidPassword(password)) {
-      Get.snackbar('Error', 'La contraseña debe tener al menos 6 caracteres');
+      Get.snackbar('Error',
+          'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.');
+      return;
+    }
+    if (!isValidPhone(phone)) {
+      Get.snackbar('Error',
+          'El teléfono debe contener exactamente 10 dígitos numéricos');
+      return;
+    }
+    if (!isValidIdentification(identification)) {
+      Get.snackbar(
+          'Error', 'La cédula debe tener entre 8 y 10 dígitos numéricos');
+      return;
+    }
+    if (role.isEmpty) {
+      Get.snackbar('Error', 'Debe seleccionar un rol');
       return;
     }
 
     isLoading.value = true;
     try {
-      final response = await _authService.signUp(email, password);
+      final response = await _authService.signUp(
+        name,
+        lastname,
+        email,
+        password,
+        phone,
+        identification,
+        role,
+      );
+
       if (response != null && response.user != null) {
         Get.snackbar('Registro exitoso', 'Bienvenido a UniStay');
         Get.offNamed('/HomePage');
       }
     } catch (e) {
-      Get.snackbar('Error', e.toString().replaceAll('Exception: ', ''));
+      Get.snackbar('Error',
+          'No se pudo registrar: ${e.toString().replaceAll('Exception: ', '')}');
     } finally {
       isLoading.value = false;
     }
   }
 
+  // 🔹 Inicio de sesión con validaciones mejoradas
   Future<void> loginUser(String email, String password) async {
+    email = email.trim().toLowerCase();
+
     if (!isValidEmail(email)) {
       Get.snackbar('Error', 'Correo electrónico no válido');
       return;
     }
-    if (!isValidPassword(password)) {
-      Get.snackbar('Error', 'La contraseña debe tener al menos 6 caracteres');
+    if (password.isEmpty) {
+      Get.snackbar('Error', 'Debe ingresar una contraseña');
       return;
     }
 
@@ -56,13 +139,17 @@ class AuthController extends GetxController {
         Get.offNamed('/HomePage');
       }
     } catch (e) {
-      Get.snackbar('Error', e.toString().replaceAll('Exception: ', ''));
+      Get.snackbar('Error',
+          'Error al iniciar sesión: ${e.toString().replaceAll('Exception: ', '')}');
     } finally {
       isLoading.value = false;
     }
   }
 
+  // 🔹 Restablecer contraseña con validación mejorada
   Future<void> forgotPassword(String email) async {
+    email = email.trim().toLowerCase();
+
     if (!isValidEmail(email)) {
       Get.snackbar('Error', 'Correo electrónico no válido');
       return;
@@ -71,21 +158,24 @@ class AuthController extends GetxController {
     isLoading.value = true;
     try {
       await _authService.resetPassword(email);
-      Get.snackbar('Correo enviado', 'Revisa tu correo para restablecer tu contraseña.');
+      Get.snackbar(
+          'Correo enviado', 'Revisa tu correo para restablecer tu contraseña.');
     } catch (e) {
-      Get.snackbar('Error', e.toString().replaceAll('Exception: ', ''));
+      Get.snackbar('Error',
+          'No se pudo enviar el correo: ${e.toString().replaceAll('Exception: ', '')}');
     } finally {
       isLoading.value = false;
     }
   }
 
-  
-  Future<void> updatePassword(String newPassword, String confirmPassword) async {
+  // 🔹 Actualización de contraseña con validaciones mejoradas
+  Future<void> updatePassword(
+      String newPassword, String confirmPassword) async {
     if (!isValidPassword(newPassword)) {
-      Get.snackbar('Error', 'La contraseña debe tener al menos 6 caracteres');
+      Get.snackbar('Error',
+          'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.');
       return;
     }
-
     if (newPassword != confirmPassword) {
       Get.snackbar('Error', 'Las contraseñas no coinciden');
       return;
@@ -97,12 +187,10 @@ class AuthController extends GetxController {
       Get.snackbar('Éxito', 'Tu contraseña ha sido actualizada.');
       Get.offNamed('/SignInPage');
     } catch (e) {
-      Get.snackbar('Error', e.toString().replaceAll('Exception: ', ''));
+      Get.snackbar('Error',
+          'Error al actualizar la contraseña: ${e.toString().replaceAll('Exception: ', '')}');
     } finally {
       isLoading.value = false;
     }
   }
-
-
-
 }
