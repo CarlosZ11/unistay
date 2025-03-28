@@ -7,6 +7,8 @@ import 'package:unistay/ui/pages/auth/forgot_password.dart';
 import 'package:unistay/ui/pages/auth/signin.dart';
 import 'package:unistay/ui/pages/auth/signup.dart';
 import 'package:unistay/ui/pages/home/home.dart';
+import 'package:unistay/ui/pages/landlord/landlord.dart';
+import 'package:unistay/ui/pages/landlord/landlord_register.dart';
 import 'package:unistay/ui/pages/welcome/welcome.dart';
 
 class MyApp extends StatelessWidget {
@@ -15,7 +17,6 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-
     DeepLinkHandler().initDeepLinkListener();
 
     return GetMaterialApp(
@@ -36,6 +37,8 @@ class MyApp extends StatelessWidget {
         '/ForgotPasswordPage': (context) => const ForgotPassword(),
         '/ResetPasswordPage': (context) => const ResetPasswordPage(),
         '/HomePage': (context) => const HomePage(),
+        '/LandlordPage': (context) => const Landlord(),
+        '/LandlordPage/Register': (context) => RegisterLandlordPage(),
       },
     );
   }
