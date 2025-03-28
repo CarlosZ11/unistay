@@ -8,6 +8,7 @@ import 'package:unistay/ui/pages/auth/signin.dart';
 import 'package:unistay/ui/pages/auth/signup.dart';
 import 'package:unistay/ui/pages/home/home.dart';
 import 'package:unistay/ui/pages/landlord/landlord.dart';
+import 'package:unistay/ui/pages/landlord/landlord_register.dart';
 import 'package:unistay/ui/pages/welcome/welcome.dart';
 
 class MyApp extends StatelessWidget {
@@ -37,6 +38,7 @@ class MyApp extends StatelessWidget {
         '/ResetPasswordPage': (context) => const ResetPasswordPage(),
         '/HomePage': (context) => const HomePage(),
         '/LandlordPage': (context) => const Landlord(),
+        '/LandlordPage/Register': (context) => RegisterLandlordPage(),
       },
     );
   }

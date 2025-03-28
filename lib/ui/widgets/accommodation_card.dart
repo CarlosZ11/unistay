@@ -17,6 +17,8 @@ class AccommodationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isLandlordView =
+        ModalRoute.of(context)?.settings.name != '/LandlordPage';
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
@@ -27,14 +29,36 @@ class AccommodationCard extends StatelessWidget {
         children: [
           // Imagen principal
           ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
-            child: Image.network(
-              imageUrl,
-              height: 200,
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
-          ),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(15)),
+              child: Stack(
+                children: [
+                  Image.network(
+                    imageUrl,
+                    height: 200,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                  if (isLandlordView)
+                    Positioned(
+                      top: 10,
+                      right: 10,
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          color: Colors.black54, // Fondo semitransparente
+                          shape: BoxShape.circle,
+                        ),
+                        child: IconButton(
+                          icon: const Icon(Icons.favorite_border,
+                              color: Colors.white),
+                          onPressed: () {
+                            // Acción al presionar el botón
+                          },
+                        ),
+                      ),
+                    ),
+                ],
+              )),
           Padding(
             padding: const EdgeInsets.all(10),
             child: Column(
@@ -76,31 +100,49 @@ class AccommodationCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 10),
+                if (isLandlordView) const SizedBox(height: 10),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    ElevatedButton.icon(
-                      onPressed: () {},
-                      label: const Text('Editar'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: () {},
+                        label: const Text(
+                          'Editar',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(10),
+                                bottomLeft: Radius.circular(10)),
+                          ),
+                        ),
+                        icon: const Icon(
+                          Icons.edit,
+                          color: Colors.white,
                         ),
                       ),
-                      icon: const Icon(Icons.edit),
                     ),
-                    ElevatedButton.icon(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(10),
+                                bottomRight: Radius.circular(10)),
+                          ),
+                        ),
+                        label: const Text('Eliminar',
+                            style: TextStyle(color: Colors.white)),
+                        icon: const Icon(
+                          Icons.delete,
+                          color: Colors.white,
                         ),
                       ),
-                      label: const Text('Eliminar'),
-                      icon: const Icon(Icons.delete),
                     ),
                   ],
                 )
