@@ -49,8 +49,9 @@ class AuthService {
   Future<void> _saveUserData(UserModel user) async {
     try {
       await _supabase.from('users').upsert({
-        'identification': user.identification, // PRIMARY KEY
+        // PRIMARY KEY
         'id': user.id, // UUID de Supabase
+        'identification': user.identification,
         'name': user.name,
         'lastname': user.lastname,
         'email': user.email,

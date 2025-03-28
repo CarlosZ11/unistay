@@ -1,6 +1,6 @@
 class UserModel {
-  final String identification; // PRIMARY KEY
-  final String id; // UUID de Supabase, pero ya no es la clave primaria
+  final String id; // Ahora es la PRIMARY KEY
+  final String identification; // Ahora solo es UNIQUE
   final String name;
   final String lastname;
   final String email;
@@ -9,8 +9,8 @@ class UserModel {
   final String createdAt;
 
   UserModel({
-    required this.identification, // PRIMARY KEY
-    required this.id, // UNIQUE pero no PRIMARY
+    required this.id, // Ahora es la PRIMARY KEY
+    required this.identification, // Ahora solo es UNIQUE
     required this.name,
     required this.lastname,
     required this.email,
@@ -22,8 +22,8 @@ class UserModel {
   // Convertir el modelo a un mapa para guardar en Supabase
   Map<String, dynamic> toMap() {
     return {
-      'identification': identification, // PRIMARY KEY
-      'id': id, // UUID de Supabase
+      'id': id, // Ahora PRIMARY KEY
+      'identification': identification, // Ahora solo es UNIQUE
       'name': name,
       'lastname': lastname,
       'email': email,
@@ -36,8 +36,8 @@ class UserModel {
   // Crear una instancia de UserModel a partir de un mapa
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
-      identification: map['identification'] ?? '',
-      id: map['id'] ?? '', // UUID de Supabase
+      id: map['id'] ?? '', // Ahora PRIMARY KEY
+      identification: map['identification'] ?? '', // Ahora solo es UNIQUE
       name: map['name'] ?? '',
       lastname: map['lastname'] ?? '',
       email: map['email'] ?? '',
