@@ -41,6 +41,7 @@ dependencies:
   iconsax: ^0.0.8
   hugeicons: ^0.0.7
   app_links: ^6.4.0
+  carousel_slider: ^5.0.0
   
 
 dev_dependencies:
