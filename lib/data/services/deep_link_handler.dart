@@ -22,7 +22,7 @@ class DeepLinkHandler {
         }
       },
       onError: (err) {
-        debugPrint("❌ Error al procesar deep link: $err");
+        debugPrint("Error al procesar deep link: $err");
       },
     );
 
@@ -37,7 +37,7 @@ class DeepLinkHandler {
         handleDeepLink(initialUri);
       }
     } catch (e) {
-      debugPrint("❌ Error obteniendo deep link inicial: $e");
+      debugPrint("Error obteniendo deep link inicial: $e");
     }
   }
 
@@ -46,7 +46,7 @@ class DeepLinkHandler {
 
       if (uri.scheme == 'unistay' && uri.host == 'password-reset') {
         String? code = uri.queryParameters['code'];  // CAMBIO: Usar 'code' en lugar de 'access_token'
-        debugPrint("🔑 Código recibido: $code");
+        debugPrint("Código recibido: $code");
 
         if (code != null) {
           // Pasamos el código como argumento a la pantalla de restablecimiento
@@ -59,12 +59,12 @@ class DeepLinkHandler {
               if (Get.context != null) {
                 Get.offAllNamed('/ResetPasswordPage', arguments: {"code": code});
               } else {
-                debugPrint("❌ No se pudo redirigir a /ResetPasswordPage. Contexto aún no disponible.");
+                debugPrint("No se pudo redirigir a /ResetPasswordPage. Contexto aún no disponible.");
               }
             });
           }
         } else {
-          debugPrint("⚠️ No se recibió un código válido en el deep link.");
+          debugPrint("No se recibió un código válido en el deep link.");
         }
       }
   }

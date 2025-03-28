@@ -5,40 +5,40 @@ class AuthController extends GetxController {
   final AuthService _authService = AuthService();
   var isLoading = false.obs;
 
-  // 🔹 Normaliza el texto eliminando espacios innecesarios
+  // Normaliza el texto eliminando espacios innecesarios
   String normalizeText(String text) {
     return text.trim().replaceAll(RegExp(r'\s+'), ' ');
   }
 
-  // 🔹 Validar nombre y apellido (solo letras y espacios, mínimo 2 caracteres)
+  // Validar nombre y apellido (solo letras y espacios, mínimo 2 caracteres)
   bool isValidName(String name) {
     return RegExp(r"^[a-zA-ZÀ-ÿ\s]{2,50}$").hasMatch(name.trim());
   }
 
-  // 🔹 Validar email
+  // Validar email
   bool isValidEmail(String email) {
     return RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
         .hasMatch(email);
   }
 
-  // 🔹 Validar contraseña (mínimo 8 caracteres, al menos una mayúscula, una minúscula, un número y un carácter especial)
+  // Validar contraseña (mínimo 8 caracteres, al menos una mayúscula, una minúscula, un número y un carácter especial)
   bool isValidPassword(String password) {
     return RegExp(
             r'^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#\$%\^&\*\-_]).{8,}$')
         .hasMatch(password);
   }
 
-  // 🔹 Validar teléfono (exactamente 10 dígitos numéricos)
+  // Validar teléfono (exactamente 10 dígitos numéricos)
   bool isValidPhone(String phone) {
     return RegExp(r"^\d{10}$").hasMatch(phone);
   }
 
-  // 🔹 Validar cédula (8-10 dígitos numéricos)
+  // Validar cédula (8-10 dígitos numéricos)
   bool isValidIdentification(String identification) {
     return RegExp(r"^\d{8,10}$").hasMatch(identification);
   }
 
-  // 🔹 Registro de usuario con validaciones mejoradas
+  // Registro de usuario 
   Future<void> registerUser({
     required String name,
     required String lastname,
@@ -118,7 +118,7 @@ class AuthController extends GetxController {
     }
   }
 
-  // 🔹 Inicio de sesión con validaciones mejoradas
+  // Inicio de sesión
   Future<void> loginUser(String email, String password) async {
     email = email.trim().toLowerCase();
 
@@ -146,7 +146,27 @@ class AuthController extends GetxController {
     }
   }
 
-  // 🔹 Restablecer contraseña con validación mejorada
+  // Verificar si hay una sesión activa
+  bool isUserLoggedIn() {
+    return _authService.getCurrentUser() != null;
+  }
+
+  // Cerrar sesión
+  Future<void> logoutUser() async {
+    isLoading.value = true;
+    try {
+      await _authService.signOut();
+      Get.offAllNamed('/SignInPage'); // Redirigir al login después de cerrar sesión
+    } catch (e) {
+      Get.snackbar('Error', 'No se pudo cerrar sesión.');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+
+
+  // Restablecer contraseña 
   Future<void> forgotPassword(String email) async {
     email = email.trim().toLowerCase();
 
@@ -168,7 +188,7 @@ class AuthController extends GetxController {
     }
   }
 
-  // 🔹 Actualización de contraseña con validaciones mejoradas
+  // Actualización de contraseña 
   Future<void> updatePassword(
       String newPassword, String confirmPassword) async {
     if (!isValidPassword(newPassword)) {
