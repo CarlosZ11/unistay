@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:unistay/ui/widgets/Accommodation_card.dart';
 import '../../colors/colors.dart';
 
