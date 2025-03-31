@@ -9,6 +9,7 @@ import 'package:unistay/ui/pages/auth/signup.dart';
 import 'package:unistay/ui/pages/home/home.dart';
 import 'package:unistay/ui/pages/landlord/landlord.dart';
 import 'package:unistay/ui/pages/landlord/landlord_register.dart';
+import 'package:unistay/ui/pages/user/profile.dart';
 import 'package:unistay/ui/pages/welcome/welcome.dart';
 
 class MyApp extends StatelessWidget {
@@ -29,7 +30,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       title: 'UniStay-App',
-      initialRoute: '/WelcomePage',
+      initialRoute: '/userProfile',
       routes: {
         '/WelcomePage': (context) => const WelcomePage(),
         '/SignInPage': (context) => const LogInPage(),
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
         '/HomePage': (context) => const HomePage(),
         '/LandlordPage': (context) => const Landlord(),
         '/LandlordPage/Register': (context) => RegisterLandlordPage(),
+        '/userProfile': (context) => MyAccountBody(),
       },
     );
   }
