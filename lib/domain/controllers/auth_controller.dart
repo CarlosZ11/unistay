@@ -38,7 +38,7 @@ class AuthController extends GetxController {
     return RegExp(r"^\d{8,10}$").hasMatch(identification);
   }
 
-  // Registro de usuario 
+  // Registro de usuario
   Future<void> registerUser({
     required String name,
     required String lastname,
@@ -136,7 +136,13 @@ class AuthController extends GetxController {
       final response = await _authService.signIn(email, password);
       if (response != null && response.user != null) {
         Get.snackbar('Inicio de sesión', 'Bienvenido de nuevo');
-        Get.offNamed('/HomePage');
+        if (response.user!.role == 'Propietario') {
+          Get.offNamed('/LandlordPage');
+        } else if (response.user!.role == 'Inquilino') {
+          Get.offNamed('/HomePage');
+        } else {
+          Get.snackbar('Error', 'Rol no reconocido');
+        }
       }
     } catch (e) {
       Get.snackbar('Error',
@@ -156,7 +162,8 @@ class AuthController extends GetxController {
     isLoading.value = true;
     try {
       await _authService.signOut();
-      Get.offAllNamed('/SignInPage'); // Redirigir al login después de cerrar sesión
+      Get.offAllNamed(
+          '/SignInPage'); // Redirigir al login después de cerrar sesión
     } catch (e) {
       Get.snackbar('Error', 'No se pudo cerrar sesión.');
     } finally {
@@ -164,9 +171,7 @@ class AuthController extends GetxController {
     }
   }
 
-
-
-  // Restablecer contraseña 
+  // Restablecer contraseña
   Future<void> forgotPassword(String email) async {
     email = email.trim().toLowerCase();
 
@@ -188,7 +193,7 @@ class AuthController extends GetxController {
     }
   }
 
-  // Actualización de contraseña 
+  // Actualización de contraseña
   Future<void> updatePassword(
       String newPassword, String confirmPassword) async {
     if (!isValidPassword(newPassword)) {

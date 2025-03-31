@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:unistay/domain/models/accommodation_model.dart';
 import 'package:unistay/ui/widgets/Accommodation_card.dart';
 import '../../colors/colors.dart';
@@ -85,14 +86,12 @@ class Landlord extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.background,
-        title: const Text('Landlord'),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.account_circle_outlined),
-            onPressed: () {},
-          )
-        ],
+        backgroundColor: AppColors.primary,
+        title: Text(
+          'Alojamientos registrados',
+          style: GoogleFonts.saira(
+              color: Colors.white, fontWeight: FontWeight.bold),
+        ),
       ),
       body: Center(
         child: ListView.builder(
@@ -110,13 +109,43 @@ class Landlord extends StatelessWidget {
               );
             }),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).pushNamed('/LandlordPage/Register');
-        },
-        backgroundColor: AppColors.primary,
-        tooltip: 'Add new Accodmmoation',
-        child: const Icon(Icons.add),
+      bottomNavigationBar: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          BottomNavigationBar(
+            backgroundColor: AppColors.primary,
+            selectedItemColor: Colors.white,
+            unselectedItemColor: Colors.white,
+            type: BottomNavigationBarType.fixed,
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: Icon(Icons.hotel, color: Colors.white),
+                label: 'Alojamiento',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.person, color: Colors.white),
+                label: 'Perfil',
+              ),
+            ],
+            currentIndex: 0,
+            onTap: (index) {},
+          ),
+          Positioned(
+            bottom: 10, // Ajusta la altura para que resalte más
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pushNamed('/LandlordPage/Register');
+              },
+              style: ElevatedButton.styleFrom(
+                shape: const CircleBorder(),
+                backgroundColor: AppColors.background,
+                padding: const EdgeInsets.all(16), // Tamaño más grande
+                elevation: 6, // Sombras para resaltar
+              ),
+              child: const Icon(Icons.add, color: Colors.white, size: 28),
+            ),
+          ),
+        ],
       ),
     );
   }

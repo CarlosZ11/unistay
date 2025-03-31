@@ -35,7 +35,9 @@ class _RegisterLandlordPageState extends State<RegisterLandlordPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text('Registrar Alojamiento', style: GoogleFonts.saira()),
+        title: Text('Registrar Alojamiento',
+            style: GoogleFonts.saira(
+                color: Colors.white, fontWeight: FontWeight.bold)),
         backgroundColor: AppColors.primary,
       ),
       body: SingleChildScrollView(

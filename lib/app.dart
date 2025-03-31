@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       title: 'UniStay-App',
-      initialRoute: '/HomePage',
+      initialRoute: '/LandlordPage',
       routes: {
         '/WelcomePage': (context) => const WelcomePage(),
         '/SignInPage': (context) => const LogInPage(),
