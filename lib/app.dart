@@ -7,12 +7,9 @@ import 'package:unistay/ui/pages/auth/forgot_password.dart';
 import 'package:unistay/ui/pages/auth/signin.dart';
 import 'package:unistay/ui/pages/auth/signup.dart';
 import 'package:unistay/ui/pages/home/home.dart';
-<<<<<<< HEAD
-=======
 import 'package:unistay/ui/pages/landlord/landlord.dart';
 import 'package:unistay/ui/pages/landlord/landlord_register.dart';
 import 'package:unistay/ui/pages/user/profile.dart';
->>>>>>> main
 import 'package:unistay/ui/pages/welcome/welcome.dart';
 
 class MyApp extends StatelessWidget {
@@ -41,13 +38,9 @@ class MyApp extends StatelessWidget {
         '/ForgotPasswordPage': (context) => const ForgotPassword(),
         '/ResetPasswordPage': (context) => const ResetPasswordPage(),
         '/HomePage': (context) => const HomePage(),
-<<<<<<< HEAD
-        
-=======
         '/LandlordPage': (context) => const Landlord(),
         '/LandlordPage/Register': (context) => RegisterLandlordPage(),
         '/userProfile': (context) => MyAccountBody(),
->>>>>>> main
       },
     );
   }
