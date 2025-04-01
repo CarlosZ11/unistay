@@ -1,10 +1,11 @@
 import 'package:get/get.dart';
 import 'package:unistay/data/services/auth_service.dart';
+import 'package:unistay/data/services/ProfileService.dart';
 
 class AuthController extends GetxController {
   final AuthService _authService = AuthService();
   var isLoading = false.obs;
-
+  final ProfileService _profileService = ProfileService();
   // Normaliza el texto eliminando espacios innecesarios
   String normalizeText(String text) {
     return text.trim().replaceAll(RegExp(r'\s+'), ' ');
@@ -136,9 +137,10 @@ class AuthController extends GetxController {
       final response = await _authService.signIn(email, password);
       if (response != null && response.user != null) {
         Get.snackbar('Inicio de sesión', 'Bienvenido de nuevo');
-        if (response.user!.role == 'Propietario') {
+        var userData = await _profileService.getUserData();
+        if (userData!.role == 'Propietario') {
           Get.offNamed('/LandlordPage');
-        } else if (response.user!.role == 'Inquilino') {
+        } else if (userData.role == 'Inquilino') {
           Get.offNamed('/HomePage');
         } else {
           Get.snackbar('Error', 'Rol no reconocido');
