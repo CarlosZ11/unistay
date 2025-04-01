@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
 import 'package:get/get.dart';
-import 'package:unistay/domain/controllers/auth_controller.dart';
-=======
 import 'package:google_fonts/google_fonts.dart';
+import 'package:unistay/domain/controllers/auth_controller.dart';
 import 'package:unistay/domain/models/accommodation_model.dart';
 import 'package:unistay/ui/widgets/accommodation_card.dart';
->>>>>>> main
 import '../../colors/colors.dart';
 
 class HomePage extends StatefulWidget {
@@ -21,30 +18,12 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.background,
-        title: const Text('Home'),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.account_circle_outlined),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              await authController.logout();
-            },
-          ),
-=======
     List<AccommodationModel> dummyAccommodations = [
       AccommodationModel(
         idAlojamiento: '1',
         direccion: 'Calle 123, Bogotá',
         fotos: [
           "https://th.bing.com/th/id/R.752a118fa0183c370fe39671b3b72219?rik=I307Oo5cKCRfzA&pid=ImgRaw&r=0"
->>>>>>> main
         ],
         ventajas: ['WiFi gratis', 'Cerca del transporte', 'Piscina'],
         price: 150000,
@@ -173,32 +152,18 @@ class _HomePageState extends State<HomePage> {
             label: 'Buscar',
           ),
           BottomNavigationBarItem(
-<<<<<<< HEAD
-            icon: Icon(Icons.school),
-            label: 'School',
-=======
             icon: Icon(Icons.favorite),
             label: 'Favoritos',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_circle_rounded),
             label: 'Perfil',
->>>>>>> main
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Alojamientos',
           ),
         ],
-<<<<<<< HEAD
-        selectedItemColor: AppColors.primary,
-        onTap: (int index) {
-          if (index == 2) {
-            Get.toNamed('/LandlordPage');
-          }
-        },
-=======
->>>>>>> main
       ),
     );
   }
