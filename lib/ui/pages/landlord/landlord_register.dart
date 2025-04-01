@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
+import 'package:unistay/domain/controllers/landlord_controller.dart';
 import '../../colors/colors.dart';
 
 class RegisterLandlordPage extends StatefulWidget {
@@ -17,6 +18,8 @@ class _RegisterLandlordPageState extends State<RegisterLandlordPage> {
   bool disponible = false;
   String? selectedCategory;
   List<String> selectedVentajas = [];
+
+  final LandlordController _controller = Get.put(LandlordController());
 
   final List<String> ventajas = [
     "Wifi",
@@ -104,17 +107,46 @@ class _RegisterLandlordPageState extends State<RegisterLandlordPage> {
                   "El número de habitaciones es obligatorio",
                   isNumeric: true),
 
+              // Disponibilidad
+              _buildLabel("Disponibilidad"),
+              SwitchListTile(
+                title: Text("Disponible", style: GoogleFonts.saira(fontSize: 16)),
+                value: disponible,
+                onChanged: (bool value) {
+                  setState(() {
+                    disponible = value;
+                  });
+                },
+                activeColor: AppColors.primary,
+              ),
+
               const SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if (_formKey.currentState!.validate()) {
-                      Get.snackbar(
-                          "Éxito", "Alojamiento registrado correctamente",
-                          backgroundColor: Colors.green,
-                          colorText: Colors.white);
+                      bool success = await _controller.createAccommodation(
+                        direccion: direccionController.text,
+                        fotos: [],
+                        ventajas: selectedVentajas,
+                        price: int.parse(priceController.text),
+                        descripcion: descripcionController.text,
+                        numeroHabitaciones:
+                            int.parse(habitacionesController.text),
+                        disponible: disponible,
+                        categoria: selectedCategory ?? "",
+                      );
+                      if (success) {
+                        Get.offNamed(
+                            '/LandlordPage'); // Redirige a LandlordPage
+                      } else {
+                        Get.snackbar(
+                            "Éxito", "Alojamiento registrado correctamente",
+                            backgroundColor: Colors.green,
+                            colorText: Colors.white);
+                      }
                     }
                   },
                   style: ElevatedButton.styleFrom(
