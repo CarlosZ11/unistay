@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:unistay/app.dart';
 import 'package:unistay/data/services/deep_link_handler.dart';
 
+
 Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,6 +17,8 @@ Future<void> main() async {
 
 // Inicializa el manejador de Deep Links
   DeepLinkHandler().initDeepLinkListener(); 
+
+
 
   runApp(const MyApp());
   SystemChrome.setPreferredOrientations([

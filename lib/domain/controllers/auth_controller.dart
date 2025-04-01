@@ -1,9 +1,14 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:unistay/data/services/auth_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 
 class AuthController extends GetxController {
   final AuthService _authService = AuthService();
   var isLoading = false.obs;
+  var currentUser = Rxn<User>();
+
 
   // Normaliza el texto eliminando espacios innecesarios
   String normalizeText(String text) {
@@ -146,24 +151,17 @@ class AuthController extends GetxController {
     }
   }
 
-  // Verificar si hay una sesión activa
-  bool isUserLoggedIn() {
-    return _authService.getCurrentUser() != null;
-  }
+  // Cierre de sesión
 
-  // Cerrar sesión
-  Future<void> logoutUser() async {
-    isLoading.value = true;
+  Future<void> logout() async {
     try {
       await _authService.signOut();
-      Get.offAllNamed('/SignInPage'); // Redirigir al login después de cerrar sesión
+      currentUser.value = null;
+      Get.offAllNamed('/SignInPage');
     } catch (e) {
-      Get.snackbar('Error', 'No se pudo cerrar sesión.');
-    } finally {
-      isLoading.value = false;
+      Get.snackbar("Error", "No se pudo cerrar sesión: $e");
     }
   }
-
 
 
   // Restablecer contraseña 

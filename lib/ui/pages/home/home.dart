@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:unistay/domain/controllers/auth_controller.dart';
 import '../../colors/colors.dart';
 
 class HomePage extends StatefulWidget {
@@ -9,14 +11,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final AuthController authController = Get.find<AuthController>();
+
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.background,
@@ -25,7 +23,13 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             icon: const Icon(Icons.account_circle_outlined),
             onPressed: () {},
-          )
+          ),
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              await authController.logout();
+            },
+          ),
         ],
       ),
       body: const Center(
@@ -39,22 +43,21 @@ class _HomePageState extends State<HomePage> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.business),
-            label: 'Business',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.school),
             label: 'School',
           ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Alojamientos',
+          ),
         ],
         selectedItemColor: AppColors.primary,
-        onTap: (int index) {},
+        onTap: (int index) {
+          if (index == 2) {
+            Get.toNamed('/LandlordPage');
+          }
+        },
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: _incrementCounter,
-      //   tooltip: 'Increment',
-      //   child: const Icon(Icons.add),
-      // ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

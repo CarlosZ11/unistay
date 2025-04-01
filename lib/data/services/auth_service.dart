@@ -4,6 +4,7 @@ import 'package:unistay/domain/models/user_model.dart';
 class AuthService {
   final SupabaseClient _supabase = Supabase.instance.client;
 
+ 
   // Registro de usuario con todos los campos
   Future<AuthResponse?> signUp(
     String name,
@@ -77,6 +78,16 @@ class AuthService {
     }
   }
 
+  // Cierre de sesión
+  Future<void> signOut() async {
+    try {
+      await _supabase.auth.signOut();
+    } catch (e) {
+      throw Exception("Error al cerrar sesión: $e");
+    }
+  }
+
+
   // Restablecer contraseña con correo
   Future<void> resetPassword(String email) async {
     try {
@@ -101,20 +112,6 @@ class AuthService {
       throw Exception("Error al actualizar contraseña: ${e.message}");
     } catch (e) {
       throw Exception("Error inesperado al actualizar la contraseña.");
-    }
-  }
-
-  // Obtener usuario actual
-  User? getCurrentUser() {
-    return _supabase.auth.currentUser;
-  }
-
-  // Cerrar sesión
-  Future<void> signOut() async {
-    try {
-      await _supabase.auth.signOut();
-    } catch (e) {
-      throw Exception("Error al cerrar sesión.");
     }
   }
 
