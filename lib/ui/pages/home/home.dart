@@ -132,13 +132,16 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: AppColors.primary, // Fondo del BottomNavigationBar
-        selectedItemColor:
-            Colors.white, // Color de íconos y texto seleccionados
-        unselectedItemColor:
-            Colors.white, // Color de íconos y texto no seleccionados
-        type: BottomNavigationBarType
-            .fixed, // Para evitar efecto de desvanecimiento en los ítems
+        backgroundColor: AppColors.primary,
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white,
+        type: BottomNavigationBarType.fixed,
+        onTap: (index) {
+          if (index == 2) {
+            // Si se presiona "Perfil"
+            Navigator.pushNamed(context, '/userProfile');
+          }
+        },
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.search),
