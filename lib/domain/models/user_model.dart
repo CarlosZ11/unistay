@@ -1,6 +1,6 @@
 class UserModel {
-  final String id; // Ahora es la PRIMARY KEY
-  final String identification; // Ahora solo es UNIQUE
+  final String id;
+  final String identification;
   final String name;
   final String lastname;
   final String email;
@@ -9,8 +9,8 @@ class UserModel {
   final String createdAt;
 
   UserModel({
-    required this.id, // Ahora es la PRIMARY KEY
-    required this.identification, // Ahora solo es UNIQUE
+    required this.id,
+    required this.identification,
     required this.name,
     required this.lastname,
     required this.email,
@@ -19,11 +19,11 @@ class UserModel {
     required this.createdAt,
   });
 
-  // Convertir el modelo a un mapa para guardar en Supabase
+  /// 🔹 Convierte el modelo a un mapa para Supabase
   Map<String, dynamic> toMap() {
     return {
-      'id': id, // Ahora PRIMARY KEY
-      'identification': identification, // Ahora solo es UNIQUE
+      'id': id,
+      'identification': identification,
       'name': name,
       'lastname': lastname,
       'email': email,
@@ -33,17 +33,36 @@ class UserModel {
     };
   }
 
-  // Crear una instancia de UserModel a partir de un mapa
+  /// 🔹 Crea un modelo a partir de un mapa (desde Supabase)
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
-      id: map['id'] ?? '', // Ahora PRIMARY KEY
-      identification: map['identification'] ?? '', // Ahora solo es UNIQUE
+      id: map['id'] ?? '',
+      identification: map['identification'] ?? '',
       name: map['name'] ?? '',
       lastname: map['lastname'] ?? '',
       email: map['email'] ?? '',
       phone: map['phone'] ?? '',
       role: map['role'] ?? '',
       createdAt: map['created_at'] ?? '',
+    );
+  }
+
+  /// 🔹 Copia el usuario con nuevos valores (para actualizar datos sin modificar el objeto original)
+  UserModel copyWith({
+    String? identification,
+    String? name,
+    String? lastname,
+    String? phone,
+  }) {
+    return UserModel(
+      id: id,
+      identification: identification ?? this.identification,
+      name: name ?? this.name,
+      lastname: lastname ?? this.lastname,
+      email: email,
+      phone: phone ?? this.phone,
+      role: role,
+      createdAt: createdAt,
     );
   }
 }

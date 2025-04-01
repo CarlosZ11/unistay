@@ -16,7 +16,7 @@ class AccommodationCard extends StatelessWidget {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       elevation: 5,
-      color: AppColors.background,
+      color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -47,7 +47,7 @@ class AccommodationCard extends StatelessWidget {
                       ),
                       child: IconButton(
                         icon: const Icon(Icons.favorite_border,
-                            color: Colors.white),
+                            color: Colors.black),
                         onPressed: () {},
                       ),
                     ),
@@ -76,7 +76,7 @@ class AccommodationCard extends StatelessWidget {
                     const Icon(Icons.location_on, color: Colors.red, size: 16),
                     const SizedBox(width: 5),
                     Text(accommodation.direccion,
-                        style: GoogleFonts.saira(color: Colors.white)),
+                        style: GoogleFonts.saira(color: Colors.black)),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -92,7 +92,7 @@ class AccommodationCard extends StatelessWidget {
                         Text('\$${accommodation.price}',
                             style: GoogleFonts.saira(
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white)),
+                                color: Colors.black)),
                       ],
                     ),
                     const Row(
@@ -104,46 +104,47 @@ class AccommodationCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                if (isLandlordView) const SizedBox(height: 10),
+
                 // Botones de acción
-                Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: () {},
-                        label: Text('Editar',
-                            style: GoogleFonts.saira(color: Colors.white)),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(10),
-                              bottomLeft: Radius.circular(10),
+                if (!isLandlordView)
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () {},
+                          label: Text('Editar',
+                              style: GoogleFonts.saira(color: Colors.black)),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(10),
+                                bottomLeft: Radius.circular(10),
+                              ),
                             ),
                           ),
+                          icon: const Icon(Icons.edit, color: Colors.black),
                         ),
-                        icon: const Icon(Icons.edit, color: Colors.white),
                       ),
-                    ),
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(10),
-                              bottomRight: Radius.circular(10),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(10),
+                                bottomRight: Radius.circular(10),
+                              ),
                             ),
                           ),
+                          label: Text('Eliminar',
+                              style: GoogleFonts.saira(color: Colors.black)),
+                          icon: const Icon(Icons.delete, color: Colors.black),
                         ),
-                        label: Text('Eliminar',
-                            style: GoogleFonts.saira(color: Colors.white)),
-                        icon: const Icon(Icons.delete, color: Colors.white),
                       ),
-                    ),
-                  ],
-                )
+                    ],
+                  )
               ],
             ),
           ),
