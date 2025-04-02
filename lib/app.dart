@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
         '/ForgotPasswordPage': (context) => const ForgotPassword(),
         '/ResetPasswordPage': (context) => const ResetPasswordPage(),
         '/HomePage': (context) => const HomePage(),
-        '/LandlordPage': (context) => const Landlord(),
+        '/LandlordPage': (context) =>  Landlord(),
         '/LandlordPage/Register': (context) => RegisterLandlordPage(),
         '/userProfile': (context) => MyAccountBody(),
         '/AccommodationDetailsPage': (context) => const Accommodationdetails(),

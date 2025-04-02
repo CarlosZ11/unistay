@@ -10,7 +10,7 @@ class LandlordService {
   }
 
   /// Registra un nuevo alojamiento en la base de datos.
- 
+
   Future<bool> createAccommodation({
     required String direccion,
     required List<String> fotos,
@@ -54,29 +54,6 @@ class LandlordService {
     }
   }
 
-  /// Obtiene la lista de alojamientos de un propietario con filtro opcional por dirección y categoria.
-  Future<List<AccommodationModel>> getLandlordAccommodations(
-      {String? query}) async {
-    try {
-      final userId = getAuthenticatedUserId();
-      if (userId == null) return [];
-
-      var queryBuilder =
-          _supabase.from('accommodations').select().eq('idPropietario', userId);
-
-      // Filtra por dirección o categoría si hay un término de búsqueda
-      if (query != null && query.isNotEmpty) {
-        queryBuilder = queryBuilder
-            .or('direccion.ilike.%$query%, categoria.ilike.%$query%');
-      }
-
-      final data = await queryBuilder;
-      return data.map((e) => AccommodationModel.fromMap(e)).toList();
-    } catch (error) {
-      throw Exception('Error al obtener alojamientos: $error');
-    }
-  }
-
   /// Obtiene un alojamiento específico si pertenece al usuario autenticado.
   Future<AccommodationModel?> getAccommodationById(String idAlojamiento) async {
     try {
@@ -93,6 +70,28 @@ class LandlordService {
       return AccommodationModel.fromMap(response);
     } catch (error) {
       throw Exception('Error al obtener el alojamiento: $error');
+    }
+  }
+
+  /// Obtiene los alojamientos del usuario autenticado.
+  Future<List<AccommodationModel>> getLandlordAccommodations(
+      {String? query}) async {
+    try {
+      final userId = getAuthenticatedUserId();
+      if (userId == null) return [];
+
+      var queryBuilder =
+          _supabase.from('accommodations').select().eq('idPropietario', userId);
+
+      if (query != null && query.isNotEmpty) {
+        queryBuilder = queryBuilder
+            .or('direccion.ilike.%$query%, categoria.ilike.%$query%');
+      }
+
+      final data = await queryBuilder;
+      return data.map((e) => AccommodationModel.fromMap(e)).toList();
+    } catch (error) {
+      throw Exception('Error al obtener alojamientos: $error');
     }
   }
 
@@ -117,19 +116,15 @@ class LandlordService {
 
   /// Elimina un alojamiento si pertenece al usuario autenticado.
   Future<bool> deleteAccommodation(String idAlojamiento) async {
-    try {
-      final userId = getAuthenticatedUserId();
-      if (userId == null) return false;
+    final response = await Supabase.instance.client
+        .from('accommodations')
+        .delete()
+        .match({'idAlojamiento': idAlojamiento});
 
-      await _supabase
-          .from('accommodations')
-          .delete()
-          .eq('idAlojamiento', idAlojamiento)
-          .eq('idPropietario', userId);
-
-      return true;
-    } catch (error) {
-      throw Exception('Error al eliminar alojamiento: $error');
+    if (response == null) {
+      return true; //
     }
+
+    return false;
   }
 }
