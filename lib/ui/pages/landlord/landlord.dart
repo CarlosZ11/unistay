@@ -23,25 +23,6 @@ class Landlord extends StatelessWidget {
           ),
         ),
       ),
-<<<<<<< HEAD
-      body: Center(
-        child: ListView.builder(
-            itemCount: dummyAccommodations.length,
-            itemBuilder: (context, index) {
-              return Column(
-                children: [
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  AccommodationCard(
-                    index: index,
-                    accommodation: dummyAccommodations[index],
-                  ),
-                ],
-              );
-            }),
-      ),
-=======
       body: Obx(() {
         if (landlordController.accommodations.isEmpty) {
           return const Center(
@@ -93,7 +74,6 @@ class Landlord extends StatelessWidget {
           },
         );
       }),
->>>>>>> main
       bottomNavigationBar: Stack(
         alignment: Alignment.bottomCenter,
         children: [

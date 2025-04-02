@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       title: 'UniStay-App',
-      initialRoute: '/HomePage',
+      initialRoute: '/WelcomePage',
       routes: {
         '/WelcomePage': (context) => const WelcomePage(),
         '/SignInPage': (context) => const LogInPage(),
@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
         '/ForgotPasswordPage': (context) => const ForgotPassword(),
         '/ResetPasswordPage': (context) => const ResetPasswordPage(),
         '/HomePage': (context) => const HomePage(),
-        '/LandlordPage': (context) =>  Landlord(),
+        '/LandlordPage': (context) => const Landlord(),
         '/LandlordPage/Register': (context) => RegisterLandlordPage(),
         '/userProfile': (context) => MyAccountBody(),
         '/AccommodationDetailsPage': (context) => const Accommodationdetails(),
