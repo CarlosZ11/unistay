@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:unistay/domain/controllers/auth_controller.dart';
-import 'package:unistay/domain/models/accommodation_model.dart';
+import 'package:unistay/domain/controllers/tenant_controller.dart';
 import 'package:unistay/ui/widgets/accommodation_card.dart';
 import '../../colors/colors.dart';
 
@@ -14,84 +13,27 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final AuthController authController = Get.find<AuthController>();
+  final TenantController tenantController = Get.put(TenantController());
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    tenantController.getAccommodations(); // Cargar alojamientos al iniciar
+    _searchController.addListener(_onSearchChanged);
+  }
+
+  void _onSearchChanged() {
+    String query = _searchController.text.trim();
+    if (query.isEmpty) {
+      tenantController.getAccommodations(); // Si no hay texto, cargar todo
+    } else {
+      tenantController.filterAccommodations(query);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    List<AccommodationModel> dummyAccommodations = [
-      AccommodationModel(
-        idAlojamiento: '1',
-        direccion: 'Calle 123, Bogotá',
-        fotos: [
-          "https://th.bing.com/th/id/R.752a118fa0183c370fe39671b3b72219?rik=I307Oo5cKCRfzA&pid=ImgRaw&r=0"
-        ],
-        ventajas: ['WiFi gratis', 'Cerca del transporte', 'Piscina'],
-        price: 150000,
-        descripcion: 'Casa cómoda en la playa con vista al mar.',
-        numeroHabitaciones: 3,
-        disponible: true,
-        categoria: 'Casa',
-        idPropietario: 'prop1',
-      ),
-      AccommodationModel(
-        idAlojamiento: '2',
-        direccion: 'Carrera 45, Medellín',
-        fotos: [
-          "https://th.bing.com/th/id/R.752a118fa0183c370fe39671b3b72219?rik=I307Oo5cKCRfzA&pid=ImgRaw&r=0",
-          "https://th.bing.com/th/id/R.752a118fa0183c370fe39671b3b72219?rik=I307Oo5cKCRfzA&pid=ImgRaw&r=0",
-          "https://th.bing.com/th/id/R.752a118fa0183c370fe39671b3b72219?rik=I307Oo5cKCRfzA&pid=ImgRaw&r=0"
-        ],
-        ventajas: ['Desayuno incluido', 'Balcón con vista', 'Gimnasio'],
-        price: 200000,
-        descripcion: 'Apartamento moderno en el centro de Medellín.',
-        numeroHabitaciones: 2,
-        disponible: true,
-        categoria: 'Apartamento',
-        idPropietario: 'prop2',
-      ),
-      AccommodationModel(
-        idAlojamiento: '3',
-        direccion: 'Calle 50, Cartagena',
-        fotos: [
-          "https://th.bing.com/th/id/R.752a118fa0183c370fe39671b3b72219?rik=I307Oo5cKCRfzA&pid=ImgRaw&r=0"
-        ],
-        ventajas: ['Frente al mar', 'Zona de BBQ', 'Aire acondicionado'],
-        price: 250000,
-        descripcion: 'Casa de lujo en Cartagena con acceso privado a la playa.',
-        numeroHabitaciones: 4,
-        disponible: true,
-        categoria: 'Casa de lujo',
-        idPropietario: 'prop3',
-      ),
-      AccommodationModel(
-        idAlojamiento: '4',
-        direccion: 'Av. Caracas, Bogotá',
-        fotos: [
-          "https://th.bing.com/th/id/R.752a118fa0183c370fe39671b3b72219?rik=I307Oo5cKCRfzA&pid=ImgRaw&r=0"
-        ],
-        ventajas: ['Seguridad 24/7', 'Centro comercial cercano', 'Parqueadero'],
-        price: 120000,
-        descripcion: 'Habitación en apartaestudio con servicios incluidos.',
-        numeroHabitaciones: 1,
-        disponible: true,
-        categoria: 'Apartaestudio',
-        idPropietario: 'prop4',
-      ),
-      AccommodationModel(
-        idAlojamiento: '5',
-        direccion: 'El Poblado, Medellín',
-        fotos: [
-          "https://th.bing.com/th/id/R.752a118fa0183c370fe39671b3b72219?rik=I307Oo5cKCRfzA&pid=ImgRaw&r=0"
-        ],
-        ventajas: ['Jacuzzi', 'Smart TV', 'Cerca de bares y restaurantes'],
-        price: 180000,
-        descripcion: 'Loft moderno en una de las mejores zonas de Medellín.',
-        numeroHabitaciones: 1,
-        disponible: true,
-        categoria: 'Loft',
-        idPropietario: 'prop5',
-      ),
-    ];
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -111,28 +53,45 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-          // Barra de búsqueda que se mantiene fija
+          // Barra de búsqueda
           SliverPersistentHeader(
             pinned: true,
             floating: false,
-            delegate: _SearchBarDelegate(),
+            delegate: _SearchBarDelegate(_searchController),
           ),
-          // Lista de elementos
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) => Column(
-                children: [
-                  AccommodationCard(
-                    accommodation: dummyAccommodations[index],
+          // Lista de alojamientos
+          Obx(() {
+            if (tenantController.isLoading.value) {
+              return const SliverToBoxAdapter(
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+
+            if (tenantController.accommodations.isEmpty) {
+              return const SliverToBoxAdapter(
+                child: Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(20.0),
+                    child: Text("No se encontraron alojamientos"),
                   ),
-                  const SizedBox(
-                    height: 10,
-                  )
-                ],
+                ),
+              );
+            }
+
+            return SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) => Column(
+                  children: [
+                    AccommodationCard(
+                      accommodation: tenantController.accommodations[index],
+                    ),
+                    const SizedBox(height: 10),
+                  ],
+                ),
+                childCount: tenantController.accommodations.length,
               ),
-              childCount: dummyAccommodations.length,
-            ),
-          ),
+            );
+          }),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -142,7 +101,6 @@ class _HomePageState extends State<HomePage> {
         type: BottomNavigationBarType.fixed,
         onTap: (index) {
           if (index == 2) {
-            // Si se presiona "Perfil"
             Navigator.pushNamed(context, '/userProfile');
           }
         },
@@ -171,25 +129,29 @@ class _HomePageState extends State<HomePage> {
 
 // Delegado para la barra de búsqueda
 class _SearchBarDelegate extends SliverPersistentHeaderDelegate {
-  @override
-  double get minExtent => 60; // Altura mínima
-  @override
-  double get maxExtent => 60; // Altura máxima
+  final TextEditingController searchController;
+
+  _SearchBarDelegate(this.searchController);
 
   @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
+  double get minExtent => 60;
+  @override
+  double get maxExtent => 60;
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.all(10),
       child: Material(
         elevation: 5,
         borderRadius: BorderRadius.circular(30),
-        child: const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: TextField(
-            decoration: InputDecoration(
-              hintText: "Buscar...",
+            controller: searchController,
+            decoration: const InputDecoration(
+              hintText: "Buscar por dirección o categoría",
               border: InputBorder.none,
               icon: Icon(Icons.search),
             ),

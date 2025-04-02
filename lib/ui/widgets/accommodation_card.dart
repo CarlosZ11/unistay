@@ -2,17 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:unistay/domain/models/accommodation_model.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:get/get.dart'; // Importa GetX
 import '../../ui/colors/colors.dart';
 
-class AccommodationCard extends StatelessWidget {
+class AccommodationCard extends StatefulWidget {
   final AccommodationModel accommodation;
+  final Future<void> Function()? onDelete; // Cambiar a función async
 
-  const AccommodationCard({super.key, required this.accommodation});
+  const AccommodationCard({super.key, required this.accommodation, this.onDelete});
+
+  @override
+  _AccommodationCardState createState() => _AccommodationCardState();
+}
+
+class _AccommodationCardState extends State<AccommodationCard> {
+  bool isDeleting = false;
 
   @override
   Widget build(BuildContext context) {
-    bool isLandlordView =
-        ModalRoute.of(context)?.settings.name != '/LandlordPage';
+    bool isLandlordView = ModalRoute.of(context)?.settings.name == '/LandlordPage';
+
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       elevation: 5,
@@ -26,9 +35,8 @@ class AccommodationCard extends StatelessWidget {
             child: Stack(
               children: [
                 CarouselSlider(
-                  options:
-                      CarouselOptions(height: 200, enableInfiniteScroll: false),
-                  items: accommodation.fotos.map((foto) {
+                  options: CarouselOptions(height: 200, enableInfiniteScroll: false),
+                  items: widget.accommodation.fotos.map((foto) {
                     return Image.network(
                       foto,
                       fit: BoxFit.cover,
@@ -36,7 +44,7 @@ class AccommodationCard extends StatelessWidget {
                     );
                   }).toList(),
                 ),
-                if (isLandlordView)
+                if (!isLandlordView)
                   Positioned(
                     top: 10,
                     right: 10,
@@ -46,8 +54,7 @@ class AccommodationCard extends StatelessWidget {
                         shape: BoxShape.circle,
                       ),
                       child: IconButton(
-                        icon: const Icon(Icons.favorite_border,
-                            color: Colors.black),
+                        icon: const Icon(Icons.favorite_border, color: Colors.black),
                         onPressed: () {},
                       ),
                     ),
@@ -62,7 +69,7 @@ class AccommodationCard extends StatelessWidget {
               children: [
                 // Título del alojamiento
                 Text(
-                  accommodation.descripcion,
+                  widget.accommodation.descripcion,
                   style: GoogleFonts.saira(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -75,7 +82,7 @@ class AccommodationCard extends StatelessWidget {
                   children: [
                     const Icon(Icons.location_on, color: Colors.red, size: 16),
                     const SizedBox(width: 5),
-                    Text(accommodation.direccion,
+                    Text(widget.accommodation.direccion,
                         style: GoogleFonts.saira(color: Colors.black)),
                   ],
                 ),
@@ -86,34 +93,29 @@ class AccommodationCard extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        const Icon(Icons.monetization_on,
-                            color: Colors.green, size: 16),
+                        const Icon(Icons.monetization_on, color: Colors.green, size: 16),
                         const SizedBox(width: 5),
-                        Text('\$${accommodation.price}',
-                            style: GoogleFonts.saira(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black)),
+                        Text('\$${widget.accommodation.price}',
+                            style: GoogleFonts.saira(fontWeight: FontWeight.bold, color: Colors.black)),
                       ],
                     ),
                     const Row(
                       children: [
                         Icon(Icons.star, color: Colors.orange, size: 16),
-                        Text('5.6',
-                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        Text('5.6', style: TextStyle(fontWeight: FontWeight.bold)),
                       ],
                     ),
                   ],
                 ),
 
-                // Botones de acción
-                if (!isLandlordView)
+                // Botones de acción (Solo en LandlordPage)
+                if (isLandlordView)
                   Row(
                     children: [
                       Expanded(
                         child: ElevatedButton.icon(
                           onPressed: () {},
-                          label: Text('Editar',
-                              style: GoogleFonts.saira(color: Colors.black)),
+                          label: Text('Editar', style: GoogleFonts.saira(color: Colors.black)),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary,
                             shape: const RoundedRectangleBorder(
@@ -128,7 +130,13 @@ class AccommodationCard extends StatelessWidget {
                       ),
                       Expanded(
                         child: ElevatedButton.icon(
-                          onPressed: () {},
+                          onPressed: isDeleting
+                              ? null
+                              : () async {
+                                  setState(() => isDeleting = true);
+                                  await widget.onDelete?.call();
+                                  setState(() => isDeleting = false);
+                                },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.red,
                             shape: const RoundedRectangleBorder(
@@ -138,9 +146,12 @@ class AccommodationCard extends StatelessWidget {
                               ),
                             ),
                           ),
-                          label: Text('Eliminar',
-                              style: GoogleFonts.saira(color: Colors.black)),
-                          icon: const Icon(Icons.delete, color: Colors.black),
+                          label: isDeleting
+                              ? const CircularProgressIndicator(color: Colors.white)
+                              : Text('Eliminar', style: GoogleFonts.saira(color: Colors.black)),
+                          icon: isDeleting
+                              ? const SizedBox.shrink()
+                              : const Icon(Icons.delete, color: Colors.black),
                         ),
                       ),
                     ],
