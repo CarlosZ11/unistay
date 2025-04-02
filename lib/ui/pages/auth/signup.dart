@@ -186,7 +186,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               password: passwordController.text.trim(),
                               phone: phoneController.text.trim(),
                               identification: idController.text.trim(),
-                              role: selectedRole!,
+                              role: selectedRole!.toLowerCase(),
                             );
                           },
                           style: ElevatedButton.styleFrom(

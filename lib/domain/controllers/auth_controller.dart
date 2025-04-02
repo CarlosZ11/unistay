@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:unistay/data/services/auth_service.dart';
 import 'package:unistay/data/services/ProfileService.dart';
 
@@ -109,7 +110,7 @@ class AuthController extends GetxController {
 
       if (response != null && response.user != null) {
         Get.snackbar('Registro exitoso', 'Bienvenido a UniStay');
-        Get.offNamed('/HomePage');
+        Get.back();
       }
     } catch (e) {
       Get.snackbar('Error',
@@ -154,7 +155,16 @@ class AuthController extends GetxController {
     }
   }
 
-
+  Future<String?> signIn(String email, String password) async {
+    try {
+      final response = await Supabase.instance.client.auth
+          .signInWithPassword(email: email, password: password);
+      
+      return response.user?.id; // Retorna el ID del usuario autenticado si es exitoso
+    } on AuthException catch (e) {
+      return null; // Devuelve null si la autenticación falla
+    }
+  }
 
   // Cerrar sesión
   Future<void> logoutUser() async {

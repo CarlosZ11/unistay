@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:unistay/data/services/auth_service.dart';
+import 'package:unistay/domain/models/user_role.dart';
 import 'package:unistay/ui/colors/colors.dart';
+import 'package:unistay/ui/pages/home/home.dart';
 import 'package:unistay/ui/widgets/email_text_field.dart';
 import 'package:unistay/ui/widgets/pass_text_field.dart';
 import 'package:get/get.dart';
 import 'package:unistay/domain/controllers/auth_controller.dart';
+import 'package:unistay/ui/widgets/splash.dart';
 
 class LogInPage extends StatefulWidget {
   const LogInPage({super.key});
@@ -63,7 +67,6 @@ class _LogInPageState extends State<LogInPage> {
                         height: 25,
                       ),
                       EmailTextFormField(controller: emailController),
-                      const SizedBox(height: 20),
                       PassTextFormField(
                         controller: passwordController,
                         labelText: "Contraseña",
@@ -100,10 +103,53 @@ class _LogInPageState extends State<LogInPage> {
                         height: 50,
                         child: ElevatedButton(
                           onPressed: () async {
-                            authController.loginUser(
-                              emailController.text.trim(),
-                              passwordController.text.trim(),
-                            );
+                            // authController.loginUser(
+                            //   emailController.text.trim(),
+                            //   passwordController.text.trim(),
+                            // );
+                            String? userId = await authController.signIn(emailController.text.trim(), passwordController.text.trim());
+
+                            if (userId != null) { 
+                              AuthService authService = AuthService();
+                              UserRole? role = await authService.getUserRole(userId);
+
+                              print("El userid es: $userId");
+                              print("El rol es: $role");
+                            
+                              if (role == null) {
+                                Get.showSnackbar(
+                                  const GetSnackBar(
+                                    title: 'Error',
+                                    message: 'No se pudo obtener el rol del usuario',
+                                    duration: Duration(seconds: 2),
+                                    backgroundColor: AppColors.primary,
+                                    snackPosition: SnackPosition.BOTTOM,
+                                  ),
+                                );
+                                return; // Detiene la ejecución si no se obtiene el rol
+                              }
+                              // Si todo está correcto, se navega a la siguiente pantalla
+                              Get.to(() => Splash(userId: userId));
+                              Future.delayed(const Duration(seconds: 3), () {
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => HomePage(role: role)),
+                                );
+                              });
+                            } else {
+                              // Mostrar error antes de cualquier navegación
+                              Get.showSnackbar(
+                                const GetSnackBar(
+                                  title: 'Credenciales incorrectas',
+                                  message: 'Verifique que sus credenciales estén correctas',
+                                  duration: Duration(seconds: 2),
+                                  backgroundColor: AppColors.primary,
+                                  snackPosition: SnackPosition.BOTTOM,
+                                ),
+                              );
+                              return; // Detiene la ejecución y evita la navegación
+                            }
+
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary,
@@ -111,17 +157,14 @@ class _LogInPageState extends State<LogInPage> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          child: Obx(() => authController.isLoading.value
-                              ? const CircularProgressIndicator(
-                                  color: Colors.white)
-                              : Text(
-                                  'Iniciar sesión',
-                                  style: GoogleFonts.saira(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white,
-                                  ),
-                                )),
+                          child: Text(
+                            'Iniciar sesión',
+                            style: GoogleFonts.saira(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                          )
                         ),
                       ),
                     ],

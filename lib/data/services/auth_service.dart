@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:unistay/domain/models/user_model.dart';
+import 'package:unistay/domain/models/user_role.dart';
 
 class AuthService {
   final SupabaseClient _supabase = Supabase.instance.client;
@@ -114,5 +115,27 @@ class AuthService {
       throw Exception("Error inesperado al actualizar la contraseña.");
     }
   }
+
+  Future<UserRole?> getUserRole(String userId) async {
+    final response = await _supabase
+        .from('users')
+        .select('role')
+        .eq('id', userId)
+        .single(); // Obtener solo un resultado
+
+    // ignore: unnecessary_null_comparison
+    if (response == null) {
+      return null; // No encontró el usuario
+    }
+
+    print("EL ROL DE LA BASE ES: $response['role']" );
+
+    // Convertir el rol de String a enum
+    return UserRole.values.firstWhere(
+      (role) => role.toString().split('.').last == response['role'],
+      orElse: () => UserRole.inquilino, // Valor por defecto si no coincide
+    );
+  }
+
 
 }

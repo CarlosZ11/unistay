@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:unistay/ui/colors/colors.dart';
-import 'package:unistay/ui/pages/user/components/my_account_menu.dart';
+import 'package:unistay/ui/pages/inquilino/pages/components/my_account_menu.dart';
 import 'package:unistay/domain/controllers/ProfileController.dart';
 
 class MyAccountBody extends StatelessWidget {
@@ -14,6 +14,12 @@ class MyAccountBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text("Mi Cuenta"),
+        titleTextStyle: GoogleFonts.saira(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 22),
+        backgroundColor: AppColors.background,
+      ),
       body: Obx(() {
         if (_controller.isLoading.value) {
           return const Center(child: CircularProgressIndicator());
@@ -54,7 +60,7 @@ class MyAccountBody extends StatelessWidget {
                         ),
                         child: const CircleAvatar(
                           child: Icon(
-                            HugeIcons.strokeRoundedUser,
+                            HugeIcons.strokeRoundedUserEdit01,
                             size: 75,
                           ),
                         ),
