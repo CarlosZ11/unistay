@@ -103,6 +103,7 @@ class Landlord extends StatelessWidget {
                     height: 10,
                   ),
                   AccommodationCard(
+                    index: index,
                     accommodation: dummyAccommodations[index],
                   ),
                 ],

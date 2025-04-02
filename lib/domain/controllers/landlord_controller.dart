@@ -2,7 +2,6 @@ import 'package:get/get.dart';
 import 'package:unistay/data/services/landlord_service.dart';
 import 'package:unistay/domain/models/accommodation_model.dart';
 
-
 class LandlordController extends GetxController {
   final LandlordService _landlordService = LandlordService();
 
@@ -47,7 +46,8 @@ class LandlordController extends GetxController {
   }
 
   /// Obtiene alojamientos con filtro opcional por dirección o categoría
-  Future<List<AccommodationModel>> getLandlordAccommodations({String? query}) async {
+  Future<List<AccommodationModel>> getLandlordAccommodations(
+      {String? query}) async {
     try {
       return await _landlordService.getLandlordAccommodations(query: query);
     } catch (error) {
@@ -71,7 +71,8 @@ class LandlordController extends GetxController {
   }
 
   /// Actualiza un alojamiento si pertenece al usuario autenticado
-  Future<bool> updateAccommodation(String idAlojamiento, Map<String, dynamic> updates) async {
+  Future<bool> updateAccommodation(
+      String idAlojamiento, Map<String, dynamic> updates) async {
     if (idAlojamiento.trim().isEmpty) {
       Get.snackbar("Error", "ID de alojamiento inválido.");
       return false;
@@ -80,7 +81,8 @@ class LandlordController extends GetxController {
       Get.snackbar("Error", "No se proporcionaron datos para actualizar.");
       return false;
     }
-    final success = await _landlordService.updateAccommodation(idAlojamiento, updates);
+    final success =
+        await _landlordService.updateAccommodation(idAlojamiento, updates);
     if (success) {
       Get.snackbar("Éxito", "Alojamiento actualizado correctamente.");
     }

@@ -14,7 +14,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final AuthController authController = Get.find<AuthController>();
+  //final AuthController authController = Get.find<AuthController>();
 
   @override
   Widget build(BuildContext context) {
@@ -100,13 +100,29 @@ class _HomePageState extends State<HomePage> {
             expandedHeight: 200.0,
             floating: false,
             pinned: true,
-            backgroundColor: AppColors.background,
+            backgroundColor: AppColors.primary,
+            automaticallyImplyLeading: false,
             flexibleSpace: FlexibleSpaceBar(
-              title: Text("Encuentra tu hogar ideal",
-                  style: GoogleFonts.saira(
-                      color: Colors.black, fontWeight: FontWeight.bold)),
+              title: Row(
+                children: [
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Container(
+                    padding: const EdgeInsets.only(right: 5, left: 5),
+                    decoration: const BoxDecoration(
+                        color: AppColors.primary,
+                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                    child: Text("Encuentra tu hogar",
+                        overflow: TextOverflow.visible,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.saira(
+                            color: Colors.white, fontWeight: FontWeight.bold)),
+                  ),
+                ],
+              ),
               background: Image.network(
-                "https://th.bing.com/th/id/OIP.h_tIBnX6AVBbVX4QOoccuwHaUS?rs=1&pid=ImgDetMain",
+                "https://static.vecteezy.com/system/resources/previews/016/245/765/original/group-of-young-students-happy-girls-and-boys-in-casual-clothes-flat-cartoon-illustration-free-vector.jpg",
                 fit: BoxFit.cover,
               ),
             ),
@@ -123,6 +139,7 @@ class _HomePageState extends State<HomePage> {
               (context, index) => Column(
                 children: [
                   AccommodationCard(
+                    index: index,
                     accommodation: dummyAccommodations[index],
                   ),
                   const SizedBox(
