@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:unistay/domain/controllers/landlord_controller.dart';
-import 'package:unistay/domain/models/accommodation_model.dart';
 import 'package:unistay/ui/colors/colors.dart';
 import 'package:unistay/ui/widgets/accommodation_card.dart';
 
@@ -45,13 +44,23 @@ class Landlord extends StatelessWidget {
                   onDelete: () async {
                     bool confirmDelete = await Get.defaultDialog(
                       title: "Confirmación",
+                      titleStyle: GoogleFonts.saira(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
                       middleText:
                           "¿Estás seguro de que deseas eliminar este alojamiento?",
+                      middleTextStyle: GoogleFonts.saira(
+                        color: Colors.black87,
+                        fontSize: 16,
+                      ),
                       textConfirm: "Sí",
                       textCancel: "No",
                       confirmTextColor: Colors.white,
                       onConfirm: () => Get.back(result: true),
                       onCancel: () => Get.back(result: false),
+                      buttonColor: AppColors.primary,
+                      cancelTextColor: AppColors.primary,
                     );
 
                     if (confirmDelete) {
