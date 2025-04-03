@@ -128,8 +128,6 @@ class AuthService {
       return null; // No encontró el usuario
     }
 
-    print("EL ROL DE LA BASE ES: $response['role']" );
-
     // Convertir el rol de String a enum
     return UserRole.values.firstWhere(
       (role) => role.toString().split('.').last == response['role'],

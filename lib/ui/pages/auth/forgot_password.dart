@@ -59,7 +59,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                       backgroundColor: AppColors.primary,
                     ),
                     onPressed: () async {
-
                       _authController.forgotPassword(_emailController.text.trim());
                       _emailController.clear();
                     },
