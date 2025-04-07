@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:unistay/ui/colors/colors.dart';
-import 'package:unistay/ui/pages/inquilino/pages/alojamientos.dart';
-import 'package:unistay/ui/pages/inquilino/pages/favoritos.dart';
-import 'package:unistay/ui/pages/inquilino/pages/inicio.dart';
-import 'package:unistay/ui/pages/inquilino/pages/perfil.dart';
-import 'package:unistay/ui/pages/propietario/pages/perfil.dart';
-import 'package:unistay/ui/pages/propietario/pages/propiedades.dart';
-import 'package:unistay/ui/pages/propietario/pages/registrar_propiedad.dart';
+import 'package:unistay/ui/pages/tenant/pages/alojamientos.dart';
+import 'package:unistay/ui/pages/tenant/pages/favoritos.dart';
+import 'package:unistay/ui/pages/tenant/pages/inicio.dart';
+import 'package:unistay/ui/pages/tenant/pages/perfil.dart';
+import 'package:unistay/ui/pages/owner/pages/perfil.dart';
+import 'package:unistay/ui/pages/owner/pages/properties.dart';
+import 'package:unistay/ui/pages/owner/pages/registry_poperty.dart';
 import '../../../domain/models/user_role.dart';
 import '../../widgets/botton_navigation_bar.dart';
 
@@ -27,7 +27,7 @@ class _HomePageState extends State<HomePage> {
 
   final Map<UserRole, List<Widget>> _screens = {
     UserRole.inquilino: [InicioInquilinoPage(), FavoritosInquilinoPage(), AlojamientosInquilinoPage(), PerfilInquilinoPage()],
-    UserRole.propietario: [PropiedadesPage(), RegistrarPropiedadPage(), PerfilPropietarioPage()],
+    UserRole.propietario: [PropertiesPage(), RegistryPopertyPage(), PerfilPropietarioPage()],
   };
 
   final Map<UserRole, List<String>> _titles = {

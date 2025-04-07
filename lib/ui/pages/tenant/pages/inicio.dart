@@ -37,18 +37,6 @@ class _InicioInquilinoPageState extends State<InicioInquilinoPage> {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          // SliverAppBar con imagen de fondo
-          // SliverAppBar(
-          //   // expandedHeight: 200.0,
-          //   floating: false,
-          //   pinned: true,
-          //   backgroundColor: AppColors.background,
-          //   flexibleSpace: FlexibleSpaceBar(
-          //     title: Text("Encuentra tu hogar ideal",
-          //         style: GoogleFonts.saira(
-          //             color: Colors.black, fontWeight: FontWeight.bold)),
-          //   ),
-          // ),
           // Barra de búsqueda
           SliverPersistentHeader(
             pinned: true,
@@ -93,35 +81,6 @@ class _InicioInquilinoPageState extends State<InicioInquilinoPage> {
           }),
         ],
       ),
-      // bottomNavigationBar: BottomNavigationBar(
-      //   backgroundColor: AppColors.primary,
-      //   selectedItemColor: Colors.white,
-      //   unselectedItemColor: Colors.white,
-      //   type: BottomNavigationBarType.fixed,
-      //   onTap: (index) {
-      //     if (index == 2) {
-      //       Navigator.pushNamed(context, '/userProfile');
-      //     }
-      //   },
-      //   items: const [
-      //     BottomNavigationBarItem(
-      //       icon: Icon(HugeIcons.strokeRoundedHome04),
-      //       label: 'Inicio',
-      //     ),
-      //     BottomNavigationBarItem(
-      //       icon: Icon(HugeIcons.strokeRoundedFavourite),
-      //       label: 'Favoritos',
-      //     ),
-      //     BottomNavigationBarItem(
-      //       icon: Icon(HugeIcons.strokeRoundedPermanentJob),
-      //       label: 'Alojamientos',
-      //     ),
-      //     BottomNavigationBarItem(
-      //       icon: Icon(HugeIcons.strokeRoundedUserList),
-      //       label: 'Pefil',
-      //     ),
-      //   ],
-      // ),
     );
   }
 }

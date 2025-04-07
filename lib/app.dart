@@ -6,9 +6,8 @@ import 'package:unistay/ui/pages/auth/reset_password.dart';
 import 'package:unistay/ui/pages/auth/forgot_password.dart';
 import 'package:unistay/ui/pages/auth/signin.dart';
 import 'package:unistay/ui/pages/auth/signup.dart';
-import 'package:unistay/ui/pages/landlord/landlord.dart';
-import 'package:unistay/ui/pages/landlord/landlord_register.dart';
-import 'package:unistay/ui/pages/propietario/pages/propiedades.dart';
+import 'package:unistay/ui/pages/owner/pages/properties.dart';
+import 'package:unistay/ui/pages/owner/pages/registry_poperty.dart';
 import 'package:unistay/ui/pages/welcome/welcome.dart';
 
 class MyApp extends StatelessWidget {
@@ -36,9 +35,8 @@ class MyApp extends StatelessWidget {
         '/SignUpPage': (context) => const SignUpPage(),
         '/ForgotPasswordPage': (context) => const ForgotPassword(),
         '/ResetPasswordPage': (context) => const ResetPasswordPage(),
-        '/PropiedadesPropietarioPage': (context) => const PropiedadesPage(),
-        '/LandlordPage': (context) =>  Landlord(),
-        '/LandlordPage/Register': (context) => RegisterLandlordPage(),
+        '/properties': (context) =>  PropertiesPage(),
+        '/registerProperty': (context) => RegistryPopertyPage(),
       },
     );
   }

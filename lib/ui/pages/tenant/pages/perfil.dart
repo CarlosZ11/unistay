@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:unistay/domain/controllers/auth_controller.dart';
-import 'package:unistay/ui/pages/inquilino/pages/components/profile_menu.dart';
-import 'package:unistay/ui/pages/inquilino/pages/components/my_account_body.dart';
+import 'package:unistay/ui/pages/tenant/components/profile_menu.dart';
+import 'package:unistay/ui/pages/tenant/components/my_account_body.dart';
 import '../../../colors/colors.dart';
 
 class PerfilInquilinoPage extends StatelessWidget {

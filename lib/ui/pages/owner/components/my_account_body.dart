@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:unistay/ui/colors/colors.dart';
-import 'package:unistay/ui/pages/inquilino/pages/components/my_account_menu.dart';
+import 'package:unistay/ui/pages/tenant/components/my_account_menu.dart';
 import 'package:unistay/domain/controllers/ProfileController.dart';
 
 class MyAccountBody extends StatelessWidget {

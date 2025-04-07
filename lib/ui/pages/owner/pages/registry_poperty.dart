@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
-import 'package:unistay/domain/controllers/landlord_controller.dart';
-import '../../colors/colors.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-class RegisterLandlordPage extends StatefulWidget {
+import '../../../../domain/controllers/landlord_controller.dart';
+import '../../../colors/colors.dart';
+
+class RegistryPopertyPage extends StatefulWidget {
+  const RegistryPopertyPage({super.key});
+
   @override
-  _RegisterLandlordPageState createState() => _RegisterLandlordPageState();
+  State<RegistryPopertyPage> createState() => _RegistryPopertyPageState();
 }
 
-class _RegisterLandlordPageState extends State<RegisterLandlordPage> {
+class _RegistryPopertyPageState extends State<RegistryPopertyPage> {
+
   final _formKey = GlobalKey<FormState>();
   final TextEditingController direccionController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
@@ -36,13 +40,7 @@ class _RegisterLandlordPageState extends State<RegisterLandlordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: Text('Registrar Alojamiento',
-            style: GoogleFonts.saira(
-                color: Colors.white, fontWeight: FontWeight.bold)),
-        backgroundColor: AppColors.primary,
-      ),
+      backgroundColor: AppColors.secundary,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -140,7 +138,7 @@ class _RegisterLandlordPageState extends State<RegisterLandlordPage> {
                       );
                       if (success) {
                         Get.offNamed(
-                            '/LandlordPage'); // Redirige a LandlordPage
+                            '/properties'); // Redirige a LandlordPage
                       } else {
                         Get.snackbar(
                             "Éxito", "Alojamiento registrado correctamente",
@@ -241,4 +239,6 @@ class _RegisterLandlordPageState extends State<RegisterLandlordPage> {
       ),
     );
   }
+
 }
+

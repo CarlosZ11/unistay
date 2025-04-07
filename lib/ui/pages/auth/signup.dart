@@ -81,6 +81,10 @@ class _SignUpPageState extends State<SignUpPage> {
                               child: TextFormField(
                                 controller: idController,
                                 style: GoogleFonts.montserrat(fontSize: 15),
+                                keyboardType: TextInputType.number,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly
+                                ],
                                 decoration: InputDecoration(
                                   filled: true,
                                   fillColor: Colors.grey[200],
@@ -188,6 +192,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               identification: idController.text.trim(),
                               role: selectedRole!.toLowerCase(),
                             );
+                            Navigator.pop(context);
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary,
@@ -195,18 +200,13 @@ class _SignUpPageState extends State<SignUpPage> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          child: Obx(
-                            () => authController.isLoading.value
-                                ? const CircularProgressIndicator(
-                                    color: Colors.white)
-                                : Text(
-                                    'Crear cuenta',
-                                    style: GoogleFonts.saira(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white,
-                                    ),
-                                  ),
+                          child: Text(
+                            'Crear cuenta',
+                            style: GoogleFonts.saira(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),

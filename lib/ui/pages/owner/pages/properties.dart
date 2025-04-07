@@ -1,34 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:unistay/domain/controllers/landlord_controller.dart';
-import 'package:unistay/ui/colors/colors.dart';
-import 'package:unistay/ui/widgets/accommodation_card.dart';
 
-class Landlord extends StatelessWidget {
-  const Landlord({super.key});
+import '../../../../domain/controllers/landlord_controller.dart';
+import '../../../colors/colors.dart';
+import '../../../widgets/accommodation_card.dart';
+
+class PropertiesPage extends StatelessWidget {
+  const PropertiesPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+
     final landlordController = Get.put(LandlordController());
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.primary,
-        title: Text(
-          'Alojamientos registrados',
-          style: GoogleFonts.saira(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
+      backgroundColor: AppColors.secundary,
       body: Obx(() {
         if (landlordController.accommodations.isEmpty) {
-          return const Center(
+          return Center(
             child: Text(
               "No hay alojamientos disponibles",
-              style: TextStyle(fontSize: 18),
+              style: GoogleFonts.saira(fontSize: 18),
             ),
           );
         }
@@ -73,45 +66,7 @@ class Landlord extends StatelessWidget {
             );
           },
         );
-      }),
-      bottomNavigationBar: Stack(
-        alignment: Alignment.bottomCenter,
-        children: [
-          BottomNavigationBar(
-            backgroundColor: AppColors.primary,
-            selectedItemColor: Colors.white,
-            unselectedItemColor: Colors.white,
-            type: BottomNavigationBarType.fixed,
-            items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: Icon(Icons.hotel, color: Colors.white),
-                label: 'Alojamiento',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.person, color: Colors.white),
-                label: 'Perfil',
-              ),
-            ],
-            currentIndex: 0,
-            onTap: (index) {},
-          ),
-          Positioned(
-            bottom: 10,
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pushNamed('/LandlordPage/Register');
-              },
-              style: ElevatedButton.styleFrom(
-                shape: const CircleBorder(),
-                backgroundColor: AppColors.background,
-                padding: const EdgeInsets.all(16),
-                elevation: 6,
-              ),
-              child: const Icon(Icons.add, color: Colors.white, size: 28),
-            ),
-          ),
-        ],
-      ),
+      })
     );
   }
 }

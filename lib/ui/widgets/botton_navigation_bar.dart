@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:unistay/domain/models/user_role.dart';
 
@@ -40,7 +41,7 @@ class RoleBasedNavigationBar extends StatelessWidget {
       data: NavigationBarThemeData(
         labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>(
           (Set<WidgetState> states) {
-            return TextStyle(
+            return GoogleFonts.saira(
               color: states.contains(WidgetState.selected) ? AppColors.primary : AppColors.tertiary,
               fontWeight: states.contains(WidgetState.selected) ? FontWeight.bold : FontWeight.normal,
               fontSize: states.contains(WidgetState.selected) ? 14 : 12,
