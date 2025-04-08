@@ -35,8 +35,8 @@ class MyApp extends StatelessWidget {
         '/SignUpPage': (context) => const SignUpPage(),
         '/ForgotPasswordPage': (context) => const ForgotPassword(),
         '/ResetPasswordPage': (context) => const ResetPasswordPage(),
-        '/properties': (context) =>  PropertiesPage(),
-        '/registerProperty': (context) => RegistryPopertyPage(),
+        '/properties': (context) =>  const PropertiesPage(),
+        '/registerProperty': (context) => const RegistryPopertyPage(),
       },
     );
   }

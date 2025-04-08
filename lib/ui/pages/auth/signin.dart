@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:unistay/data/services/auth_service.dart';
 import 'package:unistay/domain/models/user_role.dart';
 import 'package:unistay/ui/colors/colors.dart';
-import 'package:unistay/ui/pages/home/home.dart';
 import 'package:unistay/ui/widgets/email_text_field.dart';
 import 'package:unistay/ui/widgets/pass_text_field.dart';
 import 'package:get/get.dart';
@@ -129,13 +128,15 @@ class _LogInPageState extends State<LogInPage> {
                                 return; // Detiene la ejecución si no se obtiene el rol
                               }
                               // Si todo está correcto, se navega a la siguiente pantalla
-                              Get.to(() => Splash(userId: userId));
-                              Future.delayed(const Duration(seconds: 3), () {
                                 Navigator.pushReplacement(
                                   context,
-                                  MaterialPageRoute(builder: (context) => HomePage(role: role)),
+                                  MaterialPageRoute(
+                                    builder: (_) => Splash(
+                                      userId: userId,
+                                      role: role,
+                                    ),
+                                  ),
                                 );
-                              });
                             } else {
                               // Mostrar error antes de cualquier navegación
                               Get.showSnackbar(

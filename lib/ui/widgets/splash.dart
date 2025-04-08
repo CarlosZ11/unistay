@@ -8,7 +8,8 @@ import '../../domain/models/user_role.dart';
 
 class Splash extends StatefulWidget {
   final String userId;
-  Splash({super.key, required this.userId});
+  final UserRole role;
+  Splash({super.key, required this.userId, required this.role});
 
   @override
   State<Splash> createState() => _SplashState();
