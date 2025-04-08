@@ -12,7 +12,6 @@ import '../../../domain/models/user_role.dart';
 import '../../widgets/botton_navigation_bar.dart';
 
 class HomePage extends StatefulWidget {
-
   final UserRole role;
 
   HomePage({super.key, required this.role});
@@ -22,16 +21,24 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   int _currentIndex = 0;
 
   final Map<UserRole, List<Widget>> _screens = {
-    UserRole.inquilino: [InicioInquilinoPage(), FavoritosInquilinoPage(), AlojamientosInquilinoPage(), PerfilInquilinoPage()],
-    UserRole.propietario: [PropertiesPage(), RegistryPopertyPage(), PerfilPropietarioPage()],
+    UserRole.inquilino: [
+      InicioInquilinoPage(),
+      FavoritosInquilinoPage(),
+      AlojamientosInquilinoPage(),
+      PerfilInquilinoPage()
+    ],
+    UserRole.propietario: [
+      PropertiesPage(),
+      RegistryPopertyPage(),
+      PerfilPropietarioPage()
+    ],
   };
 
   final Map<UserRole, List<String>> _titles = {
-    UserRole.inquilino: ["Inicio", "Favoritos", "Mi Alquiler", "Perfil"],
+    UserRole.inquilino: ["Unistay", "Favoritos", "Mi Alquiler", "Perfil"],
     UserRole.propietario: ["Inmuebles", "Añadir Inmueble", "Perfil"],
   };
 
@@ -41,7 +48,8 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(_titles[widget.role]![_currentIndex]),
-        titleTextStyle: GoogleFonts.saira(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 22),
+        titleTextStyle: GoogleFonts.saira(
+            color: Colors.black, fontWeight: FontWeight.bold, fontSize: 22),
         backgroundColor: AppColors.background,
       ),
       body: _screens[widget.role]![_currentIndex],

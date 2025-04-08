@@ -12,7 +12,6 @@ class InicioInquilinoPage extends StatefulWidget {
 }
 
 class _InicioInquilinoPageState extends State<InicioInquilinoPage> {
-  
   final TenantController tenantController = Get.put(TenantController());
   final TextEditingController _searchController = TextEditingController();
 
@@ -37,19 +36,33 @@ class _InicioInquilinoPageState extends State<InicioInquilinoPage> {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
+          SliverPersistentHeader(
+            pinned: false,
+            floating: false,
+            delegate: _WelcomeBarDelegate(),
+          ),
           // Barra de búsqueda
           SliverPersistentHeader(
             pinned: true,
             floating: false,
             delegate: _SearchBarDelegate(_searchController),
           ),
+          SliverPersistentHeader(
+            pinned: true,
+            floating: false,
+            delegate: _CategoryBarDelegate(),
+          ),
+
           // Lista de alojamientos
           Obx(() {
             if (tenantController.isLoading.value) {
               return const SliverFillRemaining(
                 hasScrollBody: false, // Para centrar correctamente el contenido
                 child: Center(
-                  child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(AppColors.background),),
+                  child: CircularProgressIndicator(
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(AppColors.background),
+                  ),
                 ),
               );
             }
@@ -85,6 +98,36 @@ class _InicioInquilinoPageState extends State<InicioInquilinoPage> {
   }
 }
 
+// Delegado para la bienvenida del usuario
+class _WelcomeBarDelegate extends SliverPersistentHeaderDelegate {
+  @override
+  double get minExtent => 45;
+  @override
+  double get maxExtent => 45;
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(
+      color: AppColors.background,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      alignment: Alignment.centerLeft,
+      child: const Text(
+        "Hola, Juan Pérez 👋",
+        style: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          color: Colors.black87,
+        ),
+      ),
+    );
+  }
+
+  @override
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
+      false;
+}
+
 // Delegado para la barra de búsqueda
 class _SearchBarDelegate extends SliverPersistentHeaderDelegate {
   final TextEditingController searchController;
@@ -97,9 +140,10 @@ class _SearchBarDelegate extends SliverPersistentHeaderDelegate {
   double get maxExtent => 60;
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
-      color: Colors.white,
+      color: AppColors.background,
       padding: const EdgeInsets.only(top: 16, left: 14, right: 14),
       child: Material(
         elevation: 5,
@@ -121,4 +165,50 @@ class _SearchBarDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   bool shouldRebuild(_SearchBarDelegate oldDelegate) => false;
+}
+
+// Delegado para los filtros rapidos
+class _CategoryBarDelegate extends SliverPersistentHeaderDelegate {
+  @override
+  double get minExtent => 60;
+  @override
+  double get maxExtent => 60;
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(
+      color: AppColors.background, // fondo para que se vea bien sobre el scroll
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _buildCategoryButton(Icons.apartment, "Departamento"),
+          _buildCategoryButton(Icons.house, "Casa"),
+          _buildCategoryButton(Icons.bed, "Habitación"),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCategoryButton(IconData icon, String label) {
+    return TextButton.icon(
+      onPressed: () {
+        // Acción del botón
+      },
+      icon: Icon(icon, color: AppColors.primary),
+      label: Text(label, style: const TextStyle(color: AppColors.primary)),
+      style: TextButton.styleFrom(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        backgroundColor: Colors.purple.shade50,
+      ),
+    );
+  }
+
+  @override
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
+      false;
 }
