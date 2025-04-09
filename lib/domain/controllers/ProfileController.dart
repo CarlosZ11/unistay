@@ -1,9 +1,11 @@
 import 'package:get/get.dart';
+import 'package:unistay/domain/models/accommodation_model.dart';
 import 'package:unistay/domain/models/user_model.dart';
 import 'package:unistay/data/services/ProfileService.dart';
 
 class ProfileController extends GetxController {
   final ProfileService _profileService = ProfileService();
+  var favorites = <AccommodationModel>[].obs;
 
   /// 🔹 Estado del usuario (observable)
   var user = Rx<UserModel?>(null);
@@ -82,5 +84,35 @@ class ProfileController extends GetxController {
   /// 🔹 Normalización de texto (elimina espacios innecesarios)
   String _normalizeText(String text) {
     return text.trim().replaceAll(RegExp(r'\s+'), ' ');
+  }
+
+  Future<void> setFavorite(String userID, String accommdationID) async {
+    isLoading.value = true;
+    final success = await _profileService.setFavorite(userID, accommdationID);
+    if (success) {
+      await getFavorites(userID);
+    } else {
+      Get.snackbar('Error', 'No se pudo agregar el favorito');
+    }
+    isLoading.value = false;
+  }
+
+  Future<void> removeFavorite(String userID, String accommdationID) async {
+    isLoading.value = true;
+    final success =
+        await _profileService.removeFavorite(userID, accommdationID);
+    if (success) {
+      Get.snackbar('Éxito', 'Favorito eliminado correctamente');
+      await getFavorites(userID);
+    } else {
+      Get.snackbar('Error', 'No se pudo eliminar el favorito');
+    }
+    isLoading.value = false;
+  }
+
+  Future<void> getFavorites(String userID) async {
+    isLoading.value = true;
+    favorites.value = await _profileService.getFavorites(userID);
+    isLoading.value = false;
   }
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:unistay/domain/controllers/ProfileController.dart';
 import 'package:unistay/domain/models/accommodation_model.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -22,6 +24,19 @@ class _AccommodationCardState extends State<AccommodationCard> {
   bool isFavorite = false;
   double _scale = 1.0;
   final CarouselSliderController _controller = CarouselSliderController();
+  late final ProfileController _profileController;
+  @override
+  void initState() {
+    _profileController = Get.find<ProfileController>();
+    if (_profileController.favorites.isNotEmpty) {
+      if (_profileController.favorites.any(
+          (fav) => fav.idAlojamiento == widget.accommodation.idAlojamiento)) {
+        isFavorite = true;
+      }
+    }
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     bool isLandlordView =
@@ -71,6 +86,17 @@ class _AccommodationCardState extends State<AccommodationCard> {
                           _scale = 1.0;
                           isFavorite = !isFavorite;
                         });
+                        if (isFavorite) {
+                          _profileController.setFavorite(
+                            _profileController.user.value!.id,
+                            widget.accommodation.idAlojamiento,
+                          );
+                        } else {
+                          _profileController.removeFavorite(
+                            _profileController.user.value!.id,
+                            widget.accommodation.idAlojamiento,
+                          );
+                        }
                       },
                       onTapCancel: () {
                         setState(() => _scale = 1.0);

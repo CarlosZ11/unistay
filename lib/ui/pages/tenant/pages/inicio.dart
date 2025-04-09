@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:unistay/domain/controllers/ProfileController.dart';
 import '../../../../domain/controllers/tenant_Controller.dart';
 import '../../../colors/colors.dart';
 import '../../../widgets/accommodation_card.dart';
@@ -14,10 +15,14 @@ class InicioInquilinoPage extends StatefulWidget {
 class _InicioInquilinoPageState extends State<InicioInquilinoPage> {
   final TenantController tenantController = Get.put(TenantController());
   final TextEditingController _searchController = TextEditingController();
-
+  late final ProfileController _profileController;
   @override
   void initState() {
     super.initState();
+    _profileController = Get.find<ProfileController>();
+    _profileController.loadUserProfile().then((_) =>
+        _profileController.getFavorites(
+            _profileController.user.value!.id)); // Cargar el usuario al iniciar
     tenantController.getAccommodations(); // Cargar alojamientos al iniciar
     _searchController.addListener(_onSearchChanged);
   }
