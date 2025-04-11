@@ -39,8 +39,7 @@ class _AccommodationCardState extends State<AccommodationCard> {
 
   @override
   Widget build(BuildContext context) {
-    bool isLandlordView =
-        ModalRoute.of(context)?.settings.name == '/properties';
+    bool isLandlordView = _profileController.user.value?.role == "propietario";
 
     return GestureDetector(
       onTap: () {
