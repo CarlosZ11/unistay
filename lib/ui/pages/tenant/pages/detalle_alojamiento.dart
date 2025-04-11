@@ -5,6 +5,7 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:unistay/domain/controllers/ProfileController.dart';
 import 'package:unistay/domain/models/accommodation_model.dart';
 import 'package:get/get.dart';
+import 'package:unistay/ui/pages/tenant/pages/lista_comentarios.dart';
 
 class DetalleAlojamiento extends StatefulWidget {
   final AccommodationModel accommodation = Get.arguments as AccommodationModel;
@@ -21,13 +22,8 @@ class _DetalleAlojamientoState extends State<DetalleAlojamiento> {
   double _scale = 1.0;
   late final ProfileController _profileController;
 
-  List<String> dummyComentarios = [
-    "Excelente lugar, muy limpio y cómodo.",
-    "La atención fue excepcional, volvería sin dudarlo.",
-    "El lugar es hermoso, pero la comida podría mejorar.",
-    "Muy buena experiencia, lo recomiendo.",
-    "El servicio al cliente fue muy amable y servicial.",
-  ];
+  
+
 
   @override
   void initState() {
@@ -41,6 +37,27 @@ class _DetalleAlojamientoState extends State<DetalleAlojamiento> {
 
   @override
   Widget build(BuildContext context) {
+
+    final List<Map<String, dynamic>> dummyComentarios = [
+      {
+        'nombre': 'Ana Luisa',
+        'rating': 4.8,
+        'texto': 'Um moderno apartamento em Orlando, completo com cozinha equipada e quartos confortáveis.'
+      },
+      {
+        'nombre': 'Carlos Mendes',
+        'rating': 4.6,
+        'texto': 'Apartamento bem localizado e muito limpo. Voltarei com certeza!'
+      },
+      // ... más comentarios
+    ];
+
+    String limitarTexto(String texto, int maxPalabras) {
+      final palabras = texto.split(' ');
+      if (palabras.length <= maxPalabras) return texto;
+      return palabras.sublist(0, maxPalabras).join(' ');
+    }
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -298,29 +315,74 @@ class _DetalleAlojamientoState extends State<DetalleAlojamiento> {
                       style:
                           TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 10),
-                  SizedBox(
-                    height: 80,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: dummyComentarios.length,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          width: 250,
-                          margin: const EdgeInsets.only(right: 10),
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade200,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Text(dummyComentarios[index]),
-                        );
-                      },
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => ComentariosPage()));
+                    },
+                    child: SizedBox(
+                      height: 145,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: dummyComentarios.length,
+                        itemBuilder: (context, index) {
+                          final comentario = dummyComentarios[index];
+                          return Container(
+                            width: 250,
+                            margin: const EdgeInsets.only(right: 10),
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFE7EDFB), // fondo celeste suave como la imagen
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Nombre y calificación
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      comentario['nombre'],
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          comentario['rating'].toString(),
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 3,),
+                                        const Icon(
+                                          HugeIcons.strokeRoundedStar,
+                                          color: Colors.orange,
+                                          size: 16,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  limitarTexto(comentario['texto'], 12), // Cambia 15 por el límite que prefieras
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
                     ),
-                  ),
+                  )
                 ],
               ),
             ),
-
             // Propietario
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
