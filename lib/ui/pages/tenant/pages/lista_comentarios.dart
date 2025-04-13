@@ -144,164 +144,166 @@ class _ComentariosPageState extends State<ComentariosPage> {
               const SizedBox(height: 4),
 
               // FORMULARIO DE COMENTARIO
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(10),
-                margin: const EdgeInsets.only(bottom: 20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      currentUser != null
-                          ? "Hola, ${currentUser.name} ${currentUser.lastname}"
-                          : "Hola, usuario",
-                      style: GoogleFonts.saira(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
+              if (currentUser?.role == 'inquilino') ...[
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(10),
+                  margin: const EdgeInsets.only(bottom: 20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
                       ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      "Comparte tu experiencia.",
-                      style: GoogleFonts.saira(fontSize: 12),
-                    ),
-                    const SizedBox(height: 10),
-
-                    // ESTRELLAS
-                    Row(
-                      children: List.generate(5, (index) {
-                        return IconButton(
-                          icon: Icon(
-                            index < _rating ? Icons.star : Icons.star_border,
-                            color: Colors.amber,
-                            size: 22,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _rating = index + 1.0;
-                            });
-                          },
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(),
-                        );
-                      }),
-                    ),
-
-                    const SizedBox(height: 8),
-
-                    // CAMPO DE TEXTO
-                    TextField(
-                      controller: _comentarioController,
-                      maxLines: 2,
-                      style: GoogleFonts.saira(fontSize: 13),
-                      decoration: InputDecoration(
-                        hintText: "Escribe tu comentario...",
-                        hintStyle: GoogleFonts.saira(color: Colors.grey[600]),
-                        filled: true,
-                        fillColor: const Color(0xFFF5F5F5),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide.none,
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        currentUser != null
+                            ? "Hola, ${currentUser.name} ${currentUser.lastname}"
+                            : "Hola, usuario",
+                        style: GoogleFonts.saira(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
                         ),
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 8),
                       ),
-                    ),
+                      const SizedBox(height: 6),
+                      Text(
+                        "Comparte tu experiencia.",
+                        style: GoogleFonts.saira(fontSize: 12),
+                      ),
+                      const SizedBox(height: 10),
 
-                    const SizedBox(height: 10),
+                      // ESTRELLAS
+                      Row(
+                        children: List.generate(5, (index) {
+                          return IconButton(
+                            icon: Icon(
+                              index < _rating ? Icons.star : Icons.star_border,
+                              color: Colors.amber,
+                              size: 22,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _rating = index + 1.0;
+                              });
+                            },
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                          );
+                        }),
+                      ),
 
-                    // BOTÓN ENVIAR
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          final texto = _comentarioController.text.trim();
-                          if (texto.isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content:
-                                    Text("Por favor escribe un comentario"),
-                                backgroundColor: Colors.black87,
-                                behavior: SnackBarBehavior.floating,
-                              ),
-                            );
-                            return;
-                          }
+                      const SizedBox(height: 8),
 
-                          try {
-                            await _commentController.addComment(
-                              idAlojamiento: widget.idAlojamiento,
-                              descripcion: texto,
-                              puntuacion: _rating.toInt(),
-                            );
+                      // CAMPO DE TEXTO
+                      TextField(
+                        controller: _comentarioController,
+                        maxLines: 2,
+                        style: GoogleFonts.saira(fontSize: 13),
+                        decoration: InputDecoration(
+                          hintText: "Escribe tu comentario...",
+                          hintStyle: GoogleFonts.saira(color: Colors.grey[600]),
+                          filled: true,
+                          fillColor: const Color(0xFFF5F5F5),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide.none,
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 8),
+                        ),
+                      ),
 
-                            _comentarioController.clear();
-                            setState(() {
-                              _rating = 3;
-                            });
+                      const SizedBox(height: 10),
 
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("Comentario enviado"),
-                                behavior: SnackBarBehavior.floating,
-                              ),
-                            );
-                          } catch (e) {
-                            final errorStr = e.toString();
-
-                            if (errorStr.contains('duplicate key value') &&
-                                errorStr.contains('unique constraint')) {
+                      // BOTÓN ENVIAR
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            final texto = _comentarioController.text.trim();
+                            if (texto.isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text(
-                                    "Solo puedes comentar una vez sobre este alojamiento",
-                                  ),
-                                  behavior: SnackBarBehavior.floating,
-                                ),
-                              );
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
                                   content:
-                                      Text("Error al enviar comentario: $e"),
+                                      Text("Por favor escribe un comentario"),
+                                  backgroundColor: Colors.black87,
                                   behavior: SnackBarBehavior.floating,
                                 ),
                               );
+                              return;
                             }
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+
+                            try {
+                              await _commentController.addComment(
+                                idAlojamiento: widget.idAlojamiento,
+                                descripcion: texto,
+                                puntuacion: _rating.toInt(),
+                              );
+
+                              _comentarioController.clear();
+                              setState(() {
+                                _rating = 3;
+                              });
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Comentario enviado"),
+                                  behavior: SnackBarBehavior.floating,
+                                ),
+                              );
+                            } catch (e) {
+                              final errorStr = e.toString();
+
+                              if (errorStr.contains('duplicate key value') &&
+                                  errorStr.contains('unique constraint')) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      "Solo puedes comentar una vez sobre este alojamiento",
+                                    ),
+                                    behavior: SnackBarBehavior.floating,
+                                  ),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content:
+                                        Text("Error al enviar comentario: $e"),
+                                    behavior: SnackBarBehavior.floating,
+                                  ),
+                                );
+                              }
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            elevation: 1,
                           ),
-                          elevation: 1,
-                        ),
-                        child: Text(
-                          "Comentar",
-                          style: GoogleFonts.saira(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                          child: Text(
+                            "Comentar",
+                            style: GoogleFonts.saira(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
+              ],
             ],
           ),
         );
