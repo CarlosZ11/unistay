@@ -17,7 +17,6 @@ class LandlordController extends GetxController {
   static const String defaultImageUrl =
       "https://th.bing.com/th/id/R.752a118fa0183c370fe39671b3b72219?rik=I307Oo5cKCRfzA&pid=ImgRaw&r=0";
 
-
   /// Registra un nuevo alojamiento en la base de datos
   Future<bool> createAccommodation({
     required String direccion,
@@ -52,7 +51,7 @@ class LandlordController extends GetxController {
 
       if (success) {
         Get.snackbar("Éxito", "Alojamiento registrado correctamente.");
-        await fetchAccommodations(); 
+        await fetchAccommodations();
       }
       return success;
     } catch (e) {

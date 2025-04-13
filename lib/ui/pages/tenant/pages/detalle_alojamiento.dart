@@ -6,6 +6,7 @@ import 'package:unistay/domain/controllers/ProfileController.dart';
 import 'package:unistay/domain/models/accommodation_model.dart';
 import 'package:get/get.dart';
 import 'package:unistay/ui/pages/tenant/pages/lista_comentarios.dart';
+import 'package:unistay/domain/controllers/commentcontroller.dart';
 
 class DetalleAlojamiento extends StatefulWidget {
   final AccommodationModel accommodation = Get.arguments as AccommodationModel;
@@ -17,37 +18,42 @@ class DetalleAlojamiento extends StatefulWidget {
 }
 
 class _DetalleAlojamientoState extends State<DetalleAlojamiento> {
+  final CommentController _commentController = Get.put(CommentController());
+
   int _current = 0;
   bool isFavorite = false;
   double _scale = 1.0;
   late final ProfileController _profileController;
 
-  
-
-
   @override
   void initState() {
+    super.initState();
     _profileController = Get.find<ProfileController>();
+
     if (_profileController.favorites.any(
         (fav) => fav.idAlojamiento == widget.accommodation.idAlojamiento)) {
       isFavorite = true;
     }
-    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _commentController.loadComments(widget.accommodation.idAlojamiento);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-
     final List<Map<String, dynamic>> dummyComentarios = [
       {
         'nombre': 'Ana Luisa',
         'rating': 4.8,
-        'texto': 'Um moderno apartamento em Orlando, completo com cozinha equipada e quartos confortáveis.'
+        'texto':
+            'Um moderno apartamento em Orlando, completo com cozinha equipada e quartos confortáveis.'
       },
       {
         'nombre': 'Carlos Mendes',
         'rating': 4.6,
-        'texto': 'Apartamento bem localizado e muito limpo. Voltarei com certeza!'
+        'texto':
+            'Apartamento bem localizado e muito limpo. Voltarei com certeza!'
       },
       // ... más comentarios
     ];
@@ -267,43 +273,6 @@ class _DetalleAlojamientoState extends State<DetalleAlojamiento> {
             ),
 
             // Beneficios (placeholder)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Beneficios",
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: widget.accommodation.ventajas
-                        .take(4)
-                        .map((ventaja) => Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 4.0),
-                              child: Row(
-                                children: [
-                                  const Icon(Icons.check_circle,
-                                      color: Colors.green, size: 20),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: Text(
-                                      ventaja,
-                                      style: const TextStyle(fontSize: 16),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ))
-                        .toList(),
-                  ),
-                ],
-              ),
-            ),
-
             // Comentarios
             Padding(
               padding:
@@ -317,67 +286,88 @@ class _DetalleAlojamientoState extends State<DetalleAlojamiento> {
                   const SizedBox(height: 10),
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => ComentariosPage()));
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ComentariosPage(
+                            idAlojamiento: widget.accommodation.idAlojamiento,
+                          ),
+                        ),
+                      );
                     },
                     child: SizedBox(
                       height: 145,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: dummyComentarios.length,
-                        itemBuilder: (context, index) {
-                          final comentario = dummyComentarios[index];
-                          return Container(
-                            width: 250,
-                            margin: const EdgeInsets.only(right: 10),
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFE7EDFB), // fondo celeste suave como la imagen
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Nombre y calificación
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      comentario['nombre'],
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
+                      child: Obx(() {
+                        if (_commentController.isLoading.value) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }
+
+                        if (_commentController.comments.isEmpty) {
+                          return const Center(
+                              child: Text("No hay comentarios aún."));
+                        }
+
+                        return ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount:
+                              _commentController.comments.length.clamp(0, 5),
+                          itemBuilder: (context, index) {
+                            final comentario =
+                                _commentController.comments[index];
+                            return Container(
+                              width: 250,
+                              margin: const EdgeInsets.only(right: 10),
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFE7EDFB),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // Nombre y puntuación
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        comentario.nombreUsuario,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
                                       ),
-                                    ),
-                                    Row(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          comentario['rating'].toString(),
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 14,
+                                      Row(
+                                        children: [
+                                          Text(
+                                            comentario.puntuacion.toString(),
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 14,
+                                            ),
                                           ),
-                                        ),
-                                        const SizedBox(width: 3,),
-                                        const Icon(
-                                          HugeIcons.strokeRoundedStar,
-                                          color: Colors.orange,
-                                          size: 16,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  limitarTexto(comentario['texto'], 12), // Cambia 15 por el límite que prefieras
-                                  style: const TextStyle(fontSize: 14),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
+                                          const SizedBox(width: 3),
+                                          const Icon(
+                                            HugeIcons.strokeRoundedStar,
+                                            color: Colors.orange,
+                                            size: 16,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    limitarTexto(comentario.descripcion, 12),
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      }),
                     ),
                   )
                 ],

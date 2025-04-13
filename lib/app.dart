@@ -40,7 +40,9 @@ class MyApp extends StatelessWidget {
         '/properties': (context) => const PropertiesPage(),
         '/registerProperty': (context) => const RegistryPopertyPage(),
         '/detalleAlojamiento': (context) => DetalleAlojamiento(),
-        '/listaComentarios': (context) => ComentariosPage(),
+        '/listaComentarios': (context) => ComentariosPage(
+            idAlojamiento: ModalRoute.of(context)!.settings.arguments
+                as String), // Ruta dinámica
       },
     );
   }
