@@ -101,33 +101,34 @@ class _LogInPageState extends State<LogInPage> {
                         width: double.infinity,
                         height: 50,
                         child: ElevatedButton(
-                          onPressed: () async {
-                            // authController.loginUser(
-                            //   emailController.text.trim(),
-                            //   passwordController.text.trim(),
-                            // );
-                            String? userId = await authController.signIn(emailController.text.trim(), passwordController.text.trim());
+                            onPressed: () async {
+                              // authController.loginUser(
+                              //   emailController.text.trim(),
+                              //   passwordController.text.trim(),
+                              // );
+                              String? userId = await authController.signIn(
+                                  emailController.text.trim(),
+                                  passwordController.text.trim());
 
-                            if (userId != null) { 
-                              AuthService authService = AuthService();
-                              UserRole? role = await authService.getUserRole(userId);
+                              if (userId != null) {
+                                AuthService authService = AuthService();
+                                UserRole? role =
+                                    await authService.getUserRole(userId);
 
-                              print("El userid es: $userId");
-                              print("El rol es: $role");
-                            
-                              if (role == null) {
-                                Get.showSnackbar(
-                                  const GetSnackBar(
-                                    title: 'Error',
-                                    message: 'No se pudo obtener el rol del usuario',
-                                    duration: Duration(seconds: 2),
-                                    backgroundColor: AppColors.primary,
-                                    snackPosition: SnackPosition.BOTTOM,
-                                  ),
-                                );
-                                return; // Detiene la ejecución si no se obtiene el rol
-                              }
-                              // Si todo está correcto, se navega a la siguiente pantalla
+                                if (role == null) {
+                                  Get.showSnackbar(
+                                    const GetSnackBar(
+                                      title: 'Error',
+                                      message:
+                                          'No se pudo obtener el rol del usuario',
+                                      duration: Duration(seconds: 2),
+                                      backgroundColor: AppColors.primary,
+                                      snackPosition: SnackPosition.BOTTOM,
+                                    ),
+                                  );
+                                  return; // Detiene la ejecución si no se obtiene el rol
+                                }
+                                // Si todo está correcto, se navega a la siguiente pantalla
                                 Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
@@ -137,36 +138,35 @@ class _LogInPageState extends State<LogInPage> {
                                     ),
                                   ),
                                 );
-                            } else {
-                              // Mostrar error antes de cualquier navegación
-                              Get.showSnackbar(
-                                const GetSnackBar(
-                                  title: 'Credenciales incorrectas',
-                                  message: 'Verifique que sus credenciales estén correctas',
-                                  duration: Duration(seconds: 2),
-                                  backgroundColor: AppColors.primary,
-                                  snackPosition: SnackPosition.BOTTOM,
-                                ),
-                              );
-                              return; // Detiene la ejecución y evita la navegación
-                            }
-
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                              } else {
+                                // Mostrar error antes de cualquier navegación
+                                Get.showSnackbar(
+                                  const GetSnackBar(
+                                    title: 'Credenciales incorrectas',
+                                    message:
+                                        'Verifique que sus credenciales estén correctas',
+                                    duration: Duration(seconds: 2),
+                                    backgroundColor: AppColors.primary,
+                                    snackPosition: SnackPosition.BOTTOM,
+                                  ),
+                                );
+                                return; // Detiene la ejecución y evita la navegación
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                             ),
-                          ),
-                          child: Text(
-                            'Iniciar sesión',
-                            style: GoogleFonts.saira(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
-                          )
-                        ),
+                            child: Text(
+                              'Iniciar sesión',
+                              style: GoogleFonts.saira(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            )),
                       ),
                     ],
                   ),

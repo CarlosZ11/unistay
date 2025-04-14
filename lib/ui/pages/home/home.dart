@@ -52,7 +52,10 @@ class _HomePageState extends State<HomePage> {
             color: Colors.black, fontWeight: FontWeight.bold, fontSize: 22),
         backgroundColor: AppColors.background,
       ),
-      body: _screens[widget.role]![_currentIndex],
+      body: IndexedStack(
+        index: _currentIndex,
+        children: _screens[widget.role]!,
+      ),
       bottomNavigationBar: RoleBasedNavigationBar(
         role: widget.role,
         currentIndex: _currentIndex,
