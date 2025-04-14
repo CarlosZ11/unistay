@@ -16,6 +16,11 @@ class _InicioInquilinoPageState extends State<InicioInquilinoPage> {
   final TenantController tenantController = Get.put(TenantController());
   final TextEditingController _searchController = TextEditingController();
   late final ProfileController _profileController;
+  Future<void> _onRefresh() async {
+    await tenantController.getAccommodations(); // Recargar alojamientos
+    await _profileController.loadUserProfile(); // Recargar perfil de usuario
+  }
+
   @override
   void initState() {
     super.initState();
@@ -39,65 +44,69 @@ class _InicioInquilinoPageState extends State<InicioInquilinoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverPersistentHeader(
-            pinned: false,
-            floating: false,
-            delegate: _WelcomeBarDelegate(),
-          ),
-          // Barra de búsqueda
-          SliverPersistentHeader(
-            pinned: true,
-            floating: false,
-            delegate: _SearchBarDelegate(_searchController),
-          ),
-          SliverPersistentHeader(
-            pinned: true,
-            floating: false,
-            delegate: _CategoryBarDelegate(),
-          ),
+      body: RefreshIndicator(
+        onRefresh: _onRefresh,
+        child: CustomScrollView(
+          slivers: [
+            SliverPersistentHeader(
+              pinned: false,
+              floating: false,
+              delegate: _WelcomeBarDelegate(),
+            ),
+            // Barra de búsqueda
+            SliverPersistentHeader(
+              pinned: true,
+              floating: false,
+              delegate: _SearchBarDelegate(_searchController),
+            ),
+            SliverPersistentHeader(
+              pinned: true,
+              floating: false,
+              delegate: _CategoryBarDelegate(),
+            ),
 
-          // Lista de alojamientos
-          Obx(() {
-            if (tenantController.isLoading.value) {
-              return const SliverFillRemaining(
-                hasScrollBody: false, // Para centrar correctamente el contenido
-                child: Center(
-                  child: CircularProgressIndicator(
-                    valueColor:
-                        AlwaysStoppedAnimation<Color>(AppColors.background),
-                  ),
-                ),
-              );
-            }
-
-            if (tenantController.accommodations.isEmpty) {
-              return const SliverToBoxAdapter(
-                child: Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(20.0),
-                    child: Text("No se encontraron alojamientos"),
-                  ),
-                ),
-              );
-            }
-
-            return SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) => Column(
-                  children: [
-                    AccommodationCard(
-                      accommodation: tenantController.accommodations[index],
+            // Lista de alojamientos
+            Obx(() {
+              if (tenantController.isLoading.value) {
+                return const SliverFillRemaining(
+                  hasScrollBody:
+                      false, // Para centrar correctamente el contenido
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(AppColors.background),
                     ),
-                    const SizedBox(height: 10),
-                  ],
+                  ),
+                );
+              }
+
+              if (tenantController.accommodations.isEmpty) {
+                return const SliverToBoxAdapter(
+                  child: Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(20.0),
+                      child: Text("No se encontraron alojamientos"),
+                    ),
+                  ),
+                );
+              }
+
+              return SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) => Column(
+                    children: [
+                      AccommodationCard(
+                        accommodation: tenantController.accommodations[index],
+                      ),
+                      const SizedBox(height: 10),
+                    ],
+                  ),
+                  childCount: tenantController.accommodations.length,
                 ),
-                childCount: tenantController.accommodations.length,
-              ),
-            );
-          }),
-        ],
+              );
+            }),
+          ],
+        ),
       ),
     );
   }
@@ -110,6 +119,7 @@ class _WelcomeBarDelegate extends SliverPersistentHeaderDelegate {
   @override
   double get maxExtent => 45;
 
+  final ProfileController _profileController = Get.find<ProfileController>();
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
@@ -117,9 +127,9 @@ class _WelcomeBarDelegate extends SliverPersistentHeaderDelegate {
       color: AppColors.background,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       alignment: Alignment.centerLeft,
-      child: const Text(
-        "Hola, Juan Pérez 👋",
-        style: TextStyle(
+      child: Text(
+        "Hola, ${_profileController.user.value?.name} ${_profileController.user.value?.lastname} 👋",
+        style: const TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.w600,
           color: Colors.black87,

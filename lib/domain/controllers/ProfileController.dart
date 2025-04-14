@@ -17,7 +17,11 @@ class ProfileController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    loadUserProfile();
+    loadUserProfile().then((value) {
+      if (user.value != null) {
+        getFavorites(user.value!.id);
+      }
+    });
   }
 
   /// 🔹 Obtener los datos del usuario autenticado

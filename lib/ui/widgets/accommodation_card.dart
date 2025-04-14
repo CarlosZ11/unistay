@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:unistay/domain/controllers/ProfileController.dart';
 import 'package:unistay/domain/models/accommodation_model.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -76,6 +77,18 @@ class _AccommodationCardState extends State<AccommodationCard> {
                         foto,
                         fit: BoxFit.cover,
                         width: MediaQuery.of(context).size.width,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Shimmer.fromColors(
+                            baseColor: Colors.grey.shade300,
+                            highlightColor: Colors.grey.shade100,
+                            child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: 200,
+                              color: Colors.white,
+                            ),
+                          );
+                        },
                       );
                     }).toList(),
                   ),
