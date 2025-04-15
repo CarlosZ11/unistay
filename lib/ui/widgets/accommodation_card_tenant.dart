@@ -6,8 +6,6 @@ import 'package:unistay/domain/controllers/ProfileController.dart';
 import 'package:unistay/domain/models/accommodation_model.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:unistay/ui/pages/owner/pages/update_property.dart';
-import '../../ui/colors/colors.dart';
 
 class AccommodationCard extends StatefulWidget {
   final AccommodationModel accommodation;
