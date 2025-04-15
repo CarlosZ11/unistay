@@ -6,6 +6,7 @@ import 'package:unistay/domain/controllers/ProfileController.dart';
 import 'package:unistay/domain/models/accommodation_model.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:unistay/ui/pages/owner/pages/update_property.dart';
 import '../../ui/colors/colors.dart';
 
 class AccommodationCard extends StatefulWidget {
@@ -20,19 +21,19 @@ class AccommodationCard extends StatefulWidget {
 }
 
 class _AccommodationCardState extends State<AccommodationCard> {
-  bool isDeleting = false;
   int _current = 0;
   bool isFavorite = false;
   double _scale = 1.0;
   final CarouselSliderController _controller = CarouselSliderController();
-  late final ProfileController _profileController;
+  final ProfileController _profileController = Get.find<ProfileController>();
 
   @override
   void initState() {
     super.initState();
-    _profileController = Get.find<ProfileController>(); // Asegúrate de haber registrado ProfileController
+    if (_profileController.user.value == null) {
+      _profileController.loadUserProfile();
+    }
 
-    // Inicializa el estado de "isFavorite" si el usuario tiene el alojamiento como favorito
     if (_profileController.favorites.isNotEmpty) {
       if (_profileController.favorites.any(
           (fav) => fav.idAlojamiento == widget.accommodation.idAlojamiento)) {
@@ -43,13 +44,9 @@ class _AccommodationCardState extends State<AccommodationCard> {
 
   @override
   Widget build(BuildContext context) {
-    bool isLandlordView = _profileController.user.value?.role == "propietario";
-
     return GestureDetector(
       onTap: () {
-        if (!isLandlordView) {
-          Get.toNamed('/detalleAlojamiento', arguments: widget.accommodation);
-        }
+        Get.toNamed('/detalleAlojamiento', arguments: widget.accommodation);
       },
       child: Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -96,72 +93,69 @@ class _AccommodationCardState extends State<AccommodationCard> {
                     }).toList(),
                   ),
                   // Verifica si es "propietario" antes de mostrar el corazón
-                  if (!isLandlordView)
-                    Positioned(
-                      top: 10,
-                      right: 10,
-                      child: GestureDetector(
-                        onTapDown: (_) {
-                          setState(() => _scale = 0.9); // Efecto de presión
-                        },
-                        onTapUp: (_) {
-                          setState(() {
-                            _scale = 1.0;
-                            isFavorite = !isFavorite;
-                          });
-                          if (isFavorite) {
-                            _profileController.setFavorite(
-                              _profileController.user.value!.id,
-                              widget.accommodation.idAlojamiento,
-                            );
-                          } else {
-                            _profileController.removeFavorite(
-                              _profileController.user.value!.id,
-                              widget.accommodation.idAlojamiento,
-                            );
-                          }
-                        },
-                        onTapCancel: () {
-                          setState(() => _scale = 1.0);
-                        },
-                        child: AnimatedScale(
-                          scale: _scale,
-                          duration: const Duration(milliseconds: 100),
-                          curve: Curves.easeOut,
-                          child: Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              color: Colors.black.withAlpha(153), // 60% opacity
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color:
-                                      Colors.black.withAlpha(77), // 30% opacity
-                                  blurRadius: 6,
-                                  offset: const Offset(0, 3),
-                                ),
-                              ],
-                            ),
-                            child: AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 300),
-                              transitionBuilder: (child, animation) =>
-                                  ScaleTransition(
-                                      scale: animation, child: child),
-                              child: Icon(
-                                isFavorite
-                                    ? Icons.favorite
-                                    : Icons.favorite_border,
-                                key: ValueKey<bool>(isFavorite),
-                                color: isFavorite
-                                    ? Colors.pinkAccent
-                                    : Colors.white,
-                                size: 22,
+                  Positioned(
+                    top: 10,
+                    right: 10,
+                    child: GestureDetector(
+                      onTapDown: (_) {
+                        setState(() => _scale = 0.9); // Efecto de presión
+                      },
+                      onTapUp: (_) {
+                        setState(() {
+                          _scale = 1.0;
+                          isFavorite = !isFavorite;
+                        });
+                        if (isFavorite) {
+                          _profileController.setFavorite(
+                            _profileController.user.value!.id,
+                            widget.accommodation.idAlojamiento,
+                          );
+                        } else {
+                          _profileController.removeFavorite(
+                            _profileController.user.value!.id,
+                            widget.accommodation.idAlojamiento,
+                          );
+                        }
+                      },
+                      onTapCancel: () {
+                        setState(() => _scale = 1.0);
+                      },
+                      child: AnimatedScale(
+                        scale: _scale,
+                        duration: const Duration(milliseconds: 100),
+                        curve: Curves.easeOut,
+                        child: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withAlpha(153), // 60% opacity
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color:
+                                    Colors.black.withAlpha(77), // 30% opacity
+                                blurRadius: 6,
+                                offset: const Offset(0, 3),
                               ),
+                            ],
+                          ),
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 300),
+                            transitionBuilder: (child, animation) =>
+                                ScaleTransition(scale: animation, child: child),
+                            child: Icon(
+                              isFavorite
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
+                              key: ValueKey<bool>(isFavorite),
+                              color:
+                                  isFavorite ? Colors.pinkAccent : Colors.white,
+                              size: 22,
                             ),
                           ),
                         ),
                       ),
                     ),
+                  ),
                   Positioned.fill(
                       child: Align(
                     alignment: Alignment.bottomCenter,
@@ -248,59 +242,6 @@ class _AccommodationCardState extends State<AccommodationCard> {
                       fontSize: 14,
                     ),
                   ),
-                  const SizedBox(height: 5),
-                  // Botones de acción (Solo en LandlordPage)
-                  if (isLandlordView)
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            onPressed: () {},
-                            label: Text('Editar',
-                                style: GoogleFonts.saira(color: Colors.black)),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primary,
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(10),
-                                  bottomLeft: Radius.circular(10),
-                                ),
-                              ),
-                            ),
-                            icon: const Icon(Icons.edit, color: Colors.black),
-                          ),
-                        ),
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            onPressed: isDeleting
-                                ? null
-                                : () async {
-                                    setState(() => isDeleting = true);
-                                    await widget.onDelete?.call();
-                                    setState(() => isDeleting = false);
-                                  },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                  topRight: Radius.circular(10),
-                                  bottomRight: Radius.circular(10),
-                                ),
-                              ),
-                            ),
-                            label: isDeleting
-                                ? const CircularProgressIndicator(
-                                    color: Colors.white)
-                                : Text('Eliminar',
-                                    style:
-                                        GoogleFonts.saira(color: Colors.black)),
-                            icon: isDeleting
-                                ? const SizedBox.shrink()
-                                : const Icon(Icons.delete, color: Colors.black),
-                          ),
-                        ),
-                      ],
-                    )
                 ],
               ),
             ),

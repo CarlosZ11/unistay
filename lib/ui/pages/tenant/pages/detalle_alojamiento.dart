@@ -125,11 +125,11 @@ class _DetalleAlojamientoState extends State<DetalleAlojamiento> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Expanded(
+                  Expanded(
                     child: Text(
-                      "Titulo generico",
-                      style:
-                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      widget.accommodation.nombre,
+                      style: const TextStyle(
+                          fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                   ),
                   GestureDetector(
@@ -261,11 +261,7 @@ class _DetalleAlojamientoState extends State<DetalleAlojamiento> {
                       color: Colors.grey.shade200,
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Text(
-                        "lorem ipsum dolor sit amet, consectetur adipiscing elit. "
-                        "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. "
-                        "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. "
-                        "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. ",
+                    child: Text(widget.accommodation.descripcion,
                         style: GoogleFonts.saira(color: Colors.black)),
                   ),
                 ],

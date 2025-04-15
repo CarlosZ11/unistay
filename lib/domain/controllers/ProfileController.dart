@@ -14,15 +14,6 @@ class ProfileController extends GetxController {
   var isLoading = false.obs;
 
   /// 🔹 Cargar el perfil del usuario al iniciar
-  @override
-  void onInit() {
-    super.onInit();
-    loadUserProfile().then((value) {
-      if (user.value != null) {
-        getFavorites(user.value!.id);
-      }
-    });
-  }
 
   /// 🔹 Obtener los datos del usuario autenticado
   Future<void> loadUserProfile() async {

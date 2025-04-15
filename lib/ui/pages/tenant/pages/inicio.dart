@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:unistay/domain/controllers/ProfileController.dart';
 import '../../../../domain/controllers/tenant_Controller.dart';
 import '../../../colors/colors.dart';
-import '../../../widgets/accommodation_card.dart';
+import '../../../widgets/accommodation_card_tenant.dart';
 
 class InicioInquilinoPage extends StatefulWidget {
   const InicioInquilinoPage({super.key});

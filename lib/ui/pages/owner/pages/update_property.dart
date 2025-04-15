@@ -1,8 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:unistay/domain/controllers/landlord_controller.dart';
 import 'package:unistay/domain/models/accommodation_model.dart';
 import 'package:unistay/ui/colors/colors.dart';
@@ -27,7 +29,8 @@ class _UpdatePropertyPageState extends State<UpdatePropertyPage> {
   bool disponible = false;
   String? selectedCategory;
   List<String> selectedVentajas = [];
-  final List<XFile> _selectedImages = [];
+  List<dynamic> _selectedImages = [];
+  final List<String> supabaseImages = [];
 
   final LandlordController _controller = Get.find<LandlordController>();
   final ImagePicker _picker = ImagePicker();
@@ -65,16 +68,24 @@ class _UpdatePropertyPageState extends State<UpdatePropertyPage> {
     disponible = widget.accommodationModel?.disponible ?? false;
     selectedCategory = widget.accommodationModel?.categoria ?? "Casa Estudio";
     selectedVentajas = widget.accommodationModel?.ventajas ?? [];
-    _selectedImages.addAll(
-        widget.accommodationModel?.fotos.map((foto) => XFile(foto)).toList() ??
-            []);
+    supabaseImages.addAll(widget.accommodationModel?.fotos ?? []);
+    _selectedImages = [...supabaseImages];
     nombreController.text = "titulo generico";
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    print(selectedCategory);
     return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          "Actualizar alojamiento",
+          style: GoogleFonts.saira(
+              fontSize: 20, fontWeight: FontWeight.w600, color: Colors.white),
+        ),
+        backgroundColor: AppColors.background,
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -111,18 +122,39 @@ class _UpdatePropertyPageState extends State<UpdatePropertyPage> {
                         scrollDirection: Axis.horizontal,
                         itemCount: _selectedImages.length,
                         itemBuilder: (context, index) {
+                          var image = _selectedImages[index];
                           return Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 5),
                             child: Stack(
                               children: [
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(10),
-                                  child: Image.file(
-                                    File(_selectedImages[index].path),
-                                    width: 150,
-                                    height: 150,
-                                    fit: BoxFit.cover,
-                                  ),
+                                  child: image is String
+                                      ? Image.network(
+                                          image,
+                                          fit: BoxFit.cover,
+                                          width: 150,
+                                          loadingBuilder: (context, child,
+                                              loadingProgress) {
+                                            if (loadingProgress == null)
+                                              return child;
+                                            return Shimmer.fromColors(
+                                              baseColor: Colors.grey.shade300,
+                                              highlightColor:
+                                                  Colors.grey.shade100,
+                                              child: Container(
+                                                width: 150,
+                                                height: 150,
+                                                color: Colors.white,
+                                              ),
+                                            );
+                                          },
+                                        )
+                                      : Image.file(
+                                          File(_selectedImages[index].path),
+                                          width: 150,
+                                          height: 150,
+                                          fit: BoxFit.cover),
                                 ),
                                 Positioned(
                                   top: 5,
@@ -258,68 +290,59 @@ class _UpdatePropertyPageState extends State<UpdatePropertyPage> {
               ),
 
               const SizedBox(height: 20),
+              // Espaciado entre botones
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   SizedBox(
-                    width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
-                      onPressed: () async {
-                        Get.offNamed('/LandlordPage');
+                      onPressed: () {
+                        Get.back();
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
-                      child: Text("Cancelar",
-                          style: GoogleFonts.saira(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white)),
+                      child: Text(
+                        "Cancelar",
+                        style: GoogleFonts.saira(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
                   ),
                   SizedBox(
-                    width: double.infinity,
+                    width: MediaQuery.of(context).size.width * 0.4,
                     height: 50,
                     child: ElevatedButton(
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          //implementar la lógica de actualización aquí
-                          /* bool success = await _controller.updateAccommodation(
-                            direccion: direccionController.text,
-                            fotos:
-                                _selectedImages.map((file) => file.path).toList(),
-                            ventajas: selectedVentajas,
-                            price: int.parse(priceController.text),
-                            descripcion: descripcionController.text,
-                            numeroHabitaciones: numeroHabitaciones,
-                            disponible: disponible,
-                            categoria: selectedCategory ?? "",
-                          );
-                          if (success) {
-                            Get.offNamed('/LandlordPage');
-                          } else {
-                            Get.snackbar("Error", "Ocurrió un problema",
-                                backgroundColor: Colors.red,
-                                colorText: Colors.white);
-                          } */
+                          // lógica de actualización
                         }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
-                      child: Text("Actualizar",
-                          style: GoogleFonts.saira(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white)),
+                      child: Text(
+                        "Actualizar",
+                        style: GoogleFonts.saira(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
-                  ),
+                  )
                 ],
-              ),
+              )
             ],
           ),
         ),
@@ -372,6 +395,7 @@ class _UpdatePropertyPageState extends State<UpdatePropertyPage> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 9),
       child: DropdownButtonFormField<String>(
+        value: selectedCategory,
         decoration: InputDecoration(
           filled: true,
           fillColor: Colors.grey[200],

@@ -8,7 +8,6 @@ import 'package:unistay/ui/pages/auth/signin.dart';
 import 'package:unistay/ui/pages/auth/signup.dart';
 import 'package:unistay/ui/pages/owner/pages/properties.dart';
 import 'package:unistay/ui/pages/owner/pages/registry_poperty.dart';
-import 'package:unistay/ui/pages/owner/pages/update_property.dart';
 import 'package:unistay/ui/pages/tenant/pages/detalle_alojamiento.dart';
 import 'package:unistay/ui/pages/tenant/pages/lista_comentarios.dart';
 import 'package:unistay/ui/pages/welcome/welcome.dart';
@@ -44,7 +43,6 @@ class MyApp extends StatelessWidget {
         '/listaComentarios': (context) => ComentariosPage(
             idAlojamiento:
                 ModalRoute.of(context)!.settings.arguments as String),
-        'UpdateProperty': (context) => const UpdatePropertyPage(),
       },
     );
   }

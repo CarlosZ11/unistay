@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:unistay/ui/widgets/accommodation_card_owner.dart';
 import '../../../../domain/controllers/landlord_controller.dart';
 import '../../../colors/colors.dart';
-import '../../../widgets/accommodation_card.dart';
 
 class PropertiesPage extends StatelessWidget {
   const PropertiesPage({super.key});
@@ -31,7 +30,7 @@ class PropertiesPage extends StatelessWidget {
               return Column(
                 children: [
                   const SizedBox(height: 10),
-                  AccommodationCard(
+                  AccommodationOwnerCard(
                     accommodation: accommodation,
                     onDelete: () async {
                       bool confirmDelete = await Get.defaultDialog(
