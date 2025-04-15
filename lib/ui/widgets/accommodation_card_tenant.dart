@@ -38,6 +38,7 @@ class _AccommodationCardState extends State<AccommodationCard> {
         isFavorite = true;
       }
     }
+    super.initState();
   }
 
   @override
@@ -187,19 +188,21 @@ class _AccommodationCardState extends State<AccommodationCard> {
               ),
             ),
             //Datos del alojamiento
+            // Padding para el contenido del alojamiento
             Padding(
               padding: const EdgeInsets.all(10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Título del alojamiento
+                  // Título del alojamieno
                   Text(
-                    widget.accommodation.nombre, // Mostrar el título correcto
+                    widget.accommodation.nombre,
                     style: GoogleFonts.saira(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
