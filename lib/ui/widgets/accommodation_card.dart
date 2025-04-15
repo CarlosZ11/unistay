@@ -26,16 +26,19 @@ class _AccommodationCardState extends State<AccommodationCard> {
   double _scale = 1.0;
   final CarouselSliderController _controller = CarouselSliderController();
   late final ProfileController _profileController;
+
   @override
   void initState() {
-    _profileController = Get.find<ProfileController>();
+    super.initState();
+    _profileController = Get.find<ProfileController>(); // Asegúrate de haber registrado ProfileController
+
+    // Inicializa el estado de "isFavorite" si el usuario tiene el alojamiento como favorito
     if (_profileController.favorites.isNotEmpty) {
       if (_profileController.favorites.any(
           (fav) => fav.idAlojamiento == widget.accommodation.idAlojamiento)) {
         isFavorite = true;
       }
     }
-    super.initState();
   }
 
   @override
@@ -92,6 +95,7 @@ class _AccommodationCardState extends State<AccommodationCard> {
                       );
                     }).toList(),
                   ),
+                  // Verifica si es "propietario" antes de mostrar el corazón
                   if (!isLandlordView)
                     Positioned(
                       top: 10,
@@ -191,22 +195,19 @@ class _AccommodationCardState extends State<AccommodationCard> {
               ),
             ),
             //Datos del alojamiento
-            // Padding para el contenido del alojamiento
             Padding(
               padding: const EdgeInsets.all(10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Título del alojamieno
+                  // Título del alojamiento
                   Text(
-                    //widget.accommodation.titulo agregar cuando actualicen los datos
-                    "Titulo generico",
+                    widget.accommodation.nombre, // Mostrar el título correcto
                     style: GoogleFonts.saira(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [

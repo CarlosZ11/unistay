@@ -1,9 +1,10 @@
 class AccommodationModel {
   final String idAlojamiento;
+  final String nombre;
   final String direccion;
-  final List<String> fotos;
-  final List<String> ventajas;
   final int price;
+  final List<String> ventajas;
+  final List<String> fotos;
   final String descripcion;
   final int numeroHabitaciones;
   final bool disponible;
@@ -12,10 +13,11 @@ class AccommodationModel {
 
   AccommodationModel({
     required this.idAlojamiento,
+    required this.nombre,
     required this.direccion,
+    required this.price,
     required this.fotos,
     required this.ventajas,
-    required this.price,
     required this.descripcion,
     required this.numeroHabitaciones,
     required this.disponible,
@@ -26,10 +28,11 @@ class AccommodationModel {
   /// Método copyWith para actualizar campos específicos sin cambiar los demás
   AccommodationModel copyWith({
     String? idAlojamiento,
+    String? nombre,
     String? direccion,
+    int? price,
     List<String>? fotos,
     List<String>? ventajas,
-    int? price,
     String? descripcion,
     int? numeroHabitaciones,
     bool? disponible,
@@ -38,10 +41,11 @@ class AccommodationModel {
   }) {
     return AccommodationModel(
       idAlojamiento: idAlojamiento ?? this.idAlojamiento,
+      nombre: nombre ?? this.nombre,
       direccion: direccion ?? this.direccion,
+      price: price ?? this.price,
       fotos: fotos ?? this.fotos,
       ventajas: ventajas ?? this.ventajas,
-      price: price ?? this.price,
       descripcion: descripcion ?? this.descripcion,
       numeroHabitaciones: numeroHabitaciones ?? this.numeroHabitaciones,
       disponible: disponible ?? this.disponible,
@@ -54,6 +58,7 @@ class AccommodationModel {
   Map<String, dynamic> toMap() {
     return {
       'idAlojamiento': idAlojamiento,
+      'nombre': nombre,
       'direccion': direccion,
       'fotos': fotos,
       'ventajas': ventajas,
@@ -70,6 +75,7 @@ class AccommodationModel {
   factory AccommodationModel.fromMap(Map<String, dynamic> map) {
     return AccommodationModel(
       idAlojamiento: map['idAlojamiento'] ?? '',
+      nombre: map['nombre'] ?? '',
       direccion: map['direccion'] ?? '',
       fotos: List<String>.from(map['fotos'] ?? []),
       ventajas: List<String>.from(map['ventajas'] ?? []),

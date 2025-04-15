@@ -1,26 +1,34 @@
-import 'package:flutter/material.dart' show Center, CircularProgressIndicator;
+import 'dart:io';
 import 'package:get/get.dart';
 import 'package:unistay/data/services/landlord_service.dart';
 import 'package:unistay/domain/models/accommodation_model.dart';
 
 class LandlordController extends GetxController {
   final LandlordService _landlordService = LandlordService();
-  RxList<AccommodationModel> accommodations = <AccommodationModel>[].obs;
+  var accommodations = <AccommodationModel>[].obs;
+  var isLoading = false.obs;
 
   @override
   void onInit() {
-    fetchAccommodations();
     super.onInit();
+    // Cargar todos los alojamientos del propietario al inicio
+    loadLandlordAccommodations();
   }
 
-  /// URL de la imagen por defecto
-  static const String defaultImageUrl =
-      "https://th.bing.com/th/id/R.752a118fa0183c370fe39671b3b72219?rik=I307Oo5cKCRfzA&pid=ImgRaw&r=0";
+  /// Cargar todos los alojamientos del propietario sin paginación.
+  Future<void> loadLandlordAccommodations() async {
+    try {
+      accommodations.value = await _landlordService.getLandlordAccommodations();
+    } catch (e) {
+      Get.snackbar("Error", "Hubo un problema al cargar los alojamientos: $e");
+    }
+  }
 
-  /// Registra un nuevo alojamiento en la base de datos
-  Future<bool> createAccommodation({
+  /// Crear un nuevo alojamiento, incluye la subida de imágenes.
+  Future<void> createAccommodationWithImage({
+    required String nombre,
     required String direccion,
-    required List<String> fotos,
+    required List<File> imageFiles,
     required List<String> ventajas,
     required int price,
     required String descripcion,
@@ -29,16 +37,33 @@ class LandlordController extends GetxController {
     required String categoria,
   }) async {
     try {
-      Get.dialog(
-        const Center(child: CircularProgressIndicator()),
-        barrierDismissible: false,
-      );
+      List<String> imageUrls = [];
 
-      final List<String> finalFotos = fotos.isEmpty ? [defaultImageUrl] : fotos;
+      // Subir las imágenes
+      for (var imageFile in imageFiles) {
+        try {
+          print("Subiendo imagen...");
+          final imageUrl = await _landlordService.uploadImage(imageFile);
+          imageUrls.add(imageUrl);
+          print("URL de la imagen subida: $imageUrl");
+        } catch (e) {
+          print("Error al subir la imagen: $e");
+          Get.snackbar("Advertencia", "Una imagen no pudo subirse: $e");
+        }
+      }
 
-      final success = await _landlordService.createAccommodation(
+      // Verificar si alguna URL de imagen es inválida
+      if (imageUrls.isEmpty || imageUrls.any((url) => url.isEmpty)) {
+        Get.snackbar("Error",
+            "No se pudo generar ninguna URL válida para las imágenes.");
+        return; // Detenemos el proceso si no hay imágenes válidas
+      }
+
+      // Crear el alojamiento con las imágenes subidas
+      bool success = await _landlordService.createAccommodation(
+        nombre: nombre,
         direccion: direccion,
-        fotos: finalFotos,
+        fotos: imageUrls,
         ventajas: ventajas,
         price: price,
         descripcion: descripcion,
@@ -47,84 +72,45 @@ class LandlordController extends GetxController {
         categoria: categoria,
       );
 
-      Get.back(); // Cierra el diálogo de carga
-
       if (success) {
-        Get.snackbar("Éxito", "Alojamiento registrado correctamente.");
-        await fetchAccommodations();
+        loadLandlordAccommodations();
+        Get.snackbar("Éxito", "Alojamiento creado exitosamente.");
       }
-      return success;
     } catch (e) {
-      Get.back(); // Cierra el diálogo si hay un error
-      Get.snackbar("Error", "No se pudo registrar el alojamiento: $e");
-      return false;
+      print("Error al crear alojamiento: $e");
+      Get.snackbar("Error", "Hubo un problema al crear el alojamiento: $e");
     }
   }
 
-  /// Obtiene un alojamiento específico por ID
-  Future<AccommodationModel?> getAccommodationById(String idAlojamiento) async {
-    if (idAlojamiento.trim().isEmpty) {
-      Get.snackbar("Error", "ID de alojamiento inválido.");
-      return null;
-    }
-    try {
-      return await _landlordService.getAccommodationById(idAlojamiento);
-    } catch (error) {
-      Get.snackbar("Error", "No se pudo obtener el alojamiento.");
-      return null;
-    }
-  }
-
-  /// Obtiene la lista de alojamientos del usuario autenticado.
-  Future<void> fetchAccommodations() async {
-    try {
-      final results = await _landlordService.getLandlordAccommodations();
-      accommodations.assignAll(results);
-    } catch (error) {
-      Get.snackbar("Error", "No se pudieron obtener los alojamientos.");
-    }
-  }
-
-  /// Actualiza un alojamiento si pertenece al usuario autenticado
-  Future<bool> updateAccommodation(
+  /// Actualiza los datos de un alojamiento.
+  Future<void> updateAccommodation(
       String idAlojamiento, Map<String, dynamic> updates) async {
-    if (idAlojamiento.trim().isEmpty) {
-      Get.snackbar("Error", "ID de alojamiento inválido.");
-      return false;
+    try {
+      bool success =
+          await _landlordService.updateAccommodation(idAlojamiento, updates);
+      if (success) {
+        // Refrescar la lista de alojamientos después de actualizar
+        loadLandlordAccommodations();
+        Get.snackbar("Éxito", "Alojamiento actualizado exitosamente.");
+      }
+    } catch (e) {
+      Get.snackbar(
+          "Error", "Hubo un problema al actualizar el alojamiento: $e");
     }
-    if (updates.isEmpty) {
-      Get.snackbar("Error", "No se proporcionaron datos para actualizar.");
-      return false;
-    }
-    final success =
-        await _landlordService.updateAccommodation(idAlojamiento, updates);
-    if (success) {
-      Get.snackbar("Éxito", "Alojamiento actualizado correctamente.");
-    }
-    return success;
   }
 
-  /// Elimina un alojamiento y actualiza la lista.
+  /// Elimina un alojamiento.
   Future<void> deleteAccommodation(String idAlojamiento) async {
     try {
-      Get.dialog(
-        const Center(child: CircularProgressIndicator()),
-        barrierDismissible: false,
-      );
-
       bool success = await _landlordService.deleteAccommodation(idAlojamiento);
-      Get.back();
-
       if (success) {
-        accommodations
-            .removeWhere((item) => item.idAlojamiento == idAlojamiento);
-        accommodations.refresh();
-        Get.snackbar("Éxito", "Alojamiento eliminado correctamente.");
+        await loadLandlordAccommodations(); // recarga todo desde la base de datos
+        accommodations.refresh(); // fuerza actualización en la UI
+        Get.snackbar("Éxito", "Alojamiento eliminado exitosamente.");
       } else {
         Get.snackbar("Error", "No se pudo eliminar el alojamiento.");
       }
     } catch (e) {
-      Get.back();
       Get.snackbar("Error", "Hubo un problema al eliminar el alojamiento: $e");
     }
   }

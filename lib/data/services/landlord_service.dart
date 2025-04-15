@@ -1,5 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:unistay/domain/models/accommodation_model.dart';
+import 'dart:io';
+import 'package:uuid/uuid.dart';
 
 class LandlordService {
   final SupabaseClient _supabase = Supabase.instance.client;
@@ -9,9 +11,42 @@ class LandlordService {
     return _supabase.auth.currentUser?.id;
   }
 
-  /// Registra un nuevo alojamiento en la base de datos.
+  /// Sube una imagen a Supabase Storage y retorna la URL pública.
+  Future<String> uploadImage(File imageFile) async {
+    try {
+      final userId = getAuthenticatedUserId();
+      if (userId == null) throw Exception("User not authenticated");
 
+      final fileExt = imageFile.path.split('.').last;
+      final String imageName = '${const Uuid().v4()}.$fileExt';
+
+      print("Subiendo la imagen: $imageName");
+
+      final storageResponse = await _supabase.storage
+          .from('alojamientos')
+          .upload('fotos/$userId/$imageName', imageFile);
+
+      if (storageResponse.error != null) {
+        throw Exception(
+            "Error al subir la imagen: ${storageResponse.error!.message}");
+      }
+
+      print("Imagen subida con éxito, generando URL...");
+
+      final publicUrl = _supabase.storage
+          .from('alojamientos')
+          .getPublicUrl('fotos/$userId/$imageName');
+
+      return publicUrl;
+    } catch (e) {
+      print("Error al subir la imagen: $e"); // Para depuración
+      throw Exception("Failed to upload image: $e");
+    }
+  }
+
+  /// Registra un nuevo alojamiento en la base de datos.
   Future<bool> createAccommodation({
+    required String nombre,
     required String direccion,
     required List<String> fotos,
     required List<String> ventajas,
@@ -28,6 +63,7 @@ class LandlordService {
       }
 
       final accommodation = {
+        'nombre': nombre,
         'direccion': direccion,
         'fotos': fotos,
         'ventajas': ventajas,
@@ -73,25 +109,20 @@ class LandlordService {
     }
   }
 
-  /// Obtiene los alojamientos del usuario autenticado.
-  Future<List<AccommodationModel>> getLandlordAccommodations(
-      {String? query}) async {
+  /// Obtiene todos los alojamientos del propietario (sin paginación).
+  Future<List<AccommodationModel>> getLandlordAccommodations() async {
     try {
       final userId = getAuthenticatedUserId();
       if (userId == null) return [];
 
-      var queryBuilder =
-          _supabase.from('accommodations').select().eq('idPropietario', userId);
+      final response = await _supabase
+          .from('accommodations')
+          .select()
+          .eq('idPropietario', userId);
 
-      if (query != null && query.isNotEmpty) {
-        queryBuilder = queryBuilder
-            .or('direccion.ilike.%$query%, categoria.ilike.%$query%');
-      }
-
-      final data = await queryBuilder;
-      return data.map((e) => AccommodationModel.fromMap(e)).toList();
+      return response.map((e) => AccommodationModel.fromMap(e)).toList();
     } catch (error) {
-      throw Exception('Error al obtener alojamientos: $error');
+      throw Exception('Error al obtener alojamientos del propietario: $error');
     }
   }
 
@@ -116,15 +147,23 @@ class LandlordService {
 
   /// Elimina un alojamiento si pertenece al usuario autenticado.
   Future<bool> deleteAccommodation(String idAlojamiento) async {
-    final response = await Supabase.instance.client
-        .from('accommodations')
-        .delete()
-        .match({'idAlojamiento': idAlojamiento});
+    try {
+      final userId = getAuthenticatedUserId();
+      if (userId == null) return false;
 
-    if (response == null) {
-      return true; //
+      await _supabase
+          .from('accommodations')
+          .delete()
+          .eq('idAlojamiento', idAlojamiento)
+          .eq('idPropietario', userId);
+
+      return true;
+    } catch (error) {
+      throw Exception('Error al eliminar alojamiento: $error');
     }
-
-    return false;
   }
+}
+
+extension on String {
+  get error => null;
 }
