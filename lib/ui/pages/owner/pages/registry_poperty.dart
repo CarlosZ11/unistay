@@ -246,10 +246,12 @@ class _RegistryPopertyPageState extends State<RegistryPopertyPage> {
                 child: ElevatedButton(
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
-                      bool success = await _controller.createAccommodation(
+                      await _controller.createAccommodationWithImage(
+                        nombre: nombreController.text,
                         direccion: direccionController.text,
-                        fotos:
-                            _selectedImages.map((file) => file.path).toList(),
+                        imageFiles: _selectedImages
+                            .map((file) => File(file.path))
+                            .toList(), // Aquí se pasa la lista de archivos de imagen
                         ventajas: selectedVentajas,
                         price: int.parse(priceController.text),
                         descripcion: descripcionController.text,
@@ -257,13 +259,19 @@ class _RegistryPopertyPageState extends State<RegistryPopertyPage> {
                         disponible: disponible,
                         categoria: selectedCategory ?? "",
                       );
-                      if (success) {
-                        Get.offNamed('/LandlordPage');
-                      } else {
-                        Get.snackbar("Error", "Ocurrió un problema",
-                            backgroundColor: Colors.red,
-                            colorText: Colors.white);
-                      }
+
+                      // Limpiar campos
+                      setState(() {
+                        nombreController.clear();
+                        direccionController.clear();
+                        priceController.clear();
+                        descripcionController.clear();
+                        numeroHabitaciones = 1;
+                        disponible = false;
+                        selectedCategory = null;
+                        selectedVentajas.clear();
+                        _selectedImages.clear();
+                      });
                     }
                   },
                   style: ElevatedButton.styleFrom(

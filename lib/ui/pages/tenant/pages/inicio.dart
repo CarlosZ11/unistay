@@ -168,7 +168,7 @@ class _SearchBarDelegate extends SliverPersistentHeaderDelegate {
           child: TextField(
             controller: searchController,
             decoration: const InputDecoration(
-              hintText: "Buscar por dirección o categoría",
+              hintText: "Buscar por nombre o direccion",
               border: InputBorder.none,
               icon: Icon(Icons.search),
             ),
