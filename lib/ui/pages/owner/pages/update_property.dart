@@ -83,7 +83,6 @@ class _UpdatePropertyPageState extends State<UpdatePropertyPage> {
 
   @override
   Widget build(BuildContext context) {
-    print(selectedCategory);
     return Scaffold(
       appBar: AppBar(
         title: Text(

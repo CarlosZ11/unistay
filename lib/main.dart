@@ -20,7 +20,6 @@ Future<void> main() async {
 
 // Inicializa el manejador de Deep Links
   DeepLinkHandler().initDeepLinkListener();
-  Get.put(AuthController());
   Get.put(ProfileController());
   Get.put(LandlordController());
   Get.put(TenantService()); 
