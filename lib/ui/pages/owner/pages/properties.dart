@@ -10,7 +10,7 @@ class PropertiesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final landlordController = Get.put(LandlordController());
+    final landlordController = Get.find<LandlordController>();
 
     return Scaffold(
         backgroundColor: AppColors.secundary,
