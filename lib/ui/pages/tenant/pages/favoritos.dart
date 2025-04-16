@@ -36,60 +36,67 @@ class _FavoritosInquilinoPageState extends State<FavoritosInquilinoPage> {
                   itemCount: _profileController.favorites.length,
                   itemBuilder: (context, index) {
                     final apto = _profileController.favorites[index];
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 9, vertical: 7),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.grey,
+                    return GestureDetector(
+                      onTap: () {
+                        Get.toNamed('/detalleAlojamiento', arguments: apto);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 9, vertical: 7),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.grey,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: ListTile(
-                          contentPadding: const EdgeInsets.only(
-                              top: 5, bottom: 5, right: 10, left: 8),
-                          leading: Image.network(apto.fotos[0],
-                              width: 80, fit: BoxFit.cover),
-                          title: const Text("titulo",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 14)),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  const Icon(HugeIcons.strokeRoundedLocation05,
-                                      size: 14, color: AppColors.primary),
-                                  const SizedBox(width: 4),
-                                  Text(apto.direccion),
-                                ],
-                              ),
-                              const SizedBox(height: 4),
-                              Text(apto.price.toString(),
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold)),
-                            ],
-                          ),
-                          trailing: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              IconButton(
-                                icon: const Icon(
-                                    HugeIcons.strokeRoundedDelete02,
-                                    color: Colors.red,
-                                    size: 22),
-                                onPressed: () {
-                                  _profileController.removeFavorite(
-                                      _profileController.user.value!.id,
-                                      apto.idAlojamiento);
-                                  _profileController.getFavorites(
-                                      _profileController.user.value!.id);
-                                },
-                              ),
-                              // Icon(HugeIcons.strokeRoundedDelete02, color: Colors.amber, size: 22),
-                              // Text(apto['rating'].toString(), style: TextStyle(fontSize: 12)),
-                            ],
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.only(
+                                top: 5, bottom: 5, right: 10, left: 8),
+                            leading: Image.network(apto.fotos[0],
+                                width: 80, fit: BoxFit.cover),
+                            title: Text(apto.nombre,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 14)),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    const Icon(
+                                        HugeIcons.strokeRoundedLocation05,
+                                        size: 14,
+                                        color: AppColors.primary),
+                                    const SizedBox(width: 4),
+                                    Text(apto.direccion),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                Text(apto.price.toString(),
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold)),
+                              ],
+                            ),
+                            trailing: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(
+                                      HugeIcons.strokeRoundedDelete02,
+                                      color: Colors.red,
+                                      size: 22),
+                                  onPressed: () {
+                                    _profileController.removeFavorite(
+                                        _profileController.user.value!.id,
+                                        apto.idAlojamiento);
+                                    _profileController.getFavorites(
+                                        _profileController.user.value!.id);
+                                  },
+                                ),
+                                // Icon(HugeIcons.strokeRoundedDelete02, color: Colors.amber, size: 22),
+                                // Text(apto['rating'].toString(), style: TextStyle(fontSize: 12)),
+                              ],
+                            ),
                           ),
                         ),
                       ),

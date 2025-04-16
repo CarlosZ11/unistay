@@ -249,7 +249,7 @@ class _ComentariosPageState extends State<ComentariosPage> {
 
                               _comentarioController.clear();
                               setState(() {
-                                _rating = 3;
+                                _rating = 1;
                               });
 
                               ScaffoldMessenger.of(context).showSnackBar(
