@@ -42,22 +42,6 @@ class _DetalleAlojamientoState extends State<DetalleAlojamiento> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> dummyComentarios = [
-      {
-        'nombre': 'Ana Luisa',
-        'rating': 4.8,
-        'texto':
-            'Um moderno apartamento em Orlando, completo com cozinha equipada e quartos confortáveis.'
-      },
-      {
-        'nombre': 'Carlos Mendes',
-        'rating': 4.6,
-        'texto':
-            'Apartamento bem localizado e muito limpo. Voltarei com certeza!'
-      },
-      // ... más comentarios
-    ];
-
     String limitarTexto(String texto, int maxPalabras) {
       final palabras = texto.split(' ');
       if (palabras.length <= maxPalabras) return texto;

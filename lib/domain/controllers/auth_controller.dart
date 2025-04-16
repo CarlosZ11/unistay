@@ -2,11 +2,12 @@ import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:unistay/data/services/auth_service.dart';
 import 'package:unistay/data/services/ProfileService.dart';
+import 'package:unistay/domain/controllers/ProfileController.dart';
 
 class AuthController extends GetxController {
   final AuthService _authService = AuthService();
   var isLoading = false.obs;
-  final ProfileService _profileService = ProfileService();
+  final profileController = Get.find<ProfileController>();
   // Normaliza el texto eliminando espacios innecesarios
   String normalizeText(String text) {
     return text.trim().replaceAll(RegExp(r'\s+'), ' ');
@@ -121,48 +122,35 @@ class AuthController extends GetxController {
   }
 
   // Inicio de sesión
-  Future<void> loginUser(String email, String password) async {
-    email = email.trim().toLowerCase();
-
-    if (!isValidEmail(email)) {
-      Get.snackbar('Error', 'Correo electrónico no válido');
-      return;
-    }
-    if (password.isEmpty) {
-      Get.snackbar('Error', 'Debe ingresar una contraseña');
-      return;
-    }
-
-    isLoading.value = true;
-    try {
-      final response = await _authService.signIn(email, password);
-      if (response != null && response.user != null) {
-        Get.snackbar('Inicio de sesión', 'Bienvenido de nuevo');
-        var userData = await _profileService.getUserData();
-        if (userData!.role == 'Propietario') {
-          Get.offNamed('/LandlordPage');
-        } else if (userData.role == 'Inquilino') {
-          Get.offNamed('/HomePage');
-        } else {
-          Get.snackbar('Error', 'Rol no reconocido');
-        }
-      }
-    } catch (e) {
-      Get.snackbar('Error',
-          'Error al iniciar sesión: ${e.toString().replaceAll('Exception: ', '')}');
-    } finally {
-      isLoading.value = false;
-    }
-  }
 
   Future<String?> signIn(String email, String password) async {
+    isLoading.value = true;
+
     try {
-      final response = await Supabase.instance.client.auth
-          .signInWithPassword(email: email, password: password);
-      
-      return response.user?.id; // Retorna el ID del usuario autenticado si es exitoso
+      // Intentar iniciar sesión con el servicio de autenticación
+      final response = await _authService.signIn(email, password);
+
+      final userId = response?.user?.id;
+
+      // Si el inicio de sesión fue exitoso y hay un ID de usuario válido
+      if (userId != null) {
+        await profileController.loadUserProfile(); // Cargar datos del perfil
+        return userId;
+      } else {
+        Get.snackbar('Error', 'Credenciales inválidas');
+        return null;
+      }
     } on AuthException catch (e) {
-      return null; // Devuelve null si la autenticación falla
+      // Captura de errores específicos de autenticación
+      Get.snackbar('Error de autenticación', e.message);
+      return null;
+    } catch (e) {
+      // Captura de errores no esperados
+      Get.snackbar('Error', 'Ocurrió un error inesperado');
+      return null;
+    } finally {
+      // Detener el estado de carga
+      isLoading.value = false;
     }
   }
 

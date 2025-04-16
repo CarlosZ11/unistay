@@ -39,27 +39,24 @@ class LandlordController extends GetxController {
     try {
       List<String> imageUrls = [];
 
-      // Subir las imágenes
+      //Subir las imágenes
       for (var imageFile in imageFiles) {
         try {
-          print("Subiendo imagen...");
           final imageUrl = await _landlordService.uploadImage(imageFile);
           imageUrls.add(imageUrl);
-          print("URL de la imagen subida: $imageUrl");
         } catch (e) {
-          print("Error al subir la imagen: $e");
           Get.snackbar("Advertencia", "Una imagen no pudo subirse: $e");
         }
       }
 
-      // Verificar si alguna URL de imagen es inválida
+      //Verificar si alguna URL de imagen es inválida
       if (imageUrls.isEmpty || imageUrls.any((url) => url.isEmpty)) {
         Get.snackbar("Error",
             "No se pudo generar ninguna URL válida para las imágenes.");
         return; // Detenemos el proceso si no hay imágenes válidas
       }
 
-      // Crear el alojamiento con las imágenes subidas
+      //Crear el alojamiento con las imágenes subidas
       bool success = await _landlordService.createAccommodation(
         nombre: nombre,
         direccion: direccion,
@@ -77,19 +74,18 @@ class LandlordController extends GetxController {
         Get.snackbar("Éxito", "Alojamiento creado exitosamente.");
       }
     } catch (e) {
-      print("Error al crear alojamiento: $e");
       Get.snackbar("Error", "Hubo un problema al crear el alojamiento: $e");
     }
   }
 
-  /// Actualiza los datos de un alojamiento.
+  //Actualiza los datos de un alojamiento.
   Future<void> updateAccommodation(
       String idAlojamiento, Map<String, dynamic> updates) async {
     try {
       bool success =
           await _landlordService.updateAccommodation(idAlojamiento, updates);
       if (success) {
-        // Refrescar la lista de alojamientos después de actualizar
+        //Refrescar la lista de alojamientos después de actualizar
         loadLandlordAccommodations();
         Get.snackbar("Éxito", "Alojamiento actualizado exitosamente.");
       }
@@ -99,13 +95,13 @@ class LandlordController extends GetxController {
     }
   }
 
-  /// Elimina un alojamiento.
+  //Elimina un alojamiento.
   Future<void> deleteAccommodation(String idAlojamiento) async {
     try {
       bool success = await _landlordService.deleteAccommodation(idAlojamiento);
       if (success) {
-        await loadLandlordAccommodations(); // recarga todo desde la base de datos
-        accommodations.refresh(); // fuerza actualización en la UI
+        await loadLandlordAccommodations();
+        accommodations.refresh();
         Get.snackbar("Éxito", "Alojamiento eliminado exitosamente.");
       } else {
         Get.snackbar("Error", "No se pudo eliminar el alojamiento.");
