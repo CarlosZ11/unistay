@@ -37,7 +37,10 @@ class _AccommodationOwnerCardState extends State<AccommodationOwnerCard> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        Get.toNamed('/detalleAlojamientoOwner',
+            arguments: widget.accommodation);
+      },
       child: Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         elevation: 5,

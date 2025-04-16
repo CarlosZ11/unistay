@@ -6,6 +6,7 @@ import 'package:unistay/ui/pages/auth/reset_password.dart';
 import 'package:unistay/ui/pages/auth/forgot_password.dart';
 import 'package:unistay/ui/pages/auth/signin.dart';
 import 'package:unistay/ui/pages/auth/signup.dart';
+import 'package:unistay/ui/pages/owner/pages/detalle_alojamiento_owner.dart';
 import 'package:unistay/ui/pages/owner/pages/properties.dart';
 import 'package:unistay/ui/pages/owner/pages/registry_poperty.dart';
 import 'package:unistay/ui/pages/tenant/pages/detalle_alojamiento.dart';
@@ -40,6 +41,7 @@ class MyApp extends StatelessWidget {
         '/properties': (context) => const PropertiesPage(),
         '/registerProperty': (context) => const RegistryPopertyPage(),
         '/detalleAlojamiento': (context) => DetalleAlojamiento(),
+        '/detalleAlojamientoOwner': (context) => DetalleAlojamientoOwner(),
         '/listaComentarios': (context) => ComentariosPage(
             idAlojamiento:
                 ModalRoute.of(context)!.settings.arguments as String),

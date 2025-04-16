@@ -6,8 +6,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:unistay/domain/controllers/landlord_controller.dart';
 import 'package:unistay/domain/models/accommodation_model.dart';
+import 'package:unistay/domain/models/user_role.dart';
 import 'package:unistay/ui/colors/colors.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:unistay/ui/pages/home/home.dart';
 
 class UpdatePropertyPage extends StatefulWidget {
   final AccommodationModel? accommodationModel;
@@ -334,7 +336,8 @@ class _UpdatePropertyPageState extends State<UpdatePropertyPage> {
                           List<String> imagenesExistentes =
                               _selectedImages.whereType<String>().toList();
 
-                          _controller.updateAccommodationWithImage(
+                          _controller
+                              .updateAccommodationWithImage(
                             idAlojamiento:
                                 widget.accommodationModel?.idAlojamiento ?? "",
                             nombre: nombreController.text,
@@ -349,7 +352,11 @@ class _UpdatePropertyPageState extends State<UpdatePropertyPage> {
                             numeroHabitaciones: numeroHabitaciones,
                             disponible: disponible,
                             categoria: selectedCategory ?? "",
-                          );
+                          )
+                              .then((_) {
+                            Get.offAll(
+                                () => HomePage(role: UserRole.propietario));
+                          });
 
                           // Limpiar campos
                           setState(() {
