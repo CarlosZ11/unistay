@@ -78,20 +78,66 @@ class LandlordController extends GetxController {
     }
   }
 
-  //Actualiza los datos de un alojamiento.
-  Future<void> updateAccommodation(
-      String idAlojamiento, Map<String, dynamic> updates) async {
+  Future<void> updateAccommodationWithImage({
+    required String idAlojamiento,
+    required String nombre,
+    required String direccion,
+    required List<File> imageFiles,
+    required List<String> imagenesAntiguas,
+    required List<String> ventajas,
+    required int price,
+    required String descripcion,
+    required int numeroHabitaciones,
+    required bool disponible,
+    required String categoria,
+  }) async {
     try {
+      isLoading.value = true;
+      List<String> imageUrls = [];
+
+      // Mantener las imágenes antiguas si las hay
+      imageUrls.addAll(imagenesAntiguas);
+
+      // Subir nuevas imágenes solo si se proporcionan
+      if (imageFiles.isNotEmpty) {
+        for (var imageFile in imageFiles) {
+          try {
+            final imageUrl = await _landlordService.uploadImage(imageFile);
+            imageUrls.add(imageUrl); // Agregar solo la nueva imagen
+          } catch (e) {
+            Get.snackbar("Advertencia", "Una imagen no pudo subirse: $e");
+          }
+        }
+      }
+
+      // Crear mapa de campos a actualizar
+      Map<String, dynamic> updates = {
+        'nombre': nombre,
+        'direccion': direccion,
+        'ventajas': ventajas,
+        'price': price,
+        'descripcion': descripcion,
+        'numeroHabitaciones': numeroHabitaciones,
+        'disponible': disponible,
+        'categoria': categoria,
+      };
+
+      // Solo agregamos fotos si hay nuevas
+      if (imageUrls.isNotEmpty) {
+        updates['fotos'] = imageUrls;
+      }
+
       bool success =
           await _landlordService.updateAccommodation(idAlojamiento, updates);
+
       if (success) {
-        //Refrescar la lista de alojamientos después de actualizar
-        loadLandlordAccommodations();
+        await loadLandlordAccommodations();
         Get.snackbar("Éxito", "Alojamiento actualizado exitosamente.");
       }
     } catch (e) {
-      Get.snackbar(
-          "Error", "Hubo un problema al actualizar el alojamiento: $e");
+      Get.snackbar("Error", "No se pudo actualizar el alojamiento: $e");
+    } finally {
+      isLoading.value = false;
     }
   }
 

@@ -126,6 +126,32 @@ class LandlordService {
     }
   }
 
+  // Método para eliminar imagen
+  Future<void> deleteImage(String imageUrl) async {
+    try {
+      final userId = getAuthenticatedUserId();
+      if (userId == null) {
+        throw Exception("Usuario no autenticado.");
+      }
+
+      // Extraemos el nombre del archivo desde la URL (asumiendo que la imagen está en 'fotos/$userId')
+      final fileName = imageUrl.split('/').last;
+
+      // Intentamos eliminar la imagen del almacenamiento
+      final response = await _supabase.storage
+          .from('alojamientos') // El nombre del bucket
+          .remove(['fotos/$userId/$fileName']); // La ruta completa al archivo a eliminar
+
+      if (response.error != null) {
+        throw Exception("Error al eliminar la imagen: ${response.error!.message}");
+      }
+
+      print("Imagen eliminada exitosamente");
+    } catch (e) {
+      print("Error al eliminar la imagen: $e"); // Para depuración
+      throw Exception("No se pudo eliminar la imagen: $e");
+    }
+  }
   /// Actualiza los datos de un alojamiento si pertenece al usuario autenticado.
   Future<bool> updateAccommodation(
       String idAlojamiento, Map<String, dynamic> updates) async {
@@ -162,6 +188,10 @@ class LandlordService {
       throw Exception('Error al eliminar alojamiento: $error');
     }
   }
+}
+
+extension on List<FileObject> {
+  get error => null;
 }
 
 extension on String {

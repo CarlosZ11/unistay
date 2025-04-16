@@ -246,6 +246,7 @@ class _RegistryPopertyPageState extends State<RegistryPopertyPage> {
                 child: ElevatedButton(
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
+                      
                       await _controller.createAccommodationWithImage(
                         nombre: nombreController.text,
                         direccion: direccionController.text,

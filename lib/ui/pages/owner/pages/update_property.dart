@@ -30,6 +30,7 @@ class _UpdatePropertyPageState extends State<UpdatePropertyPage> {
   List<String> selectedVentajas = [];
   List<dynamic> _selectedImages = [];
   final List<String> supabaseImages = [];
+  List<File> nuevasImagenes = [];
 
   final LandlordController _controller = Get.find<LandlordController>();
   final ImagePicker _picker = ImagePicker();
@@ -45,14 +46,20 @@ class _UpdatePropertyPageState extends State<UpdatePropertyPage> {
     "Zona comercial"
   ];
 
+// Método _pickImages: Se añaden las imágenes a nuevasImagenes sin eliminar las anteriores
   Future<void> _pickImages() async {
     final List<XFile>? images = await _picker.pickMultiImage();
     if (images != null && images.isNotEmpty) {
       setState(() {
-        int remainingSlots = 3 - _selectedImages.length;
+        int remainingSlots = 10 - _selectedImages.length;
+        // Asegura que no se agreguen más de 3 imágenes
         if (remainingSlots > 0) {
           final imagesToAdd = images.take(remainingSlots).toList();
-          _selectedImages.addAll(imagesToAdd);
+          _selectedImages.addAll(
+              imagesToAdd); // Agregar las nuevas imágenes a la lista de imágenes seleccionadas
+
+          // Convierte las imágenes a tipo File y las agrega a nuevasImagenes
+          nuevasImagenes.addAll(imagesToAdd.map((e) => File(e.path)));
         }
       });
     }
@@ -69,7 +76,8 @@ class _UpdatePropertyPageState extends State<UpdatePropertyPage> {
     selectedVentajas = widget.accommodationModel?.ventajas ?? [];
     supabaseImages.addAll(widget.accommodationModel?.fotos ?? []);
     _selectedImages = [...supabaseImages];
-    nombreController.text = "titulo generico";
+    nombreController.text = widget.accommodationModel?.nombre ?? "";
+
     super.initState();
   }
 
@@ -318,9 +326,43 @@ class _UpdatePropertyPageState extends State<UpdatePropertyPage> {
                     width: MediaQuery.of(context).size.width * 0.4,
                     height: 50,
                     child: ElevatedButton(
-                      onPressed: () async {
+                      onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          // lógica de actualización
+                          // Separa imágenes nuevas (File) de las que ya están en Supabase (String)
+                          List<File> nuevasFiles =
+                              nuevasImagenes.whereType<File>().toList();
+                          List<String> imagenesExistentes =
+                              _selectedImages.whereType<String>().toList();
+
+                          _controller.updateAccommodationWithImage(
+                            idAlojamiento:
+                                widget.accommodationModel?.idAlojamiento ?? "",
+                            nombre: nombreController.text,
+                            direccion: direccionController.text,
+                            imageFiles:
+                                nuevasFiles, // Solo las nuevas imágenes como File
+                            imagenesAntiguas:
+                                imagenesExistentes, // Solo URLs existentes como String
+                            ventajas: selectedVentajas,
+                            price: int.parse(priceController.text),
+                            descripcion: descripcionController.text,
+                            numeroHabitaciones: numeroHabitaciones,
+                            disponible: disponible,
+                            categoria: selectedCategory ?? "",
+                          );
+
+                          // Limpiar campos
+                          setState(() {
+                            nombreController.clear();
+                            direccionController.clear();
+                            priceController.clear();
+                            descripcionController.clear();
+                            numeroHabitaciones = 1;
+                            disponible = false;
+                            selectedCategory = null;
+                            selectedVentajas.clear();
+                            _selectedImages.clear();
+                          });
                         }
                       },
                       style: ElevatedButton.styleFrom(
