@@ -12,6 +12,7 @@ class RegistryPopertyPage extends StatefulWidget {
 
   @override
   State<RegistryPopertyPage> createState() => _RegistryPopertyPageState();
+  
 }
 
 class _RegistryPopertyPageState extends State<RegistryPopertyPage> {
@@ -29,6 +30,7 @@ class _RegistryPopertyPageState extends State<RegistryPopertyPage> {
   final List<XFile> _selectedImages = [];
   final ImagePicker _picker = ImagePicker();
 
+ 
   final List<String> ventajas = [
     "Wifi",
     "Seguridad 24 horas",
@@ -246,7 +248,6 @@ class _RegistryPopertyPageState extends State<RegistryPopertyPage> {
                 child: ElevatedButton(
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
-                      
                       await _controller.createAccommodationWithImage(
                         nombre: nombreController.text,
                         direccion: direccionController.text,

@@ -13,11 +13,13 @@ class InicioInquilinoPage extends StatefulWidget {
 }
 
 class _InicioInquilinoPageState extends State<InicioInquilinoPage> {
-  final TenantController tenantController = Get.put(TenantController());
+  final AccommodationController tenantController = Get.put(AccommodationController());
   final TextEditingController _searchController = TextEditingController();
   late final ProfileController _profileController;
+  String selectedCategory = '';
+
   Future<void> _onRefresh() async {
-    await tenantController.getAccommodations(); // Recargar alojamientos
+    await tenantController.fetchAccommodations(); // Recargar alojamientos
     await _profileController.loadUserProfile(); // Recargar perfil de usuario
   }
 
@@ -28,16 +30,16 @@ class _InicioInquilinoPageState extends State<InicioInquilinoPage> {
     _profileController.loadUserProfile().then((_) =>
         _profileController.getFavorites(
             _profileController.user.value!.id)); // Cargar el usuario al iniciar
-    tenantController.getAccommodations(); // Cargar alojamientos al iniciar
+    tenantController.fetchAccommodations(); // Cargar alojamientos al iniciar
     _searchController.addListener(_onSearchChanged);
   }
 
   void _onSearchChanged() {
     String query = _searchController.text.trim();
     if (query.isEmpty) {
-      tenantController.getAccommodations(); // Si no hay texto, cargar todo
+      tenantController.fetchAccommodations(); // Si no hay texto, cargar todo
     } else {
-      tenantController.filterAccommodations(query);
+      tenantController.fetchFilteredAccommodations(query: query);
     }
   }
 
@@ -62,7 +64,10 @@ class _InicioInquilinoPageState extends State<InicioInquilinoPage> {
             SliverPersistentHeader(
               pinned: true,
               floating: false,
-              delegate: _CategoryBarDelegate(),
+              delegate: _CategoryBarDelegate(
+                selectedCategory: selectedCategory,
+                onCategorySelected: _onCategorySelected,
+              ),
             ),
 
             // Lista de alojamientos
@@ -109,6 +114,13 @@ class _InicioInquilinoPageState extends State<InicioInquilinoPage> {
         ),
       ),
     );
+  }
+
+  void _onCategorySelected(String category) {
+    setState(() {
+      selectedCategory = category;
+    });
+    tenantController.fetchAccommodationsByCategory(selectedCategory);
   }
 }
 
@@ -182,8 +194,16 @@ class _SearchBarDelegate extends SliverPersistentHeaderDelegate {
   bool shouldRebuild(_SearchBarDelegate oldDelegate) => false;
 }
 
-// Delegado para los filtros rapidos
+// Delegado para los filtros rápidos
 class _CategoryBarDelegate extends SliverPersistentHeaderDelegate {
+  final String selectedCategory;
+  final Function(String) onCategorySelected;
+
+  _CategoryBarDelegate({
+    required this.selectedCategory,
+    required this.onCategorySelected,
+  });
+
   @override
   double get minExtent => 60;
   @override
@@ -195,30 +215,37 @@ class _CategoryBarDelegate extends SliverPersistentHeaderDelegate {
     return Container(
       color: AppColors.background, // fondo para que se vea bien sobre el scroll
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          _buildCategoryButton(Icons.apartment, "Departamento"),
-          _buildCategoryButton(Icons.house, "Casa"),
-          _buildCategoryButton(Icons.bed, "Habitación"),
-        ],
+      child: SingleChildScrollView( // Hace el desplazamiento horizontal
+        scrollDirection: Axis.horizontal, // Desplazamiento horizontal
+        child: Row(
+          children: [
+            _buildCategoryButton(Icons.apartment, "Departamento"),
+            _buildCategoryButton(Icons.house, "Casa Estudio"),  // Aquí se cambia por "Casa Estudio"
+            _buildCategoryButton(Icons.bed, "Habitación"),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildCategoryButton(IconData icon, String label) {
-    return TextButton.icon(
-      onPressed: () {
-        // Acción del botón
-      },
-      icon: Icon(icon, color: AppColors.primary),
-      label: Text(label, style: const TextStyle(color: AppColors.primary)),
-      style: TextButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0), // Agrego un espacio entre los botones
+      child: TextButton.icon(
+        onPressed: () {
+          onCategorySelected(label);
+        },
+        icon: Icon(icon, color: AppColors.primary),
+        label: Text(label, style: const TextStyle(color: AppColors.primary)),
+        style: TextButton.styleFrom(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          backgroundColor: selectedCategory == label
+              ? Colors.purple.shade200
+              : Colors.purple.shade50,
         ),
-        backgroundColor: Colors.purple.shade50,
       ),
     );
   }

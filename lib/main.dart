@@ -4,8 +4,10 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:unistay/app.dart';
 import 'package:unistay/data/services/deep_link_handler.dart';
 import 'package:get/get.dart';
+import 'package:unistay/data/services/tenant_Service.dart';
 import 'package:unistay/domain/controllers/ProfileController.dart';
 import 'package:unistay/domain/controllers/auth_controller.dart';
+import 'package:unistay/domain/controllers/landlord_controller.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,7 +21,8 @@ Future<void> main() async {
 // Inicializa el manejador de Deep Links
   DeepLinkHandler().initDeepLinkListener();
   Get.put(ProfileController());
-  Get.put(AuthController());
+  Get.put(LandlordController());
+  Get.put(TenantService()); 
 
   runApp(const MyApp());
   Get.lazyPut(() => ProfileController());

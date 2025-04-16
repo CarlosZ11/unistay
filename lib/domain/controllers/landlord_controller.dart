@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:unistay/data/services/landlord_service.dart';
 import 'package:unistay/domain/models/accommodation_model.dart';
@@ -7,6 +8,16 @@ class LandlordController extends GetxController {
   final LandlordService _landlordService = LandlordService();
   var accommodations = <AccommodationModel>[].obs;
   var isLoading = false.obs;
+
+  // Controladores de texto
+  final TextEditingController nombreController = TextEditingController();
+  final TextEditingController direccionController = TextEditingController();
+  final TextEditingController descripcionController = TextEditingController();
+  final TextEditingController priceController = TextEditingController();
+  dynamic selectedCategory;
+  bool disponible = false;
+  List<String> selectedVentajas = [];
+  List<dynamic> _selectedImages = [];
 
   @override
   void onInit() {
@@ -23,6 +34,17 @@ class LandlordController extends GetxController {
       Get.snackbar("Error", "Hubo un problema al cargar los alojamientos: $e");
     }
   }
+
+void resetAddAccommodationForm() {
+  nombreController.clear();
+  direccionController.clear();
+  descripcionController.clear();
+  priceController.clear();
+  selectedCategory = null;
+  disponible = false;
+  selectedVentajas.clear();
+  _selectedImages.clear();
+}
 
   /// Crear un nuevo alojamiento, incluye la subida de imágenes.
   Future<void> createAccommodationWithImage({

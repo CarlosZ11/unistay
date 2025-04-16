@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:unistay/domain/controllers/landlord_controller.dart';
 import 'package:unistay/ui/colors/colors.dart';
 import 'package:unistay/ui/pages/tenant/pages/alojamientos.dart';
 import 'package:unistay/ui/pages/tenant/pages/favoritos.dart';
@@ -21,6 +24,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final LandlordController _controller = Get.find<LandlordController>();
   int _currentIndex = 0;
 
   final Map<UserRole, List<Widget>> _screens = {
@@ -60,6 +64,10 @@ class _HomePageState extends State<HomePage> {
         role: widget.role,
         currentIndex: _currentIndex,
         onTap: (index) {
+          // Si el usuario es propietario y está entrando a "Añadir Inmueble"
+          if (widget.role == UserRole.propietario && index == 1) { 
+            _controller.resetAddAccommodationForm();
+          }
           setState(() {
             _currentIndex = index;
           });
