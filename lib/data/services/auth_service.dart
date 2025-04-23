@@ -5,7 +5,6 @@ import 'package:unistay/domain/models/user_role.dart';
 class AuthService {
   final SupabaseClient _supabase = Supabase.instance.client;
 
- 
   // Registro de usuario con todos los campos
   Future<AuthResponse?> signUp(
     String name,
@@ -88,7 +87,6 @@ class AuthService {
     }
   }
 
-
   // Restablecer contraseña con correo
   Future<void> resetPassword(String email) async {
     try {
@@ -135,5 +133,31 @@ class AuthService {
     );
   }
 
+  Future<String?> obtenerNumeroArrendador(String idPropietario) async {
+    try {
+      final response = await _supabase
+          .from('users')
+          .select('phone')
+          .eq('id', idPropietario)
+          .single();
 
+      return response['phone'] as String?;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<String?> getUserById(String idPropietario) async {
+    try {
+      final response = await _supabase
+          .from('users')
+          .select('name, lastname')
+          .eq('id', idPropietario)
+          .single();
+
+      return '${response['name']} ${response['lastname']}';
+    } catch (e) {
+      return null;
+    }
+  }
 }

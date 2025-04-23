@@ -1,11 +1,14 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:unistay/data/services/auth_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:get/get.dart';
 import 'package:unistay/data/services/landlord_service.dart';
 import 'package:unistay/domain/models/accommodation_model.dart';
 
 class LandlordController extends GetxController {
   final LandlordService _landlordService = LandlordService();
+  final AuthService _authService = AuthService();
   var accommodations = <AccommodationModel>[].obs;
   var isLoading = false.obs;
 
@@ -35,16 +38,16 @@ class LandlordController extends GetxController {
     }
   }
 
-void resetAddAccommodationForm() {
-  nombreController.clear();
-  direccionController.clear();
-  descripcionController.clear();
-  priceController.clear();
-  selectedCategory = null;
-  disponible = false;
-  selectedVentajas.clear();
-  _selectedImages.clear();
-}
+  void resetAddAccommodationForm() {
+    nombreController.clear();
+    direccionController.clear();
+    descripcionController.clear();
+    priceController.clear();
+    selectedCategory = null;
+    disponible = false;
+    selectedVentajas.clear();
+    _selectedImages.clear();
+  }
 
   /// Crear un nuevo alojamiento, incluye la subida de imágenes.
   Future<void> createAccommodationWithImage({
@@ -178,4 +181,74 @@ void resetAddAccommodationForm() {
       Get.snackbar("Error", "Hubo un problema al eliminar el alojamiento: $e");
     }
   }
+
+  String normalizePhoneNumber(String number) {
+    number = number.replaceAll(
+        RegExp(r'\D'), ''); // Elimina todo lo que no sea dígito
+
+    if (number.startsWith('57')) {
+      return number;
+    } else if (number.startsWith('0')) {
+      number = number.substring(1);
+    }
+
+    return '+57$number';
+  }
+
+  Future<void> openChat({
+    required BuildContext context,
+    required String phoneNumber,
+    required String message,
+  }) async {
+    
+    final normalizedNumber = normalizePhoneNumber(phoneNumber);
+
+    // Solo dígitos
+    final encodedMessage = Uri.encodeComponent(message);
+
+    final whatsappUrl = 'https://wa.me/$normalizedNumber?text=$encodedMessage';
+    final uri = Uri.parse(whatsappUrl);
+
+
+    if (await canLaunchUrl(uri)) {
+      final launched = await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication,
+      );
+      if (!launched) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+                'No se pudo abrir WhatsApp. Asegúrate de que esté instalado.'),
+          ),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No se pudo lanzar la URL.'),
+        ),
+      );
+    }
+  }
+
+  /// Método que obtiene alojamientos con la información del propietario
+  Future<List<Map<String, dynamic>>> getAccommodationsWithOwnerInfo() async {
+    try {
+      var accommodations =
+          await _landlordService.getAccommodationsWithOwnerInfo();
+
+      if (accommodations.isEmpty) {
+        throw Exception('No hay alojamientos disponibles.');
+      }
+
+      // Si todo está bien, retorna los alojamientos
+      return accommodations;
+    } catch (e) {
+      // Si ocurre un error, lanza una excepción para que la vista la maneje
+      throw Exception('Error al obtener alojamientos: $e');
+    }
+  }
+
+  
 }
