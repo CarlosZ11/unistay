@@ -3,11 +3,13 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:unistay/data/services/auth_service.dart';
 import 'package:unistay/data/services/ProfileService.dart';
 import 'package:unistay/domain/controllers/ProfileController.dart';
+import 'package:unistay/domain/models/user_model.dart';
 
 class AuthController extends GetxController {
   final AuthService _authService = AuthService();
   var isLoading = false.obs;
   final profileController = Get.find<ProfileController>();
+  var nombreCompleto = ''.obs;
   // Normaliza el texto eliminando espacios innecesarios
   String normalizeText(String text) {
     return text.trim().replaceAll(RegExp(r'\s+'), ' ');
@@ -213,6 +215,76 @@ class AuthController extends GetxController {
           'Error al actualizar la contraseña: ${e.toString().replaceAll('Exception: ', '')}');
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  // Método para obtener el número de teléfono del arrendador
+  Future<String?> obtenerNumeroArrendador(String idPropietario) async {
+    // Comprobamos si el ID del propietario está vacío
+    if (idPropietario.isEmpty) {
+      Get.snackbar('Error', 'El ID del propietario no puede estar vacío');
+      return null; // Retorna null si no se puede proceder
+    }
+
+    isLoading.value = true;
+    try {
+      // Llamamos al servicio que retorna el número de teléfono
+      final phone = await _authService.obtenerNumeroArrendador(idPropietario);
+
+      if (phone != null) {
+        print('Número de teléfono obtenido' 'Número de teléfono: $phone');
+
+        return phone; // Retorna el número de teléfono obtenido
+      } else {
+        print('Error' 'No se pudo obtener el número de teléfono');
+        return null; // Retorna null si no se obtiene el número
+      }
+    } catch (e) {
+      Get.snackbar(
+          'Error', 'Ocurrió un error al obtener el número: ${e.toString()}');
+      return null; // Retorna null en caso de error
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<String?> getUserById(String idPropietario) async {
+    if (idPropietario.isEmpty) {
+      Get.snackbar('Error', 'El ID del propietario no puede estar vacío');
+      return null;
+    }
+
+    isLoading.value = true;
+    try {
+      final nombrePropietario = await _authService.getUserById(idPropietario);
+
+      if (nombrePropietario != null) {
+        return nombrePropietario;
+      } else {
+        Get.snackbar('Error', 'No se pudo obtener el nombre del propietario');
+        return null;
+      }
+    } catch (e) {
+      Get.snackbar(
+          'Error', 'Ocurrió un error al obtener el nombre: ${e.toString()}');
+      return null;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<String> cargarNombrePropietario(String id) async {
+    final nombre =
+        await getUserById(id); // Llamamos al servicio para obtener el nombre
+
+    if (nombre != null) {
+      nombreCompleto.value =
+          nombre; // Actualizamos el valor de nombreCompleto si es exitoso
+      return nombre; // Retornamos el nombre completo
+    } else {
+      nombreCompleto.value =
+          'No disponible'; // Si no se encuentra el nombre, actualizamos a 'No disponible'
+      return 'No disponible'; // Retornamos un valor predeterminado si el nombre no está disponible
     }
   }
 }

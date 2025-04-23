@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:unistay/domain/controllers/ProfileController.dart';
+import 'package:unistay/domain/controllers/auth_controller.dart';
+import 'package:unistay/domain/controllers/landlord_controller.dart';
 import 'package:unistay/domain/models/accommodation_model.dart';
+import 'package:unistay/domain/models/user_model.dart';
 import 'package:get/get.dart';
 import 'package:unistay/ui/pages/tenant/pages/lista_comentarios.dart';
 import 'package:unistay/domain/controllers/commentcontroller.dart';
@@ -19,6 +22,10 @@ class DetalleAlojamiento extends StatefulWidget {
 
 class _DetalleAlojamientoState extends State<DetalleAlojamiento> {
   final CommentController _commentController = Get.put(CommentController());
+
+  final LandlordController _controller = LandlordController();
+  final AuthController _authController = Get.put(AuthController());
+  String propietarioNombre = '';
 
   int _current = 0;
   bool isFavorite = false;
@@ -38,6 +45,14 @@ class _DetalleAlojamientoState extends State<DetalleAlojamiento> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _commentController.loadComments(widget.accommodation.idAlojamiento);
     });
+
+    Future<void> cargarNombrePropietario(String id) async {
+      String nombre = await _authController
+          .cargarNombrePropietario(id); // Esperamos el nombre
+      setState(() {
+        propietarioNombre = nombre; // Actualizamos el estado con el nombre
+      });
+    }
   }
 
   @override
@@ -390,21 +405,45 @@ class _DetalleAlojamientoState extends State<DetalleAlojamiento> {
               ),
             ),
             // Propietario
-            const Padding(
+
+            Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Propietario (a)",
+                  const Text("Propietario (a)",
                       style:
                           TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   ListTile(
-                    leading: CircleAvatar(
+                    leading: const CircleAvatar(
                       backgroundColor: Colors.grey,
                       child: Icon(Icons.person, color: Colors.white),
                     ),
-                    title: Text("Maria Antonieta"),
+                    title: FutureBuilder<String>(
+                      future: _authController.cargarNombrePropietario(widget
+                          .accommodation
+                          .idPropietario), // Llamamos al método asíncrono para obtener el nombre
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Text(
+                              'Cargando...'); // Si está esperando, mostramos "Cargando..."
+                        } else if (snapshot.hasError) {
+                          return Text(
+                              'Error: ${snapshot.error}'); // Si hay un error, lo mostramos
+                        } else if (snapshot.hasData) {
+                          return Text(
+                            snapshot
+                                .data!, // Si los datos están disponibles, mostramos el nombre
+                            style: TextStyle(fontSize: 18),
+                          );
+                        } else {
+                          return Text(
+                              'No disponible'); // Si no hay datos, mostramos un mensaje predeterminado
+                        }
+                      },
+                    ),
                   ),
                 ],
               ),
@@ -418,7 +457,32 @@ class _DetalleAlojamientoState extends State<DetalleAlojamiento> {
                   width: MediaQuery.of(context).size.width *
                       0.8, // 80% del ancho de pantalla
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      // Obtener el número de teléfono del arrendador
+                      final phone =
+                          await _authController.obtenerNumeroArrendador(
+                              widget.accommodation.idPropietario);
+
+                      // Si el número es válido, abrir WhatsApp, si no mostrar un error
+                      if (phone != null) {
+                        await _controller.openChat(
+                            context: context,
+                            phoneNumber: phone,
+                            message:
+                                "¡Hola! Estoy interesad@ en el arrendamiento de la propiedad que publicaste:\n\n"
+                                "Nombre:    ${widget.accommodation.nombre}\n"
+                                "Precio:    \$${widget.accommodation.price}\n"
+                                "Dirección: ${widget.accommodation.direccion}\n\n"
+                                "¿Me podrías proporcionar más información? ¡Gracias!");
+                      } else {
+                        // Mostrar mensaje de error
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text(
+                                  'No se pudo obtener el número del arrendador.')),
+                        );
+                      }
+                    },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 24, vertical: 12),

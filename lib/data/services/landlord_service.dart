@@ -140,10 +140,13 @@ class LandlordService {
       // Intentamos eliminar la imagen del almacenamiento
       final response = await _supabase.storage
           .from('alojamientos') // El nombre del bucket
-          .remove(['fotos/$userId/$fileName']); // La ruta completa al archivo a eliminar
+          .remove([
+        'fotos/$userId/$fileName'
+      ]); // La ruta completa al archivo a eliminar
 
       if (response.error != null) {
-        throw Exception("Error al eliminar la imagen: ${response.error!.message}");
+        throw Exception(
+            "Error al eliminar la imagen: ${response.error!.message}");
       }
 
       print("Imagen eliminada exitosamente");
@@ -152,6 +155,7 @@ class LandlordService {
       throw Exception("No se pudo eliminar la imagen: $e");
     }
   }
+
   /// Actualiza los datos de un alojamiento si pertenece al usuario autenticado.
   Future<bool> updateAccommodation(
       String idAlojamiento, Map<String, dynamic> updates) async {
@@ -186,6 +190,19 @@ class LandlordService {
       return true;
     } catch (error) {
       throw Exception('Error al eliminar alojamiento: $error');
+    }
+  }
+
+  /// Obtiene alojamientos con información del propietario (nombre, email).
+  Future<List<Map<String, dynamic>>> getAccommodationsWithOwnerInfo() async {
+    try {
+      final response = await _supabase
+          .from('accommodations')
+          .select('*, users(nombre, email)');
+
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      throw Exception('Error al obtener alojamientos con propietario: $e');
     }
   }
 }
