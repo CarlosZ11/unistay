@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:unistay/ui/colors/colors.dart';
 import 'package:unistay/ui/pages/tenant/components/my_account_menu.dart';
-import 'package:unistay/domain/controllers/ProfileController.dart';
+import 'package:unistay/domain/controllers/profile_controller.dart';
 
 class MyAccountBody extends StatelessWidget {
   MyAccountBody({Key? key}) : super(key: key);
@@ -17,7 +17,8 @@ class MyAccountBody extends StatelessWidget {
       appBar: AppBar(
         centerTitle: true,
         title: Text("Mi Cuenta"),
-        titleTextStyle: GoogleFonts.saira(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 22),
+        titleTextStyle: GoogleFonts.saira(
+            color: Colors.black, fontWeight: FontWeight.bold, fontSize: 22),
         backgroundColor: AppColors.background,
       ),
       body: Obx(() {

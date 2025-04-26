@@ -1,14 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:unistay/data/services/auth_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:get/get.dart';
-import 'package:unistay/data/services/landlord_service.dart';
+import 'package:unistay/data/services/owner_service.dart';
 import 'package:unistay/domain/models/accommodation_model.dart';
 
-class LandlordController extends GetxController {
-  final LandlordService _landlordService = LandlordService();
-  final AuthService _authService = AuthService();
+class OwnerController extends GetxController {
+  final OwnerService _OwnerService = OwnerService();
   var accommodations = <AccommodationModel>[].obs;
   var isLoading = false.obs;
 
@@ -32,7 +30,7 @@ class LandlordController extends GetxController {
   /// Cargar todos los alojamientos del propietario sin paginación.
   Future<void> loadLandlordAccommodations() async {
     try {
-      accommodations.value = await _landlordService.getLandlordAccommodations();
+      accommodations.value = await _OwnerService.getLandlordAccommodations();
     } catch (e) {
       Get.snackbar("Error", "Hubo un problema al cargar los alojamientos: $e");
     }
@@ -67,7 +65,7 @@ class LandlordController extends GetxController {
       //Subir las imágenes
       for (var imageFile in imageFiles) {
         try {
-          final imageUrl = await _landlordService.uploadImage(imageFile);
+          final imageUrl = await _OwnerService.uploadImage(imageFile);
           imageUrls.add(imageUrl);
         } catch (e) {
           Get.snackbar("Advertencia", "Una imagen no pudo subirse: $e");
@@ -82,7 +80,7 @@ class LandlordController extends GetxController {
       }
 
       //Crear el alojamiento con las imágenes subidas
-      bool success = await _landlordService.createAccommodation(
+      bool success = await _OwnerService.createAccommodation(
         nombre: nombre,
         direccion: direccion,
         fotos: imageUrls,
@@ -127,7 +125,7 @@ class LandlordController extends GetxController {
       if (imageFiles.isNotEmpty) {
         for (var imageFile in imageFiles) {
           try {
-            final imageUrl = await _landlordService.uploadImage(imageFile);
+            final imageUrl = await _OwnerService.uploadImage(imageFile);
             imageUrls.add(imageUrl); // Agregar solo la nueva imagen
           } catch (e) {
             Get.snackbar("Advertencia", "Una imagen no pudo subirse: $e");
@@ -153,7 +151,7 @@ class LandlordController extends GetxController {
       }
 
       bool success =
-          await _landlordService.updateAccommodation(idAlojamiento, updates);
+          await _OwnerService.updateAccommodation(idAlojamiento, updates);
 
       if (success) {
         await loadLandlordAccommodations();
@@ -169,7 +167,7 @@ class LandlordController extends GetxController {
   //Elimina un alojamiento.
   Future<void> deleteAccommodation(String idAlojamiento) async {
     try {
-      bool success = await _landlordService.deleteAccommodation(idAlojamiento);
+      bool success = await _OwnerService.deleteAccommodation(idAlojamiento);
       if (success) {
         await loadLandlordAccommodations();
         accommodations.refresh();
@@ -200,7 +198,6 @@ class LandlordController extends GetxController {
     required String phoneNumber,
     required String message,
   }) async {
-    
     final normalizedNumber = normalizePhoneNumber(phoneNumber);
 
     // Solo dígitos
@@ -208,7 +205,6 @@ class LandlordController extends GetxController {
 
     final whatsappUrl = 'https://wa.me/$normalizedNumber?text=$encodedMessage';
     final uri = Uri.parse(whatsappUrl);
-
 
     if (await canLaunchUrl(uri)) {
       final launched = await launchUrl(
@@ -235,8 +231,7 @@ class LandlordController extends GetxController {
   /// Método que obtiene alojamientos con la información del propietario
   Future<List<Map<String, dynamic>>> getAccommodationsWithOwnerInfo() async {
     try {
-      var accommodations =
-          await _landlordService.getAccommodationsWithOwnerInfo();
+      var accommodations = await _OwnerService.getAccommodationsWithOwnerInfo();
 
       if (accommodations.isEmpty) {
         throw Exception('No hay alojamientos disponibles.');
@@ -249,6 +244,4 @@ class LandlordController extends GetxController {
       throw Exception('Error al obtener alojamientos: $e');
     }
   }
-
-  
 }

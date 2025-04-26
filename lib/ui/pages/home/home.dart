@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:unistay/domain/controllers/landlord_controller.dart';
+import 'package:unistay/domain/controllers/owner_controller.dart';
 import 'package:unistay/ui/colors/colors.dart';
-import 'package:unistay/ui/pages/tenant/pages/alojamientos.dart';
 import 'package:unistay/ui/pages/tenant/pages/favoritos.dart';
 import 'package:unistay/ui/pages/tenant/pages/inicio.dart';
 import 'package:unistay/ui/pages/tenant/pages/perfil.dart';
@@ -24,14 +22,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final LandlordController _controller = Get.find<LandlordController>();
+  final OwnerController _controller = Get.find<OwnerController>();
   int _currentIndex = 0;
 
   final Map<UserRole, List<Widget>> _screens = {
     UserRole.inquilino: [
       InicioInquilinoPage(),
       FavoritosInquilinoPage(),
-      AlojamientosInquilinoPage(),
       PerfilInquilinoPage()
     ],
     UserRole.propietario: [
@@ -65,7 +62,7 @@ class _HomePageState extends State<HomePage> {
         currentIndex: _currentIndex,
         onTap: (index) {
           // Si el usuario es propietario y está entrando a "Añadir Inmueble"
-          if (widget.role == UserRole.propietario && index == 1) { 
+          if (widget.role == UserRole.propietario && index == 1) {
             _controller.resetAddAccommodationForm();
           }
           setState(() {

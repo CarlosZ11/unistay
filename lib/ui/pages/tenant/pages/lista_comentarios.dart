@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:get/get.dart';
 import '../../../colors/colors.dart';
-import 'package:unistay/domain/controllers/commentcontroller.dart';
+import 'package:unistay/domain/controllers/comment_controller.dart';
 import 'package:unistay/domain/models/comment_model.dart';
 
 class ComentariosPage extends StatefulWidget {

@@ -2,14 +2,13 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:unistay/domain/controllers/ProfileController.dart';
+import 'package:unistay/domain/controllers/profile_controller.dart';
 import 'package:unistay/domain/controllers/auth_controller.dart';
-import 'package:unistay/domain/controllers/landlord_controller.dart';
+import 'package:unistay/domain/controllers/owner_controller.dart';
 import 'package:unistay/domain/models/accommodation_model.dart';
-import 'package:unistay/domain/models/user_model.dart';
 import 'package:get/get.dart';
 import 'package:unistay/ui/pages/tenant/pages/lista_comentarios.dart';
-import 'package:unistay/domain/controllers/commentcontroller.dart';
+import 'package:unistay/domain/controllers/comment_controller.dart';
 
 class DetalleAlojamiento extends StatefulWidget {
   final AccommodationModel accommodation = Get.arguments as AccommodationModel;
@@ -23,7 +22,7 @@ class DetalleAlojamiento extends StatefulWidget {
 class _DetalleAlojamientoState extends State<DetalleAlojamiento> {
   final CommentController _commentController = Get.put(CommentController());
 
-  final LandlordController _controller = LandlordController();
+  final OwnerController _controller = OwnerController();
   final AuthController _authController = Get.put(AuthController());
   String propietarioNombre = '';
 

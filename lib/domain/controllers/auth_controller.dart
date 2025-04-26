@@ -1,47 +1,16 @@
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:unistay/data/services/auth_service.dart';
-import 'package:unistay/data/services/ProfileService.dart';
-import 'package:unistay/domain/controllers/ProfileController.dart';
-import 'package:unistay/domain/models/user_model.dart';
+import 'package:unistay/domain/controllers/profile_controller.dart';
+import 'package:unistay/domain/controllers/utils/validation.dart';
 
 class AuthController extends GetxController {
   final AuthService _authService = AuthService();
+  final profileController = Get.put(ProfileController());
+  final validation = Validation();
+
   var isLoading = false.obs;
-  final profileController = Get.find<ProfileController>();
   var nombreCompleto = ''.obs;
-  // Normaliza el texto eliminando espacios innecesarios
-  String normalizeText(String text) {
-    return text.trim().replaceAll(RegExp(r'\s+'), ' ');
-  }
-
-  // Validar nombre y apellido (solo letras y espacios, mínimo 2 caracteres)
-  bool isValidName(String name) {
-    return RegExp(r"^[a-zA-ZÀ-ÿ\s]{2,50}$").hasMatch(name.trim());
-  }
-
-  // Validar email
-  bool isValidEmail(String email) {
-    return RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
-        .hasMatch(email);
-  }
-
-  // Validar contraseña (mínimo 8 caracteres, al menos una mayúscula, una minúscula, un número y un carácter especial)
-  bool isValidPassword(String password) {
-    return RegExp(
-            r'^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#\$%\^&\*\-_]).{8,}$')
-        .hasMatch(password);
-  }
-
-  // Validar teléfono (exactamente 10 dígitos numéricos)
-  bool isValidPhone(String phone) {
-    return RegExp(r"^\d{10}$").hasMatch(phone);
-  }
-
-  // Validar cédula (8-10 dígitos numéricos)
-  bool isValidIdentification(String identification) {
-    return RegExp(r"^\d{8,10}$").hasMatch(identification);
-  }
 
   // Registro de usuario
   Future<void> registerUser({
@@ -54,8 +23,8 @@ class AuthController extends GetxController {
     required String role,
   }) async {
     // Normalización de datos
-    name = normalizeText(name);
-    lastname = normalizeText(lastname);
+    name = validation.normalizeText(name);
+    lastname = validation.normalizeText(lastname);
     email = email.trim().toLowerCase();
 
     // Validaciones
@@ -70,26 +39,26 @@ class AuthController extends GetxController {
       Get.snackbar('Error', 'Todos los campos son obligatorios');
       return;
     }
-    if (!isValidName(name) || !isValidName(lastname)) {
+    if (!validation.isValidName(name) || !validation.isValidName(lastname)) {
       Get.snackbar('Error',
           'Nombre y apellido deben ser válidos (solo letras y espacios)');
       return;
     }
-    if (!isValidEmail(email)) {
+    if (!validation.isValidEmail(email)) {
       Get.snackbar('Error', 'Correo electrónico no válido');
       return;
     }
-    if (!isValidPassword(password)) {
+    if (!validation.isValidPassword(password)) {
       Get.snackbar('Error',
           'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.');
       return;
     }
-    if (!isValidPhone(phone)) {
+    if (!validation.isValidPhone(phone)) {
       Get.snackbar('Error',
           'El teléfono debe contener exactamente 10 dígitos numéricos');
       return;
     }
-    if (!isValidIdentification(identification)) {
+    if (!validation.isValidIdentification(identification)) {
       Get.snackbar(
           'Error', 'La cédula debe tener entre 8 y 10 dígitos numéricos');
       return;
@@ -174,7 +143,7 @@ class AuthController extends GetxController {
   Future<void> forgotPassword(String email) async {
     email = email.trim().toLowerCase();
 
-    if (!isValidEmail(email)) {
+    if (!validation.isValidEmail(email)) {
       Get.snackbar('Error', 'Correo electrónico no válido');
       return;
     }
@@ -195,7 +164,7 @@ class AuthController extends GetxController {
   // Actualización de contraseña
   Future<void> updatePassword(
       String newPassword, String confirmPassword) async {
-    if (!isValidPassword(newPassword)) {
+    if (!validation.isValidPassword(newPassword)) {
       Get.snackbar('Error',
           'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.');
       return;

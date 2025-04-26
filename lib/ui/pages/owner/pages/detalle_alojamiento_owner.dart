@@ -5,7 +5,7 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:unistay/domain/models/accommodation_model.dart';
 import 'package:get/get.dart';
 import 'package:unistay/ui/pages/tenant/pages/lista_comentarios.dart';
-import 'package:unistay/domain/controllers/commentcontroller.dart';
+import 'package:unistay/domain/controllers/comment_controller.dart';
 
 class DetalleAlojamientoOwner extends StatefulWidget {
   final AccommodationModel accommodation = Get.arguments as AccommodationModel;

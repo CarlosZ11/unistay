@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:unistay/domain/controllers/ProfileController.dart';
+import 'package:unistay/domain/controllers/profile_controller.dart';
 import 'package:get/get.dart';
 import '../../../colors/colors.dart';
 
@@ -70,8 +70,8 @@ class _FavoritosInquilinoPageState extends State<FavoritosInquilinoPage> {
                                       : '', // Verificar que la lista de fotos no esté vacía
                                   width: 80,
                                   fit: BoxFit.cover),
-                              title: const Text("titulo",
-                                  style: TextStyle(
+                              title: Text(apto.nombre,
+                                  style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 14)),
                               subtitle: Column(

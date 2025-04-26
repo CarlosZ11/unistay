@@ -1,8 +1,8 @@
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:unistay/data/services/comment_service.dart';
 import 'package:unistay/domain/models/comment_model.dart';
 import 'package:unistay/domain/models/user_model.dart';
-import 'package:unistay/data/services/commentservice.dart';
 
 class CommentController extends GetxController {
   final CommentService _service = CommentService();

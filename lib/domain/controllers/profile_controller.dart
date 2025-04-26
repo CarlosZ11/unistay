@@ -1,21 +1,13 @@
 import 'package:get/get.dart';
-import 'package:unistay/domain/controllers/landlord_controller.dart';
 import 'package:unistay/domain/models/accommodation_model.dart';
 import 'package:unistay/domain/models/user_model.dart';
-import 'package:unistay/data/services/ProfileService.dart';
+import 'package:unistay/data/services/profile_service.dart';
 
 class ProfileController extends GetxController {
   final ProfileService _profileService = ProfileService();
-  var favorites = <AccommodationModel>[].obs;
-  final LandlordController _landlordController = Get.put(LandlordController());
-
-  /// 🔹 Estado del usuario (observable)
   var user = Rx<UserModel?>(null);
-
-  /// 🔹 Estado de carga
+  var favorites = <AccommodationModel>[].obs;
   var isLoading = false.obs;
-
-  /// 🔹 Cargar el perfil del usuario al iniciar
 
   /// 🔹 Obtener los datos del usuario autenticado
   Future<void> loadUserProfile() async {
@@ -53,6 +45,39 @@ class ProfileController extends GetxController {
     isLoading.value = false;
   }
 
+  Future<void> setFavorite(String userID, String accommdationID) async {
+    isLoading.value = true;
+    final success = await _profileService.setFavorite(userID, accommdationID);
+    if (success) {
+      await getFavorites(userID);
+    } else {
+      Get.snackbar('Error', 'No se pudo agregar el favorito');
+    }
+    isLoading.value = false;
+  }
+
+  /// 🔹 Eliminar un favorito
+  Future<void> removeFavorite(String userID, String accommdationID) async {
+    isLoading.value = true;
+    final success =
+        await _profileService.removeFavorite(userID, accommdationID);
+    if (success) {
+      Get.snackbar('Éxito', 'Favorito eliminado correctamente');
+      await getFavorites(userID);
+      favorites.refresh();
+    } else {
+      Get.snackbar('Error', 'No se pudo eliminar el favorito');
+    }
+    isLoading.value = false;
+  }
+
+  // / 🔹 Obtener los favoritos del usuario
+  Future<void> getFavorites(String userID) async {
+    isLoading.value = true;
+    favorites.value = await _profileService.getFavorites(userID);
+    isLoading.value = false;
+  }
+
   /// 🔹 Validaciones de los datos del perfil
   bool _validateInputs(
       String name, String lastname, String phone, String identification) {
@@ -81,37 +106,5 @@ class ProfileController extends GetxController {
   /// 🔹 Normalización de texto (elimina espacios innecesarios)
   String _normalizeText(String text) {
     return text.trim().replaceAll(RegExp(r'\s+'), ' ');
-  }
-
-  Future<void> setFavorite(String userID, String accommdationID) async {
-    isLoading.value = true;
-    final success = await _profileService.setFavorite(userID, accommdationID);
-    if (success) {
-      await getFavorites(userID);
-    } else {
-      Get.snackbar('Error', 'No se pudo agregar el favorito');
-    }
-    isLoading.value = false;
-  }
-
-  Future<void> removeFavorite(String userID, String accommdationID) async {
-    isLoading.value = true;
-    final success =
-        await _profileService.removeFavorite(userID, accommdationID);
-    if (success) {
-      Get.snackbar('Éxito', 'Favorito eliminado correctamente');
-      await getFavorites(userID);
-      _landlordController.accommodations.refresh();
-      favorites.refresh();
-    } else {
-      Get.snackbar('Error', 'No se pudo eliminar el favorito');
-    }
-    isLoading.value = false;
-  }
-
-  Future<void> getFavorites(String userID) async {
-    isLoading.value = true;
-    favorites.value = await _profileService.getFavorites(userID);
-    isLoading.value = false;
   }
 }

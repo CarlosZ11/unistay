@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:unistay/ui/widgets/accommodation_card_owner.dart';
-import '../../../../domain/controllers/landlord_controller.dart';
+import '../../../../domain/controllers/owner_controller.dart';
 import '../../../colors/colors.dart';
 
 class PropertiesPage extends StatelessWidget {
@@ -10,12 +10,12 @@ class PropertiesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final landlordController = Get.find<LandlordController>();
+    final ownerController = Get.find<OwnerController>();
 
     return Scaffold(
         backgroundColor: AppColors.secundary,
         body: Obx(() {
-          if (landlordController.accommodations.isEmpty) {
+          if (ownerController.accommodations.isEmpty) {
             return Center(
               child: Text(
                 "No hay alojamientos disponibles",
@@ -24,9 +24,9 @@ class PropertiesPage extends StatelessWidget {
             );
           }
           return ListView.builder(
-            itemCount: landlordController.accommodations.length,
+            itemCount: ownerController.accommodations.length,
             itemBuilder: (context, index) {
-              final accommodation = landlordController.accommodations[index];
+              final accommodation = ownerController.accommodations[index];
               return Column(
                 children: [
                   const SizedBox(height: 10),
@@ -55,7 +55,7 @@ class PropertiesPage extends StatelessWidget {
                       );
 
                       if (confirmDelete) {
-                        await landlordController
+                        await ownerController
                             .deleteAccommodation(accommodation.idAlojamiento);
                       }
                     },

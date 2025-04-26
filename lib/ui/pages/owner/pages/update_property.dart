@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:unistay/domain/controllers/landlord_controller.dart';
+import 'package:unistay/domain/controllers/owner_controller.dart';
 import 'package:unistay/domain/models/accommodation_model.dart';
 import 'package:unistay/domain/models/user_role.dart';
 import 'package:unistay/ui/colors/colors.dart';
@@ -34,7 +34,7 @@ class _UpdatePropertyPageState extends State<UpdatePropertyPage> {
   final List<String> supabaseImages = [];
   List<File> nuevasImagenes = [];
 
-  final LandlordController _controller = Get.find<LandlordController>();
+  final OwnerController _controller = Get.find<OwnerController>();
   final ImagePicker _picker = ImagePicker();
   final List<String> ventajas = [
     "Wifi",

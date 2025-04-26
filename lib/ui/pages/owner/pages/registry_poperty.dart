@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:unistay/domain/controllers/landlord_controller.dart';
+import 'package:unistay/domain/controllers/owner_controller.dart';
 import 'package:unistay/ui/colors/colors.dart';
 import 'package:hugeicons/hugeicons.dart';
 
@@ -12,7 +12,6 @@ class RegistryPopertyPage extends StatefulWidget {
 
   @override
   State<RegistryPopertyPage> createState() => _RegistryPopertyPageState();
-  
 }
 
 class _RegistryPopertyPageState extends State<RegistryPopertyPage> {
@@ -26,11 +25,10 @@ class _RegistryPopertyPageState extends State<RegistryPopertyPage> {
   String? selectedCategory;
   List<String> selectedVentajas = [];
 
-  final LandlordController _controller = Get.find<LandlordController>();
+  final OwnerController _controller = Get.find<OwnerController>();
   final List<XFile> _selectedImages = [];
   final ImagePicker _picker = ImagePicker();
 
- 
   final List<String> ventajas = [
     "Wifi",
     "Seguridad 24 horas",

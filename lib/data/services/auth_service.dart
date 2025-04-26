@@ -12,7 +12,7 @@ class AuthService {
     String email,
     String password,
     String phone,
-    String identification, // Ahora es la clave primaria
+    String identification,
     String role,
   ) async {
     try {

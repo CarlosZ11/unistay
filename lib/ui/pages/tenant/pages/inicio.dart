@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:unistay/domain/controllers/ProfileController.dart';
-import '../../../../domain/controllers/tenant_Controller.dart';
+import 'package:unistay/domain/controllers/profile_controller.dart';
+import '../../../../domain/controllers/tenant_controller.dart';
 import '../../../colors/colors.dart';
 import '../../../widgets/accommodation_card_tenant.dart';
 
@@ -13,8 +13,7 @@ class InicioInquilinoPage extends StatefulWidget {
 }
 
 class _InicioInquilinoPageState extends State<InicioInquilinoPage> {
-  final AccommodationController tenantController =
-      Get.put(AccommodationController());
+  final TenantController tenantController = Get.put(TenantController());
   final TextEditingController _searchController = TextEditingController();
   late final ProfileController _profileController;
   String selectedCategory = '';

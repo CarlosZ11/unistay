@@ -3,7 +3,7 @@ import 'package:unistay/domain/models/accommodation_model.dart';
 import 'dart:io';
 import 'package:uuid/uuid.dart';
 
-class LandlordService {
+class OwnerService {
   final SupabaseClient _supabase = Supabase.instance.client;
 
   /// Obtiene el ID del usuario autenticado desde Supabase.
