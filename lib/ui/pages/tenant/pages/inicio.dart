@@ -13,7 +13,8 @@ class InicioInquilinoPage extends StatefulWidget {
 }
 
 class _InicioInquilinoPageState extends State<InicioInquilinoPage> {
-  final AccommodationController tenantController = Get.put(AccommodationController());
+  final AccommodationController tenantController =
+      Get.put(AccommodationController());
   final TextEditingController _searchController = TextEditingController();
   late final ProfileController _profileController;
   String selectedCategory = '';
@@ -215,12 +216,14 @@ class _CategoryBarDelegate extends SliverPersistentHeaderDelegate {
     return Container(
       color: AppColors.background, // fondo para que se vea bien sobre el scroll
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: SingleChildScrollView( // Hace el desplazamiento horizontal
+      child: SingleChildScrollView(
+        // Hace el desplazamiento horizontal
         scrollDirection: Axis.horizontal, // Desplazamiento horizontal
         child: Row(
           children: [
             _buildCategoryButton(Icons.apartment, "Departamento"),
-            _buildCategoryButton(Icons.house, "Casa Estudio"),  // Aquí se cambia por "Casa Estudio"
+            _buildCategoryButton(Icons.house,
+                "Casa Estudio"), // Aquí se cambia por "Casa Estudio"
             _buildCategoryButton(Icons.bed, "Habitación"),
           ],
         ),
@@ -230,7 +233,8 @@ class _CategoryBarDelegate extends SliverPersistentHeaderDelegate {
 
   Widget _buildCategoryButton(IconData icon, String label) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0), // Agrego un espacio entre los botones
+      padding: const EdgeInsets.symmetric(
+          horizontal: 8.0), // Agrego un espacio entre los botones
       child: TextButton.icon(
         onPressed: () {
           onCategorySelected(label);

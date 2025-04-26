@@ -126,14 +126,22 @@ class _DetalleAlojamientoState extends State<DetalleAlojamientoOwner> {
             ),
 
             // Calificación
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 13.0, vertical: 4.0),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 13.0, vertical: 4.0),
               child: Row(
                 children: [
-                  Icon(Icons.star, color: Colors.yellow),
-                  SizedBox(width: 5),
-                  Text('4.5 (95 opiniones)',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  const Icon(Icons.star, color: Colors.yellow),
+                  const SizedBox(width: 5),
+                  Text(
+                    '${widget.accommodation.promedioPuntuacion}', // 👈 dinámico
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(width: 5),
+                  Text(
+                    '(${widget.accommodation.cantidadComentarios})', // 👈 Mostrar la cantidad de comentarios entre paréntesis
+                    style: const TextStyle(color: Colors.grey),
+                  ),
                 ],
               ),
             ),

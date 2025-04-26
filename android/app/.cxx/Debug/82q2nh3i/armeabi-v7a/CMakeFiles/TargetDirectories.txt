@@ -1,0 +1,2 @@
+C:/Users/leona/Pictures/Nueva carpeta/unistay/android/app/.cxx/Debug/82q2nh3i/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Users/leona/Pictures/Nueva carpeta/unistay/android/app/.cxx/Debug/82q2nh3i/armeabi-v7a/CMakeFiles/rebuild_cache.dir

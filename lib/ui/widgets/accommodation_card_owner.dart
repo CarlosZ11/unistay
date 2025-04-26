@@ -152,8 +152,10 @@ class _AccommodationOwnerCardState extends State<AccommodationOwnerCard> {
                             icon: Icons.star,
                             color: Colors.yellow,
                           ),
-                          const Text('5.6',
-                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text(
+                            '${widget.accommodation.promedioPuntuacion}', // 👈 dinámico
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
                         ],
                       ),
                     ],

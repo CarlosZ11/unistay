@@ -10,6 +10,8 @@ class AccommodationModel {
   final bool disponible;
   final String categoria;
   final String idPropietario;
+  final double promedioPuntuacion; // 👈 NUEVO CAMPO
+  final int cantidadComentarios; // 👈 NUEVO CAMPO
 
   AccommodationModel({
     required this.idAlojamiento,
@@ -23,9 +25,10 @@ class AccommodationModel {
     required this.disponible,
     required this.categoria,
     required this.idPropietario,
+    required this.promedioPuntuacion,
+    required this.cantidadComentarios,
   });
 
-  /// Método copyWith para actualizar campos específicos sin cambiar los demás
   AccommodationModel copyWith({
     String? idAlojamiento,
     String? nombre,
@@ -38,6 +41,8 @@ class AccommodationModel {
     bool? disponible,
     String? categoria,
     String? idPropietario,
+    double? promedioPuntuacion,
+    int? cantidadComentarios, // 👈 También aquí
   }) {
     return AccommodationModel(
       idAlojamiento: idAlojamiento ?? this.idAlojamiento,
@@ -51,10 +56,12 @@ class AccommodationModel {
       disponible: disponible ?? this.disponible,
       categoria: categoria ?? this.categoria,
       idPropietario: idPropietario ?? this.idPropietario,
+      promedioPuntuacion: promedioPuntuacion ?? this.promedioPuntuacion,
+      cantidadComentarios:
+          cantidadComentarios ?? this.cantidadComentarios, // 👈
     );
   }
 
-  /// Método para convertir el modelo a un mapa para Supabase
   Map<String, dynamic> toMap() {
     return {
       'idAlojamiento': idAlojamiento,
@@ -68,10 +75,11 @@ class AccommodationModel {
       'disponible': disponible,
       'categoria': categoria,
       'idPropietario': idPropietario,
+      'promedio_puntuacion': promedioPuntuacion,
+      'cantidad_comentarios': cantidadComentarios, // 👈
     };
   }
 
-  /// Método para crear un modelo desde un mapa (respuesta de Supabase)
   factory AccommodationModel.fromMap(Map<String, dynamic> map) {
     return AccommodationModel(
       idAlojamiento: map['idAlojamiento'] ?? '',
@@ -85,6 +93,10 @@ class AccommodationModel {
       disponible: map['disponible'] ?? true,
       categoria: map['categoria'] ?? '',
       idPropietario: map['idPropietario'] ?? '',
+      promedioPuntuacion: (map['promedio_puntuacion'] as num?)?.toDouble() ??
+          0.0, // 👈 transformación segura
+      cantidadComentarios:
+          map['cantidad_comentarios'] ?? 0, // 👈 transformación segura
     );
   }
 }
