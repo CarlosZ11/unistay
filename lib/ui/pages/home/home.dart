@@ -5,6 +5,7 @@ import 'package:unistay/domain/controllers/owner_controller.dart';
 import 'package:unistay/ui/colors/colors.dart';
 import 'package:unistay/ui/pages/tenant/pages/favoritos.dart';
 import 'package:unistay/ui/pages/tenant/pages/inicio.dart';
+import 'package:unistay/ui/pages/tenant/pages/maps.dart';
 import 'package:unistay/ui/pages/tenant/pages/perfil.dart';
 import 'package:unistay/ui/pages/owner/pages/perfil.dart';
 import 'package:unistay/ui/pages/owner/pages/properties.dart';
@@ -29,6 +30,7 @@ class _HomePageState extends State<HomePage> {
     UserRole.inquilino: [
       InicioInquilinoPage(),
       FavoritosInquilinoPage(),
+      MapPage(),
       PerfilInquilinoPage()
     ],
     UserRole.propietario: [
@@ -39,7 +41,7 @@ class _HomePageState extends State<HomePage> {
   };
 
   final Map<UserRole, List<String>> _titles = {
-    UserRole.inquilino: ["Unistay", "Favoritos", "Mi Alquiler", "Perfil"],
+    UserRole.inquilino: ["Unistay", "Favoritos", "Mapa", "Perfil"],
     UserRole.propietario: ["Inmuebles", "Añadir Inmueble", "Perfil"],
   };
 

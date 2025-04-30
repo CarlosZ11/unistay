@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:unistay/app.dart';
 import 'package:unistay/data/services/deep_link_handler.dart';
@@ -10,6 +11,10 @@ import 'package:unistay/domain/controllers/owner_controller.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  MapboxOptions.setAccessToken(
+    "pk.eyJ1IjoiY21pZ3VlbHphbWJyYW5vIiwiYSI6ImNtN3Z2cnA4bDAwamcybG9vY2xyeDliYnUifQ.gQHCzZb6IHkYMNme-ezbiQ"
+  );
 
   await Supabase.initialize(
     url: 'https://nzjcvaqyqtnvtnsrelvw.supabase.co',

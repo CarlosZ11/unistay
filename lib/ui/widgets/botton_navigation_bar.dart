@@ -25,7 +25,7 @@ class RoleBasedNavigationBar extends StatelessWidget {
           return [
             const NavigationDestination(icon: Icon(HugeIcons.strokeRoundedHome04), label: "Inicio"),
             const NavigationDestination(icon: Icon(HugeIcons.strokeRoundedFavourite), label: "Fvoritos"),
-            const NavigationDestination(icon: Icon(HugeIcons.strokeRoundedPermanentJob), label: "Alquiler"),
+            const NavigationDestination(icon: Icon(HugeIcons.strokeRoundedMapsSquare02), label: "Mapa"),
             const NavigationDestination(icon: Icon(HugeIcons.strokeRoundedUserList), label: "Perfil"),
           ];
         case UserRole.propietario:
