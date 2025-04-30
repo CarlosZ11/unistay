@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:unistay/domain/controllers/owner_controller.dart';
+import 'package:unistay/domain/controllers/tenant_controller.dart';
 import 'package:unistay/ui/colors/colors.dart';
 import 'package:unistay/ui/pages/tenant/pages/favoritos.dart';
 import 'package:unistay/ui/pages/tenant/pages/inicio.dart';
@@ -22,7 +23,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final OwnerController _controller = Get.find<OwnerController>();
+  OwnerController? _ownerController;
+  TenantController? _tenantController;
   int _currentIndex = 0;
 
   final Map<UserRole, List<Widget>> _screens = {
@@ -44,6 +46,17 @@ class _HomePageState extends State<HomePage> {
   };
 
   @override
+  void initState() {
+    super.initState();
+
+    if (widget.role == UserRole.propietario) {
+      _ownerController = Get.put(OwnerController());
+    } else if (widget.role == UserRole.inquilino) {
+      _tenantController = Get.put(TenantController());
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -63,7 +76,7 @@ class _HomePageState extends State<HomePage> {
         onTap: (index) {
           // Si el usuario es propietario y está entrando a "Añadir Inmueble"
           if (widget.role == UserRole.propietario && index == 1) {
-            _controller.resetAddAccommodationForm();
+            _ownerController?.resetAddAccommodationForm();
           }
           setState(() {
             _currentIndex = index;

@@ -6,7 +6,7 @@ import 'package:unistay/data/services/owner_service.dart';
 import 'package:unistay/domain/models/accommodation_model.dart';
 
 class OwnerController extends GetxController {
-  final OwnerService _OwnerService = OwnerService();
+  final OwnerService _ownerService = OwnerService();
   var accommodations = <AccommodationModel>[].obs;
   var isLoading = false.obs;
 
@@ -29,10 +29,13 @@ class OwnerController extends GetxController {
 
   /// Cargar todos los alojamientos del propietario sin paginación.
   Future<void> loadLandlordAccommodations() async {
+    isLoading.value = true;
     try {
-      accommodations.value = await _OwnerService.getLandlordAccommodations();
-    } catch (e) {
-      Get.snackbar("Error", "Hubo un problema al cargar los alojamientos: $e");
+      final data =
+          await _ownerService.getLandlordAccommodations(); // Tu método de carga
+      accommodations.value = data;
+    } finally {
+      isLoading.value = false;
     }
   }
 
@@ -65,7 +68,7 @@ class OwnerController extends GetxController {
       //Subir las imágenes
       for (var imageFile in imageFiles) {
         try {
-          final imageUrl = await _OwnerService.uploadImage(imageFile);
+          final imageUrl = await _ownerService.uploadImage(imageFile);
           imageUrls.add(imageUrl);
         } catch (e) {
           Get.snackbar("Advertencia", "Una imagen no pudo subirse: $e");
@@ -80,7 +83,7 @@ class OwnerController extends GetxController {
       }
 
       //Crear el alojamiento con las imágenes subidas
-      bool success = await _OwnerService.createAccommodation(
+      bool success = await _ownerService.createAccommodation(
         nombre: nombre,
         direccion: direccion,
         fotos: imageUrls,
@@ -125,7 +128,7 @@ class OwnerController extends GetxController {
       if (imageFiles.isNotEmpty) {
         for (var imageFile in imageFiles) {
           try {
-            final imageUrl = await _OwnerService.uploadImage(imageFile);
+            final imageUrl = await _ownerService.uploadImage(imageFile);
             imageUrls.add(imageUrl); // Agregar solo la nueva imagen
           } catch (e) {
             Get.snackbar("Advertencia", "Una imagen no pudo subirse: $e");
@@ -151,7 +154,7 @@ class OwnerController extends GetxController {
       }
 
       bool success =
-          await _OwnerService.updateAccommodation(idAlojamiento, updates);
+          await _ownerService.updateAccommodation(idAlojamiento, updates);
 
       if (success) {
         await loadLandlordAccommodations();
@@ -167,7 +170,7 @@ class OwnerController extends GetxController {
   //Elimina un alojamiento.
   Future<void> deleteAccommodation(String idAlojamiento) async {
     try {
-      bool success = await _OwnerService.deleteAccommodation(idAlojamiento);
+      bool success = await _ownerService.deleteAccommodation(idAlojamiento);
       if (success) {
         await loadLandlordAccommodations();
         accommodations.refresh();
@@ -231,7 +234,7 @@ class OwnerController extends GetxController {
   /// Método que obtiene alojamientos con la información del propietario
   Future<List<Map<String, dynamic>>> getAccommodationsWithOwnerInfo() async {
     try {
-      var accommodations = await _OwnerService.getAccommodationsWithOwnerInfo();
+      var accommodations = await _ownerService.getAccommodationsWithOwnerInfo();
 
       if (accommodations.isEmpty) {
         throw Exception('No hay alojamientos disponibles.');
