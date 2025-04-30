@@ -39,7 +39,7 @@ class _HomePageState extends State<HomePage> {
   };
 
   final Map<UserRole, List<String>> _titles = {
-    UserRole.inquilino: ["Unistay", "Favoritos", "Mi Alquiler", "Perfil"],
+    UserRole.inquilino: ["Unistay", "Favoritos", "Perfil"],
     UserRole.propietario: ["Inmuebles", "Añadir Inmueble", "Perfil"],
   };
 
