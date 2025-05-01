@@ -10,8 +10,10 @@ class AccommodationModel {
   final bool disponible;
   final String categoria;
   final String idPropietario;
-  final double promedioPuntuacion; // 👈 NUEVO CAMPO
-  final int cantidadComentarios; // 👈 NUEVO CAMPO
+  final double promedioPuntuacion;
+  final int cantidadComentarios;
+  final double latitud; 
+  final double longitud;
 
   AccommodationModel({
     required this.idAlojamiento,
@@ -27,6 +29,8 @@ class AccommodationModel {
     required this.idPropietario,
     required this.promedioPuntuacion,
     required this.cantidadComentarios,
+    required this.latitud,
+    required this.longitud,
   });
 
   AccommodationModel copyWith({
@@ -42,7 +46,9 @@ class AccommodationModel {
     String? categoria,
     String? idPropietario,
     double? promedioPuntuacion,
-    int? cantidadComentarios, // 👈 También aquí
+    int? cantidadComentarios,
+    double? latitud,
+    double? longitud,
   }) {
     return AccommodationModel(
       idAlojamiento: idAlojamiento ?? this.idAlojamiento,
@@ -58,7 +64,9 @@ class AccommodationModel {
       idPropietario: idPropietario ?? this.idPropietario,
       promedioPuntuacion: promedioPuntuacion ?? this.promedioPuntuacion,
       cantidadComentarios:
-          cantidadComentarios ?? this.cantidadComentarios, // 👈
+      cantidadComentarios ?? this.cantidadComentarios,
+      latitud: latitud ?? this.latitud,
+      longitud: longitud ?? this.longitud,
     );
   }
 
@@ -76,7 +84,9 @@ class AccommodationModel {
       'categoria': categoria,
       'idPropietario': idPropietario,
       'promedio_puntuacion': promedioPuntuacion,
-      'cantidad_comentarios': cantidadComentarios, // 👈
+      'cantidad_comentarios': cantidadComentarios,
+      'latitud': latitud,
+      'longitud': longitud,
     };
   }
 
@@ -93,10 +103,10 @@ class AccommodationModel {
       disponible: map['disponible'] ?? true,
       categoria: map['categoria'] ?? '',
       idPropietario: map['idPropietario'] ?? '',
-      promedioPuntuacion: (map['promedio_puntuacion'] as num?)?.toDouble() ??
-          0.0, // 👈 transformación segura
-      cantidadComentarios:
-          map['cantidad_comentarios'] ?? 0, // 👈 transformación segura
+      promedioPuntuacion: (map['promedio_puntuacion'] as num?)?.toDouble() ?? 0.0, 
+      cantidadComentarios: map['cantidad_comentarios'] ?? 0,
+      latitud: (map['latitud'] as num?)?.toDouble() ?? 0.0,
+      longitud: (map['longitud'] as num?)?.toDouble() ?? 0.0,
     );
   }
 }

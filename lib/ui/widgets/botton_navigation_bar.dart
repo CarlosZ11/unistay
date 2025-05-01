@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:unistay/domain/models/user_role.dart';
-
 import '../colors/colors.dart';
 
 class RoleBasedNavigationBar extends StatelessWidget {
@@ -23,13 +22,10 @@ class RoleBasedNavigationBar extends StatelessWidget {
       switch (role) {
         case UserRole.inquilino:
           return [
-            const NavigationDestination(
-                icon: Icon(HugeIcons.strokeRoundedHome04), label: "Inicio"),
-            const NavigationDestination(
-                icon: Icon(HugeIcons.strokeRoundedFavourite),
-                label: "Fvoritos"),
-            const NavigationDestination(
-                icon: Icon(HugeIcons.strokeRoundedUserList), label: "Perfil"),
+            const NavigationDestination(icon: Icon(HugeIcons.strokeRoundedHome04), label: "Inicio"),
+            const NavigationDestination(icon: Icon(HugeIcons.strokeRoundedMapsSquare02), label: "Ubicaciones"),
+            const NavigationDestination(icon: Icon(HugeIcons.strokeRoundedFavourite), label: "Fvoritos"),
+            const NavigationDestination(icon: Icon(HugeIcons.strokeRoundedUserList), label: "Perfil"),
           ];
         case UserRole.propietario:
           return [

@@ -1,8 +1,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:label="unistay"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+
+        <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="AIzaSyB1oS9H3xyC_LlfUubwwl1yluYnrolHKZQ"/>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -16,10 +23,11 @@
                  the Android process has started. This theme is visible to the user
                  while the Flutter UI initializes. After that, this theme continues
                  to determine the Window background behind the Flutter UI. -->
-            <meta-data
+            <!-- <meta-data
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
-              />
+              android:value="pk.eyJ1IjoiY21pZ3VlbHphbWJyYW5vIiwiYSI6ImNtN3Z2cnA4bDAwamcybG9vY2xyeDliYnUifQ.gQHCzZb6IHkYMNme-ezbiQ"
+              /> -->
 
             <!-- Intent filter para manejar unistay://password-reset -->
             <intent-filter>

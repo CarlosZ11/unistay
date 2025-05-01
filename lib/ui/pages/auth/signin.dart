@@ -22,6 +22,13 @@ class _LogInPageState extends State<LogInPage> {
   final AuthController authController = Get.put(AuthController());
 
   @override
+  void initState() {
+    super.initState();
+    emailController.text = 'derek@gmail.com';
+    passwordController.text = 'C@rlosZp11';
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,

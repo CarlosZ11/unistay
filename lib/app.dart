@@ -11,6 +11,7 @@ import 'package:unistay/ui/pages/owner/pages/properties.dart';
 import 'package:unistay/ui/pages/owner/pages/registry_poperty.dart';
 import 'package:unistay/ui/pages/tenant/pages/detalle_alojamiento.dart';
 import 'package:unistay/ui/pages/tenant/pages/lista_comentarios.dart';
+import 'package:unistay/ui/pages/tenant/pages/maps.dart';
 import 'package:unistay/ui/pages/welcome/welcome.dart';
 
 class MyApp extends StatelessWidget {
@@ -42,9 +43,8 @@ class MyApp extends StatelessWidget {
         '/registerProperty': (context) => const RegistryPopertyPage(),
         '/detalleAlojamiento': (context) => DetalleAlojamiento(),
         '/detalleAlojamientoOwner': (context) => DetalleAlojamientoOwner(),
-        '/listaComentarios': (context) => ComentariosPage(
-            idAlojamiento:
-                ModalRoute.of(context)!.settings.arguments as String),
+        '/listaComentarios': (context) => ComentariosPage(idAlojamiento:ModalRoute.of(context)!.settings.arguments as String),
+        '/map': (context) => MapPage(),
       },
     );
   }
