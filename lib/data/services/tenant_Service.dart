@@ -18,7 +18,8 @@ class TenantService extends GetxService {
   }
 
   /// Filtra alojamientos por categoría
-  Future<List<AccommodationModel>> fetchAccommodationsByCategory(String categoria) async {
+  Future<List<AccommodationModel>> fetchAccommodationsByCategory(
+      String categoria) async {
     if (categoria.isEmpty) {
       throw Exception("Category cannot be empty");
     }
@@ -52,11 +53,13 @@ class TenantService extends GetxService {
   }
 
   /// Método para filtrar alojamientos por categoría o búsqueda por texto
-  Future<List<AccommodationModel>> fetchFilteredAccommodations({String? query, String? category}) async {
+  Future<List<AccommodationModel>> fetchFilteredAccommodations(
+      {String? query, String? category}) async {
     try {
       if ((query == null || query.isEmpty) &&
           (category == null || category.isEmpty)) {
-        throw Exception("At least one filter (query or category) must be provided.");
+        throw Exception(
+            "At least one filter (query or category) must be provided.");
       }
 
       if (query != null && query.isNotEmpty) {
@@ -68,6 +71,20 @@ class TenantService extends GetxService {
       }
     } catch (e) {
       throw Exception("Failed to fetch filtered accommodations: $e");
+    }
+  }
+
+  Future<AccommodationModel> getAccommodationById(String id) async {
+    try {
+      final response = await supabase
+          .from('accommodations')
+          .select()
+          .eq('idAlojamiento', id)
+          .single();
+
+      return AccommodationModel.fromMap(response);
+    } catch (e) {
+      throw Exception("Failed to fetch accommodation by ID: $e");
     }
   }
 }

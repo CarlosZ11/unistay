@@ -5,14 +5,12 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:unistay/domain/controllers/profile_controller.dart';
 import 'package:unistay/domain/controllers/auth_controller.dart';
 import 'package:unistay/domain/controllers/owner_controller.dart';
-import 'package:unistay/domain/models/accommodation_model.dart';
+import 'package:unistay/domain/controllers/tenant_controller.dart';
 import 'package:get/get.dart';
 import 'package:unistay/ui/pages/tenant/pages/lista_comentarios.dart';
 import 'package:unistay/domain/controllers/comment_controller.dart';
 
 class DetalleAlojamiento extends StatefulWidget {
-  final AccommodationModel accommodation = Get.arguments as AccommodationModel;
-
   DetalleAlojamiento({super.key});
 
   @override
@@ -22,8 +20,9 @@ class DetalleAlojamiento extends StatefulWidget {
 class _DetalleAlojamientoState extends State<DetalleAlojamiento> {
   final CommentController _commentController = Get.put(CommentController());
 
-  final OwnerController _controller = OwnerController();
-  final AuthController _authController = Get.put(AuthController());
+  final TenantController _tenantController = Get.find<TenantController>();
+  final AuthController _authController = Get.find<AuthController>();
+  final OwnerController _ownercontroller = Get.find<OwnerController>();
   String propietarioNombre = '';
 
   int _current = 0;
@@ -36,13 +35,15 @@ class _DetalleAlojamientoState extends State<DetalleAlojamiento> {
     super.initState();
     _profileController = Get.find<ProfileController>();
 
-    if (_profileController.favorites.any(
-        (fav) => fav.idAlojamiento == widget.accommodation.idAlojamiento)) {
+    if (_profileController.favorites.any((fav) =>
+        fav.idAlojamiento ==
+        _tenantController.selectedAccommodation.value!.idAlojamiento)) {
       isFavorite = true;
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _commentController.loadComments(widget.accommodation.idAlojamiento);
+      _commentController.loadComments(
+          _tenantController.selectedAccommodation.value!.idAlojamiento);
     });
 
     Future<void> cargarNombrePropietario(String id) async {
@@ -78,7 +79,8 @@ class _DetalleAlojamientoState extends State<DetalleAlojamiento> {
                       setState(() => _current = index);
                     },
                   ),
-                  items: widget.accommodation.fotos.map((foto) {
+                  items: _tenantController.selectedAccommodation.value!.fotos
+                      .map((foto) {
                     return Image.network(
                       foto,
                       fit: BoxFit.cover,
@@ -91,7 +93,8 @@ class _DetalleAlojamientoState extends State<DetalleAlojamiento> {
                     alignment: Alignment.bottomCenter,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: widget.accommodation.fotos
+                      children: _tenantController
+                          .selectedAccommodation.value!.fotos
                           .asMap()
                           .entries
                           .map((entry) {
@@ -125,7 +128,7 @@ class _DetalleAlojamientoState extends State<DetalleAlojamiento> {
                 children: [
                   Expanded(
                     child: Text(
-                      widget.accommodation.nombre,
+                      _tenantController.selectedAccommodation.value!.nombre,
                       style: const TextStyle(
                           fontSize: 24, fontWeight: FontWeight.bold),
                     ),
@@ -140,12 +143,14 @@ class _DetalleAlojamientoState extends State<DetalleAlojamiento> {
                       if (isFavorite) {
                         _profileController.setFavorite(
                           _profileController.user.value!.id,
-                          widget.accommodation.idAlojamiento,
+                          _tenantController
+                              .selectedAccommodation.value!.idAlojamiento,
                         );
                       } else {
                         _profileController.removeFavorite(
                           _profileController.user.value!.id,
-                          widget.accommodation.idAlojamiento,
+                          _tenantController
+                              .selectedAccommodation.value!.idAlojamiento,
                         );
                       }
                     },
@@ -200,7 +205,7 @@ class _DetalleAlojamientoState extends State<DetalleAlojamiento> {
                   const SizedBox(width: 5),
                   Expanded(
                     child: Text(
-                      widget.accommodation.direccion,
+                      _tenantController.selectedAccommodation.value!.direccion,
                       style: GoogleFonts.saira(color: Colors.black),
                     ),
                   ),
@@ -210,23 +215,25 @@ class _DetalleAlojamientoState extends State<DetalleAlojamiento> {
 
             // Calificación
             // Calificación
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 13.0, vertical: 4.0),
-              child: Row(
-                children: [
-                  const Icon(Icons.star, color: Colors.yellow),
-                  const SizedBox(width: 5),
-                  Text(
-                    '${widget.accommodation.promedioPuntuacion}', // 👈 dinámico
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(width: 5),
-                  Text(
-                    '(${widget.accommodation.cantidadComentarios})', // 👈 Mostrar la cantidad de comentarios entre paréntesis
-                    style: const TextStyle(color: Colors.grey),
-                  ),
-                ],
+            Obx(
+              () => Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 13.0, vertical: 4.0),
+                child: Row(
+                  children: [
+                    const Icon(Icons.star, color: Colors.yellow),
+                    const SizedBox(width: 5),
+                    Text(
+                      '${_tenantController.selectedAccommodation.value!.promedioPuntuacion}', // 👈 dinámico
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(width: 5),
+                    Text(
+                      '(${_tenantController.selectedAccommodation.value!.cantidadComentarios})', // 👈 Mostrar la cantidad de comentarios entre paréntesis
+                      style: const TextStyle(color: Colors.grey),
+                    ),
+                  ],
+                ),
               ),
             ),
 
@@ -241,7 +248,8 @@ class _DetalleAlojamientoState extends State<DetalleAlojamiento> {
                       style:
                           TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 10),
-                  Text('COP\$ ${widget.accommodation.price}',
+                  Text(
+                      'COP\$ ${_tenantController.selectedAccommodation.value!.price}',
                       style: GoogleFonts.saira(
                         fontSize: 18,
                         color: Colors.black,
@@ -268,7 +276,9 @@ class _DetalleAlojamientoState extends State<DetalleAlojamiento> {
                       color: Colors.grey.shade200,
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Text(widget.accommodation.descripcion,
+                    child: Text(
+                        _tenantController
+                            .selectedAccommodation.value!.descripcion,
                         style: GoogleFonts.saira(color: Colors.black)),
                   ),
                 ],
@@ -288,26 +298,27 @@ class _DetalleAlojamientoState extends State<DetalleAlojamiento> {
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: widget.accommodation.ventajas
-                        .take(4)
-                        .map((ventaja) => Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 4.0),
-                              child: Row(
-                                children: [
-                                  const Icon(Icons.check_circle,
-                                      color: Colors.green, size: 20),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: Text(
-                                      ventaja,
-                                      style: const TextStyle(fontSize: 16),
-                                    ),
+                    children:
+                        _tenantController.selectedAccommodation.value!.ventajas
+                            .take(4)
+                            .map((ventaja) => Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 4.0),
+                                  child: Row(
+                                    children: [
+                                      const Icon(Icons.check_circle,
+                                          color: Colors.green, size: 20),
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: Text(
+                                          ventaja,
+                                          style: const TextStyle(fontSize: 16),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                            ))
-                        .toList(),
+                                ))
+                            .toList(),
                   ),
                 ],
               ),
@@ -329,7 +340,8 @@ class _DetalleAlojamientoState extends State<DetalleAlojamiento> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => ComentariosPage(
-                            idAlojamiento: widget.accommodation.idAlojamiento,
+                            idAlojamiento: _tenantController
+                                .selectedAccommodation.value!.idAlojamiento,
                           ),
                         ),
                       );
@@ -429,9 +441,9 @@ class _DetalleAlojamientoState extends State<DetalleAlojamiento> {
                       child: Icon(Icons.person, color: Colors.white),
                     ),
                     title: FutureBuilder<String>(
-                      future: _authController.cargarNombrePropietario(widget
-                          .accommodation
-                          .idPropietario), // Llamamos al método asíncrono para obtener el nombre
+                      future: _authController.cargarNombrePropietario(
+                          _tenantController.selectedAccommodation.value!
+                              .idPropietario), // Llamamos al método asíncrono para obtener el nombre
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
@@ -467,20 +479,20 @@ class _DetalleAlojamientoState extends State<DetalleAlojamiento> {
                   child: ElevatedButton(
                     onPressed: () async {
                       // Obtener el número de teléfono del arrendador
-                      final phone =
-                          await _authController.obtenerNumeroArrendador(
-                              widget.accommodation.idPropietario);
+                      final phone = await _authController
+                          .obtenerNumeroArrendador(_tenantController
+                              .selectedAccommodation.value!.idPropietario);
 
                       // Si el número es válido, abrir WhatsApp, si no mostrar un error
                       if (phone != null) {
-                        await _controller.openChat(
+                        await _ownercontroller.openChat(
                             context: context,
                             phoneNumber: phone,
                             message:
                                 "¡Hola! Estoy interesad@ en el arrendamiento de la propiedad que publicaste:\n\n"
-                                "Nombre:    ${widget.accommodation.nombre}\n"
-                                "Precio:    \$${widget.accommodation.price}\n"
-                                "Dirección: ${widget.accommodation.direccion}\n\n"
+                                "Nombre:    ${_tenantController.selectedAccommodation.value!.nombre}\n"
+                                "Precio:    \$${_tenantController.selectedAccommodation.value!.price}\n"
+                                "Dirección: ${_tenantController.selectedAccommodation.value!.direccion}\n\n"
                                 "¿Me podrías proporcionar más información? ¡Gracias!");
                       } else {
                         // Mostrar mensaje de error

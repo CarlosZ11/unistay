@@ -1,12 +1,13 @@
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:unistay/data/services/comment_service.dart';
+import 'package:unistay/domain/controllers/tenant_controller.dart';
 import 'package:unistay/domain/models/comment_model.dart';
 import 'package:unistay/domain/models/user_model.dart';
 
 class CommentController extends GetxController {
   final CommentService _service = CommentService();
-
+  final TenantController _tenantController = Get.find<TenantController>();
   var comments = <CommentModel>[].obs;
   var isLoading = false.obs;
   var errorMessage = ''.obs;
@@ -71,6 +72,7 @@ class CommentController extends GetxController {
     try {
       await _service.addComment(nuevoComentario);
       await loadComments(idAlojamiento);
+      _tenantController.getAccommodationById(idAlojamiento);
     } catch (e) {
       errorMessage.value = 'Error agregando comentario: $e';
       rethrow;

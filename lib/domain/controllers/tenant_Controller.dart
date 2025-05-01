@@ -3,12 +3,41 @@ import 'package:unistay/data/services/tenant_service.dart';
 import 'package:unistay/domain/models/accommodation_model.dart';
 
 class TenantController extends GetxController {
+  final selectedAccommodation = Rxn<AccommodationModel>();
+
   final TenantService tenantService = TenantService();
   // Lista para almacenar los alojamientos (reactiva)
   var accommodations = <AccommodationModel>[].obs;
 
   // Estado de carga (reactivo)
   var isLoading = false.obs;
+
+  void setSelectAccommodation(AccommodationModel accommodation) {
+    selectedAccommodation.value = accommodation;
+  }
+
+  void updateAccommodationInList(AccommodationModel updatedAccommodation) {
+    final index = accommodations.indexWhere(
+        (a) => a.idAlojamiento == updatedAccommodation.idAlojamiento);
+    if (index != -1) {
+      accommodations[index] = updatedAccommodation;
+      accommodations.refresh(); // Notifica a la UI que la lista cambió
+    }
+  }
+
+  Future<void> getAccommodationById(String idAccommodation) async {
+    try {
+      isLoading.value = true;
+      AccommodationModel accommodation =
+          await tenantService.getAccommodationById(idAccommodation);
+      setSelectAccommodation(accommodation);
+      updateAccommodationInList(accommodation);
+    } catch (e) {
+      print("Error fetching comments: $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
 
   /// Método para obtener todos los alojamientos
   Future<void> fetchAccommodations() async {

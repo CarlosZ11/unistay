@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:unistay/domain/controllers/profile_controller.dart';
+import 'package:unistay/domain/controllers/tenant_controller.dart';
 import 'package:unistay/domain/models/accommodation_model.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -24,13 +25,10 @@ class _AccommodationCardState extends State<AccommodationCard> {
   double _scale = 1.0;
   final CarouselSliderController _controller = CarouselSliderController();
   final ProfileController _profileController = Get.find<ProfileController>();
-
+  final TenantController _tenantController = Get.find<TenantController>();
   @override
   void initState() {
     super.initState();
-    if (_profileController.user.value == null) {
-      _profileController.loadUserProfile();
-    }
 
     if (_profileController.favorites.isNotEmpty) {
       if (_profileController.favorites.any(
@@ -45,7 +43,8 @@ class _AccommodationCardState extends State<AccommodationCard> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Get.toNamed('/detalleAlojamiento', arguments: widget.accommodation);
+        _tenantController.selectedAccommodation(widget.accommodation);
+        Get.toNamed('/detalleAlojamiento');
       },
       child: Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
