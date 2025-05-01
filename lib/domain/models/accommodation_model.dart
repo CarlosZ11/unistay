@@ -1,3 +1,5 @@
+import 'package:get/get.dart';
+
 class AccommodationModel {
   final String idAlojamiento;
   final String nombre;
@@ -12,8 +14,9 @@ class AccommodationModel {
   final String idPropietario;
   final double promedioPuntuacion;
   final int cantidadComentarios;
-  final double latitud; 
+  final double latitud;
   final double longitud;
+  final RxBool isFavorite = false.obs;
 
   AccommodationModel({
     required this.idAlojamiento,
@@ -63,8 +66,7 @@ class AccommodationModel {
       categoria: categoria ?? this.categoria,
       idPropietario: idPropietario ?? this.idPropietario,
       promedioPuntuacion: promedioPuntuacion ?? this.promedioPuntuacion,
-      cantidadComentarios:
-      cantidadComentarios ?? this.cantidadComentarios,
+      cantidadComentarios: cantidadComentarios ?? this.cantidadComentarios,
       latitud: latitud ?? this.latitud,
       longitud: longitud ?? this.longitud,
     );
@@ -103,7 +105,8 @@ class AccommodationModel {
       disponible: map['disponible'] ?? true,
       categoria: map['categoria'] ?? '',
       idPropietario: map['idPropietario'] ?? '',
-      promedioPuntuacion: (map['promedio_puntuacion'] as num?)?.toDouble() ?? 0.0, 
+      promedioPuntuacion:
+          (map['promedio_puntuacion'] as num?)?.toDouble() ?? 0.0,
       cantidadComentarios: map['cantidad_comentarios'] ?? 0,
       latitud: (map['latitud'] as num?)?.toDouble() ?? 0.0,
       longitud: (map['longitud'] as num?)?.toDouble() ?? 0.0,

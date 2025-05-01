@@ -1,10 +1,12 @@
 import 'package:get/get.dart';
+import 'package:unistay/domain/controllers/tenant_controller.dart';
 import 'package:unistay/domain/models/accommodation_model.dart';
 import 'package:unistay/domain/models/user_model.dart';
 import 'package:unistay/data/services/profile_service.dart';
 
 class ProfileController extends GetxController {
   final ProfileService _profileService = ProfileService();
+  final TenantController _tenantcontroller = Get.put(TenantController());
   var user = Rx<UserModel?>(null);
   var favorites = <AccommodationModel>[].obs;
   var isLoading = false.obs;
@@ -64,6 +66,12 @@ class ProfileController extends GetxController {
     if (success) {
       Get.snackbar('Éxito', 'Favorito eliminado correctamente');
       await getFavorites(userID);
+      final index = _tenantcontroller.accommodations.indexWhere(
+        (a) => a.idAlojamiento == accommdationID,
+      );
+      if (index != -1) {
+        _tenantcontroller.accommodations[index].isFavorite.value = false;
+      }
       favorites.refresh();
     } else {
       Get.snackbar('Error', 'No se pudo eliminar el favorito');

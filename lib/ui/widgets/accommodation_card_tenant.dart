@@ -21,7 +21,7 @@ class AccommodationCard extends StatefulWidget {
 
 class _AccommodationCardState extends State<AccommodationCard> {
   int _current = 0;
-  bool isFavorite = false;
+
   double _scale = 1.0;
   final CarouselSliderController _controller = CarouselSliderController();
   final ProfileController _profileController = Get.find<ProfileController>();
@@ -30,13 +30,9 @@ class _AccommodationCardState extends State<AccommodationCard> {
   void initState() {
     super.initState();
 
-    if (_profileController.favorites.isNotEmpty) {
-      if (_profileController.favorites.any(
-          (fav) => fav.idAlojamiento == widget.accommodation.idAlojamiento)) {
-        isFavorite = true;
-      }
-    }
-    super.initState();
+    widget.accommodation.isFavorite.value = _profileController.favorites.any(
+      (fav) => fav.idAlojamiento == widget.accommodation.idAlojamiento,
+    );
   }
 
   @override
@@ -91,63 +87,69 @@ class _AccommodationCardState extends State<AccommodationCard> {
                     }).toList(),
                   ),
                   // Verifica si es "propietario" antes de mostrar el corazón
-                  Positioned(
-                    top: 10,
-                    right: 10,
-                    child: GestureDetector(
-                      onTapDown: (_) {
-                        setState(() => _scale = 0.9); // Efecto de presión
-                      },
-                      onTapUp: (_) {
-                        setState(() {
-                          _scale = 1.0;
-                          isFavorite = !isFavorite;
-                        });
-                        if (isFavorite) {
-                          _profileController.setFavorite(
-                            _profileController.user.value!.id,
-                            widget.accommodation.idAlojamiento,
-                          );
-                        } else {
-                          _profileController.removeFavorite(
-                            _profileController.user.value!.id,
-                            widget.accommodation.idAlojamiento,
-                          );
-                        }
-                      },
-                      onTapCancel: () {
-                        setState(() => _scale = 1.0);
-                      },
-                      child: AnimatedScale(
-                        scale: _scale,
-                        duration: const Duration(milliseconds: 100),
-                        curve: Curves.easeOut,
-                        child: Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withAlpha(153), // 60% opacity
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color:
-                                    Colors.black.withAlpha(77), // 30% opacity
-                                blurRadius: 6,
-                                offset: const Offset(0, 3),
+                  Obx(
+                    () => Positioned(
+                      top: 10,
+                      right: 10,
+                      child: GestureDetector(
+                        onTapDown: (_) {
+                          setState(() => _scale = 0.9); // Efecto de presión
+                        },
+                        onTapUp: (_) {
+                          setState(() {
+                            _scale = 1.0;
+                            widget.accommodation.isFavorite.value =
+                                !widget.accommodation.isFavorite.value;
+                          });
+                          if (widget.accommodation.isFavorite.value) {
+                            _profileController.setFavorite(
+                              _profileController.user.value!.id,
+                              widget.accommodation.idAlojamiento,
+                            );
+                          } else {
+                            _profileController.removeFavorite(
+                              _profileController.user.value!.id,
+                              widget.accommodation.idAlojamiento,
+                            );
+                          }
+                        },
+                        onTapCancel: () {
+                          setState(() => _scale = 1.0);
+                        },
+                        child: AnimatedScale(
+                          scale: _scale,
+                          duration: const Duration(milliseconds: 100),
+                          curve: Curves.easeOut,
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withAlpha(153), // 60% opacity
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color:
+                                      Colors.black.withAlpha(77), // 30% opacity
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            child: AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 300),
+                              transitionBuilder: (child, animation) =>
+                                  ScaleTransition(
+                                      scale: animation, child: child),
+                              child: Icon(
+                                widget.accommodation.isFavorite.value
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
+                                key: ValueKey<bool>(
+                                    widget.accommodation.isFavorite.value),
+                                color: widget.accommodation.isFavorite.value
+                                    ? Colors.pinkAccent
+                                    : Colors.white,
+                                size: 22,
                               ),
-                            ],
-                          ),
-                          child: AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 300),
-                            transitionBuilder: (child, animation) =>
-                                ScaleTransition(scale: animation, child: child),
-                            child: Icon(
-                              isFavorite
-                                  ? Icons.favorite
-                                  : Icons.favorite_border,
-                              key: ValueKey<bool>(isFavorite),
-                              color:
-                                  isFavorite ? Colors.pinkAccent : Colors.white,
-                              size: 22,
                             ),
                           ),
                         ),

@@ -1,0 +1,2 @@
+C:/Users/Dange/Videos/proyectos/unistay/android/app/.cxx/Debug/6m14524i/x86/CMakeFiles/edit_cache.dir
+C:/Users/Dange/Videos/proyectos/unistay/android/app/.cxx/Debug/6m14524i/x86/CMakeFiles/rebuild_cache.dir
