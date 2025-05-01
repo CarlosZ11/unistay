@@ -29,8 +29,8 @@ class _HomePageState extends State<HomePage> {
   final Map<UserRole, List<Widget>> _screens = {
     UserRole.inquilino: [
       InicioInquilinoPage(),
-      FavoritosInquilinoPage(),
       MapPage(),
+      FavoritosInquilinoPage(),
       PerfilInquilinoPage()
     ],
     UserRole.propietario: [
@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
   };
 
   final Map<UserRole, List<String>> _titles = {
-    UserRole.inquilino: ["Unistay", "Favoritos", "Mapa", "Perfil"],
+    UserRole.inquilino: ["Unistay", "Ubicaciones", "Favoritos", "Perfil"],
     UserRole.propietario: ["Inmuebles", "Añadir Inmueble", "Perfil"],
   };
 

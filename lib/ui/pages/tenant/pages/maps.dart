@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
+import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:hugeicons/hugeicons.dart';
+import 'package:location/location.dart';
+import 'package:unistay/domain/controllers/tenant_controller.dart';
 import '../../../../domain/controllers/map_controller.dart';
 import '../../../../domain/models/accommodation_model.dart';
 
@@ -11,71 +15,158 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
+  
+  final MapaController _mapController = MapaController();
+  final TenantController _tenantController = Get.put(TenantController());
+  Set<Marker> _markers = {};
+  Set<Polyline> _polylines = {};
 
-  final _mapaController = MapaController();
-  MapboxMap? _mapboxMap;
 
-  final List<AccommodationModel> listaAlojamientos = [
-    AccommodationModel(
-      idAlojamiento: '1',
-      nombre: 'Iglesia',
-      direccion: 'Calle 10 #12-34',
-      price: 100000,
-      fotos: ['https://via.placeholder.com/150'],
-      ventajas: ['Wi-Fi', 'Cerca del parque', 'Agua caliente'],
-      descripcion: 'Alojamiento en el centro de Valledupar',
-      numeroHabitaciones: 3,
-      disponible: true,
-      categoria: 'Familiar',
-      idPropietario: 'prop123',
-      promedioPuntuacion: 4.5,
-      cantidadComentarios: 12,
-      latitud: 10.468730249496476,
-      longitud: -73.26325620528516,
-    ),
-  ];
+  static const LatLng _valledupar = LatLng(10.4749, -73.2601);
+
+  // void _onMapCreated(GoogleMapController controller) {
+  //   mapController = controller;
+  // }
 
   @override
-  void initState() {
-    super.initState();
-    _mapaController.cargarUbicacion().then((_) {
-      setState(() {});
+void initState() {
+  super.initState();
+  _solicitarPermisosUbicacion();
+  _cargarAlojamientosYMarcadores();
+}
+
+  Future<void> _cargarAlojamientosYMarcadores() async {
+    await _tenantController.fetchAccommodations();
+
+    final marcadores = await _mapController.generarMarcadores(
+      _tenantController.accommodations,
+      _mostrarModalRuta, // ← pasa la función para cuando se toca un marcador
+    );
+
+    setState(() {
+      _markers = marcadores;
     });
+  }
+
+  void _mostrarModalRuta(AccommodationModel alojamiento) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      backgroundColor: Colors.white,
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 5,
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              Text(
+                alojamiento.nombre,
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                "Dirección: ${alojamiento.direccion}",
+                style: const TextStyle(fontSize: 16, color: Colors.grey),
+              ),
+              const SizedBox(height: 20),
+              Center(
+                child: ElevatedButton.icon(
+                  onPressed: () async {
+                    Navigator.of(context).pop(); // cerrar modal
+                    await _trazarRutaHacia(LatLng(alojamiento.latitud, alojamiento.longitud));
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.indigo,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  ),
+                  icon: const Icon(HugeIcons.strokeRoundedNavigation03, color: Colors.white),
+                  label: const Text("Cómo llegar", style: TextStyle(color: Colors.white)),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _limpiarRuta() {
+    setState(() {
+      _polylines.clear();
+    });
+  }
+
+  Future<void> _trazarRutaHacia(LatLng destino) async {
+    final puntos = await _mapController.trazarRutaHacia(destino);
+
+    final ruta = Polyline(
+      polylineId: const PolylineId("ruta"),
+      color: Colors.blue,
+      width: 5,
+      points: puntos,
+    );
+
+    setState(() {
+      _polylines.clear();
+      _polylines = {ruta};
+    });
+
+    _mapController.moverCamaraARuta(puntos); // centra en la ruta
+  }
+  
+  void _solicitarPermisosUbicacion() async {
+    final location = Location();
+
+    bool serviceEnabled = await location.serviceEnabled();
+    if (!serviceEnabled) {
+      serviceEnabled = await location.requestService();
+      if (!serviceEnabled) return;
+    }
+
+    PermissionStatus permissionGranted = await location.hasPermission();
+    if (permissionGranted == PermissionStatus.denied) {
+      permissionGranted = await location.requestPermission();
+      if (permissionGranted != PermissionStatus.granted) return;
+    }
+
+    await _mapController.centrarEnUbicacionActual();
   }
 
   @override
   Widget build(BuildContext context) {
-
-    final ubicacion = _mapaController.ubicacion;
-
-    if (ubicacion == null) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
-
     return Scaffold(
-      body: MapWidget(
-        key: const ValueKey("mapWidget"),
-        cameraOptions: CameraOptions(
-          center: Point(coordinates: ubicacion.coordinates),
-          zoom: 14.0,
+      body: GoogleMap(
+        initialCameraPosition: const CameraPosition(
+          target: _valledupar,
+          zoom: 16.0,
         ),
-        onMapCreated: (MapboxMap mapboxMap) async {
-          _mapboxMap = mapboxMap;
-          
-          await _mapaController.mostrarAlojamientosEnMapa(
-            alojamientos: listaAlojamientos,
-            mapboxMap: mapboxMap,
-          );
-
-          // Cambiar el estilo del mapa
-          mapboxMap.loadStyleURI("mapbox://styles/mapbox/streets-v12");
-
-          // Mostrar punto actual en el mapa
-          mapboxMap.location.updateSettings(LocationComponentSettings(
-            enabled: true,
-            pulsingEnabled: true,
-          ));
+        onMapCreated: (controller) {
+          _mapController.onMapCreated(controller);
+          _mapController.asignarControlador(controller);
+          _mapController.centrarEnUbicacionActual();
         },
+        myLocationEnabled: true,
+        myLocationButtonEnabled: true,
+        markers: _markers,
+        polylines: _polylines,
+        onTap: (_) => _limpiarRuta(),
       ),
     );
   }

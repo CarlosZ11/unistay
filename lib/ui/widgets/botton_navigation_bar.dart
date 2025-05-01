@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:unistay/domain/models/user_role.dart';
-
 import '../colors/colors.dart';
 
 class RoleBasedNavigationBar extends StatelessWidget {
@@ -24,15 +23,19 @@ class RoleBasedNavigationBar extends StatelessWidget {
         case UserRole.inquilino:
           return [
             const NavigationDestination(icon: Icon(HugeIcons.strokeRoundedHome04), label: "Inicio"),
+            const NavigationDestination(icon: Icon(HugeIcons.strokeRoundedMapsSquare02), label: "Ubicaciones"),
             const NavigationDestination(icon: Icon(HugeIcons.strokeRoundedFavourite), label: "Fvoritos"),
-            const NavigationDestination(icon: Icon(HugeIcons.strokeRoundedMapsSquare02), label: "Mapa"),
             const NavigationDestination(icon: Icon(HugeIcons.strokeRoundedUserList), label: "Perfil"),
           ];
         case UserRole.propietario:
           return [
-            const NavigationDestination(icon: Icon(HugeIcons.strokeRoundedPermanentJob), label: "Inmuebles"),
-            const NavigationDestination(icon: Icon(HugeIcons.strokeRoundedStoreAdd02), label: "Añadir"),
-            const NavigationDestination(icon: Icon(HugeIcons.strokeRoundedUser), label: "Usuario"),
+            const NavigationDestination(
+                icon: Icon(HugeIcons.strokeRoundedPermanentJob),
+                label: "Inmuebles"),
+            const NavigationDestination(
+                icon: Icon(HugeIcons.strokeRoundedStoreAdd02), label: "Añadir"),
+            const NavigationDestination(
+                icon: Icon(HugeIcons.strokeRoundedUser), label: "Usuario"),
           ];
       }
     }
@@ -42,8 +45,12 @@ class RoleBasedNavigationBar extends StatelessWidget {
         labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>(
           (Set<WidgetState> states) {
             return GoogleFonts.saira(
-              color: states.contains(WidgetState.selected) ? AppColors.primary : AppColors.tertiary,
-              fontWeight: states.contains(WidgetState.selected) ? FontWeight.bold : FontWeight.normal,
+              color: states.contains(WidgetState.selected)
+                  ? AppColors.primary
+                  : AppColors.tertiary,
+              fontWeight: states.contains(WidgetState.selected)
+                  ? FontWeight.bold
+                  : FontWeight.normal,
               fontSize: states.contains(WidgetState.selected) ? 14 : 12,
             );
           },
@@ -51,7 +58,9 @@ class RoleBasedNavigationBar extends StatelessWidget {
         iconTheme: WidgetStateProperty.resolveWith<IconThemeData>(
           (Set<WidgetState> states) {
             return IconThemeData(
-              color: states.contains(WidgetState.selected) ? AppColors.primary : AppColors.tertiary,
+              color: states.contains(WidgetState.selected)
+                  ? AppColors.primary
+                  : AppColors.tertiary,
               size: states.contains(WidgetState.selected) ? 28 : 24,
             );
           },
