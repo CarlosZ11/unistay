@@ -183,7 +183,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               return;
                             }
 
-                            authController.registerUser(
+                            bool exito = await authController.registerUser(
                               name: nameController.text.trim(),
                               lastname: lastnameController.text.trim(),
                               email: emailController.text.trim(),
@@ -192,7 +192,11 @@ class _SignUpPageState extends State<SignUpPage> {
                               identification: idController.text.trim(),
                               role: selectedRole!.toLowerCase(),
                             );
-                            Navigator.pop(context);
+
+                            if (exito) {
+                              Navigator.pop(
+                                  context); // Solo si el registro fue exitoso
+                            }
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary,

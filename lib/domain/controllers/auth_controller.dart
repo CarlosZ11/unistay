@@ -13,21 +13,18 @@ class AuthController extends GetxController {
   var nombreCompleto = ''.obs;
 
   // Registro de usuario
-  Future<void> registerUser({
+  Future<bool> registerUser({
     required String name,
     required String lastname,
     required String email,
     required String password,
     required String phone,
-    required String identification, // Clave primaria en Supabase
+    required String identification,
     required String role,
   }) async {
-    // Normalización de datos
     name = validation.normalizeText(name);
     lastname = validation.normalizeText(lastname);
     email = email.trim().toLowerCase();
-
-    // Validaciones
 
     if (name.isEmpty ||
         lastname.isEmpty ||
@@ -37,35 +34,35 @@ class AuthController extends GetxController {
         identification.isEmpty ||
         role.isEmpty) {
       Get.snackbar('Error', 'Todos los campos son obligatorios');
-      return;
+      return false;
     }
     if (!validation.isValidName(name) || !validation.isValidName(lastname)) {
       Get.snackbar('Error',
           'Nombre y apellido deben ser válidos (solo letras y espacios)');
-      return;
+      return false;
     }
     if (!validation.isValidEmail(email)) {
       Get.snackbar('Error', 'Correo electrónico no válido');
-      return;
+      return false;
     }
     if (!validation.isValidPassword(password)) {
       Get.snackbar('Error',
           'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.');
-      return;
+      return false;
     }
     if (!validation.isValidPhone(phone)) {
       Get.snackbar('Error',
           'El teléfono debe contener exactamente 10 dígitos numéricos');
-      return;
+      return false;
     }
     if (!validation.isValidIdentification(identification)) {
       Get.snackbar(
           'Error', 'La cédula debe tener entre 8 y 10 dígitos numéricos');
-      return;
+      return false;
     }
     if (role.isEmpty) {
       Get.snackbar('Error', 'Debe seleccionar un rol');
-      return;
+      return false;
     }
 
     isLoading.value = true;
@@ -83,10 +80,14 @@ class AuthController extends GetxController {
       if (response != null && response.user != null) {
         Get.snackbar('Registro exitoso', 'Bienvenido a UniStay');
         Get.back();
+        return true;
+      } else {
+        return false;
       }
     } catch (e) {
       Get.snackbar('Error',
           'No se pudo registrar: ${e.toString().replaceAll('Exception: ', '')}');
+      return false;
     } finally {
       isLoading.value = false;
     }
