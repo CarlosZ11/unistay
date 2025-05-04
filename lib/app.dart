@@ -43,8 +43,10 @@ class MyApp extends StatelessWidget {
         '/registerProperty': (context) => const RegistryPopertyPage(),
         '/detalleAlojamiento': (context) => DetalleAlojamiento(),
         '/detalleAlojamientoOwner': (context) => DetalleAlojamientoOwner(),
-        '/listaComentarios': (context) => ComentariosPage(idAlojamiento:ModalRoute.of(context)!.settings.arguments as String),
-        '/map': (context) => MapPage(),
+        '/listaComentarios': (context) => ComentariosPage(
+            idAlojamiento:
+                ModalRoute.of(context)!.settings.arguments as String),
+        '/map': (context) => const MapPage(),
       },
     );
   }

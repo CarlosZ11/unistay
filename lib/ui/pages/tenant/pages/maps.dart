@@ -8,19 +8,18 @@ import '../../../../domain/controllers/map_controller.dart';
 import '../../../../domain/models/accommodation_model.dart';
 
 class MapPage extends StatefulWidget {
-  const MapPage({super.key});
+  final LatLng? ubicacionInicial;
+  const MapPage({super.key, this.ubicacionInicial});
 
   @override
   State<MapPage> createState() => _MapPageState();
 }
 
 class _MapPageState extends State<MapPage> {
-  
   final MapaController _mapController = MapaController();
-  final TenantController _tenantController = Get.put(TenantController());
+  final TenantController _tenantController = Get.find<TenantController>();
   Set<Marker> _markers = {};
   Set<Polyline> _polylines = {};
-
 
   static const LatLng _valledupar = LatLng(10.4749, -73.2601);
 
@@ -29,15 +28,12 @@ class _MapPageState extends State<MapPage> {
   // }
 
   @override
-void initState() {
-  super.initState();
-  _solicitarPermisosUbicacion();
-  _cargarAlojamientosYMarcadores();
-}
+  void initState() {
+    super.initState();
+    _solicitarPermisosUbicacion();
+  }
 
   Future<void> _cargarAlojamientosYMarcadores() async {
-    await _tenantController.fetchAccommodations();
-
     final marcadores = await _mapController.generarMarcadores(
       _tenantController.accommodations,
       _mostrarModalRuta, // ← pasa la función para cuando se toca un marcador
@@ -75,7 +71,8 @@ void initState() {
               ),
               Text(
                 alojamiento.nombre,
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 8),
               Text(
@@ -85,19 +82,43 @@ void initState() {
               const SizedBox(height: 20),
               Center(
                 child: ElevatedButton.icon(
-                  onPressed: () async {
-                    Navigator.of(context).pop(); // cerrar modal
-                    await _trazarRutaHacia(LatLng(alojamiento.latitud, alojamiento.longitud));
+                  onPressed: () {
+                    Get.toNamed('/detalleAlojamiento');
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.indigo,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 12),
                   ),
-                  icon: const Icon(HugeIcons.strokeRoundedNavigation03, color: Colors.white),
-                  label: const Text("Cómo llegar", style: TextStyle(color: Colors.white)),
+                  icon: const Icon(HugeIcons.strokeRoundedFolderDetails,
+                      color: Colors.white),
+                  label: const Text("vista detallada",
+                      style: TextStyle(color: Colors.white)),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Center(
+                child: ElevatedButton.icon(
+                  onPressed: () async {
+                    Navigator.of(context).pop(); // cerrar modal
+                    await _trazarRutaHacia(
+                        LatLng(alojamiento.latitud, alojamiento.longitud));
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.indigo,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 12),
+                  ),
+                  icon: const Icon(HugeIcons.strokeRoundedNavigation03,
+                      color: Colors.white),
+                  label: const Text("Cómo llegar",
+                      style: TextStyle(color: Colors.white)),
                 ),
               ),
             ],
@@ -130,7 +151,7 @@ void initState() {
 
     _mapController.moverCamaraARuta(puntos); // centra en la ruta
   }
-  
+
   void _solicitarPermisosUbicacion() async {
     final location = Location();
 
@@ -145,28 +166,41 @@ void initState() {
       permissionGranted = await location.requestPermission();
       if (permissionGranted != PermissionStatus.granted) return;
     }
-
-    await _mapController.centrarEnUbicacionActual();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GoogleMap(
-        initialCameraPosition: const CameraPosition(
-          target: _valledupar,
-          zoom: 16.0,
-        ),
-        onMapCreated: (controller) {
-          _mapController.onMapCreated(controller);
-          _mapController.asignarControlador(controller);
-          _mapController.centrarEnUbicacionActual();
+      body: Obx(
+        () {
+          if (_tenantController.accommodations.isEmpty) {
+            return const Center(child: CircularProgressIndicator());
+          } else {
+            _cargarAlojamientosYMarcadores();
+            return GoogleMap(
+              initialCameraPosition: const CameraPosition(
+                target: _valledupar,
+                zoom: 16.0,
+              ),
+              onMapCreated: (controller) {
+                _mapController.onMapCreated(controller);
+                _mapController.asignarControlador(controller);
+                if (widget.ubicacionInicial != null) {
+                  _mapController
+                      .centrarEnUbicacionActual(widget.ubicacionInicial);
+                } else {
+                  _mapController.centrarEnUbicacionActual(
+                      null); // centrarse en ubicación del dispositivo
+                }
+              },
+              myLocationEnabled: true,
+              myLocationButtonEnabled: true,
+              markers: _markers,
+              polylines: _polylines,
+              onTap: (_) => _limpiarRuta(),
+            );
+          }
         },
-        myLocationEnabled: true,
-        myLocationButtonEnabled: true,
-        markers: _markers,
-        polylines: _polylines,
-        onTap: (_) => _limpiarRuta(),
       ),
     );
   }

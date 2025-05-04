@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:unistay/domain/controllers/profile_controller.dart';
 import 'package:unistay/domain/controllers/auth_controller.dart';
@@ -9,6 +10,7 @@ import 'package:unistay/domain/controllers/tenant_controller.dart';
 import 'package:get/get.dart';
 import 'package:unistay/ui/pages/tenant/pages/lista_comentarios.dart';
 import 'package:unistay/domain/controllers/comment_controller.dart';
+import 'package:unistay/ui/pages/tenant/pages/maps.dart';
 
 class DetalleAlojamiento extends StatefulWidget {
   DetalleAlojamiento({super.key});
@@ -197,16 +199,43 @@ class _DetalleAlojamientoState extends State<DetalleAlojamiento> {
                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
               child: Row(
                 children: [
-                  HugeIcon(
-                    icon: HugeIcons.strokeRoundedLocation01,
-                    color: Colors.black,
-                    size: 16,
-                  ),
-                  const SizedBox(width: 5),
+                  // Primer elemento expandido
                   Expanded(
-                    child: Text(
-                      _tenantController.selectedAccommodation.value!.direccion,
-                      style: GoogleFonts.saira(color: Colors.black),
+                    child: Row(
+                      children: [
+                        HugeIcon(
+                          icon: HugeIcons.strokeRoundedLocation01,
+                          color: Colors.black,
+                          size: 16,
+                        ),
+                        const SizedBox(width: 5),
+                        // Texto expandido dentro del espacio disponible
+                        Expanded(
+                          child: Text(
+                            _tenantController
+                                .selectedAccommodation.value!.direccion,
+                            style: GoogleFonts.saira(color: Colors.black),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Segundo elemento: el botón
+                  IconButton(
+                    onPressed: () {
+                      final ubicacion = LatLng(
+                        _tenantController.selectedAccommodation.value!.latitud,
+                        _tenantController.selectedAccommodation.value!.longitud,
+                      );
+                      Get.to(() => MapPage(
+                            ubicacionInicial: ubicacion,
+                          ));
+                    },
+                    icon: HugeIcon(
+                      icon: HugeIcons.strokeRoundedMapsLocation01,
+                      color: Colors.black,
+                      size: 20,
                     ),
                   ),
                 ],
