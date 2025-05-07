@@ -25,6 +25,7 @@ Future<void> main() async {
 // Inicializa el manejador de Deep Links
   DeepLinkHandler().initDeepLinkListener();
   Get.put(AuthController());
+  Get.put(OwnerController());
 
   runApp(const MyApp());
   Get.lazyPut(() => ProfileController());

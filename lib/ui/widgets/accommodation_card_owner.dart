@@ -202,9 +202,22 @@ class _AccommodationOwnerCardState extends State<AccommodationOwnerCard> {
                           onPressed: isDeleting
                               ? null
                               : () async {
-                                  setState(() => isDeleting = true);
-                                  await widget.onDelete?.call();
-                                  setState(() => isDeleting = false);
+                                  // Asegurarte de que el widget esté montado antes de intentar cambiar el estado
+                                  if (mounted) {
+                                    setState(() => isDeleting = true);
+                                  }
+
+                                  try {
+                                    // Llamada asincrónica para eliminar
+                                    await widget.onDelete?.call();
+                                  } catch (e) {
+                                    // Aquí puedes manejar errores si es necesario
+                                  } finally {
+                                    // Verifica si el widget sigue montado antes de cambiar el estado
+                                    if (mounted) {
+                                      setState(() => isDeleting = false);
+                                    }
+                                  }
                                 },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.red,

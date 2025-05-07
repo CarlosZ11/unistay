@@ -1,4 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:unistay/data/services/locationAddress_service.dart';
 import 'package:unistay/domain/models/accommodation_model.dart';
 import 'dart:io';
 import 'package:uuid/uuid.dart';
@@ -44,6 +45,19 @@ class OwnerService {
     }
   }
 
+  String completarDireccion(String direccion) {
+    if (!direccion.toLowerCase().contains('valledupar')) {
+      direccion += ', Valledupar';
+    }
+    if (!direccion.toLowerCase().contains('cesar')) {
+      direccion += ', Cesar';
+    }
+    if (!direccion.toLowerCase().contains('colombia')) {
+      direccion += ', Colombia';
+    }
+    return direccion;
+  }
+
   /// Registra un nuevo alojamiento en la base de datos.
   Future<bool> createAccommodation({
     required String nombre,
@@ -62,6 +76,17 @@ class OwnerService {
         throw Exception("Usuario no autenticado.");
       }
 
+      // Completar dirección con ciudad y departamento
+      final direccionCompleta = completarDireccion(direccion);
+
+      // Obtener coordenadas desde la dirección completa
+      final coordinates = await getCoordinatesFromGoogleMaps(direccionCompleta);
+
+      if (coordinates['latitude'] == null || coordinates['longitude'] == null) {
+        throw Exception(
+            "No se pudieron obtener las coordenadas para la dirección.");
+      }
+
       final accommodation = {
         'nombre': nombre,
         'direccion': direccion,
@@ -73,6 +98,8 @@ class OwnerService {
         'disponible': disponible,
         'categoria': categoria,
         'idPropietario': userId,
+        'latitud': coordinates['latitude'],
+        'longitud': coordinates['longitude'],
       };
 
       final response =
@@ -156,12 +183,20 @@ class OwnerService {
     }
   }
 
-  /// Actualiza los datos de un alojamiento si pertenece al usuario autenticado.
   Future<bool> updateAccommodation(
       String idAlojamiento, Map<String, dynamic> updates) async {
     try {
       final userId = getAuthenticatedUserId();
       if (userId == null) return false;
+
+      // Verificar si la dirección ha cambiado
+      if (updates.containsKey('direccion')) {
+        final direccionCompleta = completarDireccion(updates['direccion']);
+        final coordinates =
+            await getCoordinatesFromGoogleMaps(direccionCompleta);
+        updates['latitud'] = coordinates['latitude'];
+        updates['longitud'] = coordinates['longitude'];
+      }
 
       await _supabase
           .from('accommodations')

@@ -251,7 +251,7 @@ class _RegistryPopertyPageState extends State<RegistryPopertyPage> {
                         direccion: direccionController.text,
                         imageFiles: _selectedImages
                             .map((file) => File(file.path))
-                            .toList(), // Aquí se pasa la lista de archivos de imagen
+                            .toList(), 
                         ventajas: selectedVentajas,
                         price: int.parse(priceController.text),
                         descripcion: descripcionController.text,

@@ -107,4 +107,19 @@ class TenantController extends GetxController {
       isLoading.value = false;
     }
   }
+
+  /// Método para filtrar alojamientos por calificación de estrellas
+  Future<void> filterAccommodationsByRating(int stars) async {
+    isLoading.value = true;
+
+    try {
+      accommodations.value =
+          await tenantService.fetchAccommodationsByRating(stars);
+    } catch (e) {
+      accommodations.clear(); // Limpiar lista si hay error
+      print("Error fetching accommodations by rating: $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
 }

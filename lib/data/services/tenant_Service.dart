@@ -87,4 +87,27 @@ class TenantService extends GetxService {
       throw Exception("Failed to fetch accommodation by ID: $e");
     }
   }
+
+  /// Filtra alojamientos según una calificación de estrellas (por ejemplo, 2.0 - 2.9)
+  Future<List<AccommodationModel>> fetchAccommodationsByRating(
+      int stars) async {
+    if (stars < 1 || stars > 5) {
+      throw Exception("La calificación debe estar entre 1 y 5 estrellas.");
+    }
+
+    final double minRating = stars.toDouble();
+    final double maxRating = minRating + 1.0;
+
+    try {
+      final response = await supabase
+          .from('accommodations')
+          .select()
+          .gte('promedio_puntuacion', minRating)
+          .lt('promedio_puntuacion', maxRating);
+
+      return response.map((item) => AccommodationModel.fromMap(item)).toList();
+    } catch (e) {
+      throw Exception("Failed to fetch accommodations by rating: $e");
+    }
+  }
 }

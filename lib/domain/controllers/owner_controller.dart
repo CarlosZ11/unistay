@@ -23,7 +23,6 @@ class OwnerController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Cargar todos los alojamientos del propietario al inicio
     loadLandlordAccommodations();
   }
 
@@ -31,9 +30,13 @@ class OwnerController extends GetxController {
   Future<void> loadLandlordAccommodations() async {
     isLoading.value = true;
     try {
-      final data =
-          await _ownerService.getLandlordAccommodations(); // Tu método de carga
-      accommodations.value = data;
+      final data = await _ownerService.getLandlordAccommodations();
+      accommodations.value =
+          data; 
+    } catch (e, stackTrace) {
+      print("Error al cargar alojamientos: $e");
+      print("StackTrace: $stackTrace");
+      Get.snackbar("Error", "No se pudieron cargar los alojamientos");
     } finally {
       isLoading.value = false;
     }

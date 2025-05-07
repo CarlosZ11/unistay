@@ -17,7 +17,10 @@ class _PropertiesPageState extends State<PropertiesPage> {
   @override
   void initState() {
     super.initState();
-    ownerController.loadLandlordAccommodations();
+     WidgetsBinding.instance.addPostFrameCallback((_) {
+      ownerController.loadLandlordAccommodations();
+    });
+    
   }
 
   @override

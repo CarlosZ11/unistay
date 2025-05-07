@@ -453,7 +453,7 @@ class _DetalleAlojamientoState extends State<DetalleAlojamiento> {
                 ],
               ),
             ),
-            // Propietario
+            // 
 
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
@@ -472,24 +472,24 @@ class _DetalleAlojamientoState extends State<DetalleAlojamiento> {
                     title: FutureBuilder<String>(
                       future: _authController.cargarNombrePropietario(
                           _tenantController.selectedAccommodation.value!
-                              .idPropietario), // Llamamos al método asíncrono para obtener el nombre
+                              .idPropietario), 
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
                           return const Text(
-                              'Cargando...'); // Si está esperando, mostramos "Cargando..."
+                              'Cargando...'); 
                         } else if (snapshot.hasError) {
                           return Text(
-                              'Error: ${snapshot.error}'); // Si hay un error, lo mostramos
+                              'Error: ${snapshot.error}'); 
                         } else if (snapshot.hasData) {
                           return Text(
                             snapshot
-                                .data!, // Si los datos están disponibles, mostramos el nombre
+                                .data!, 
                             style: TextStyle(fontSize: 18),
                           );
                         } else {
                           return Text(
-                              'No disponible'); // Si no hay datos, mostramos un mensaje predeterminado
+                              'No disponible'); 
                         }
                       },
                     ),

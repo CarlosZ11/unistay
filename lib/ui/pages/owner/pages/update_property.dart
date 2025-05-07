@@ -33,6 +33,7 @@ class _UpdatePropertyPageState extends State<UpdatePropertyPage> {
   List<dynamic> _selectedImages = [];
   final List<String> supabaseImages = [];
   List<File> nuevasImagenes = [];
+  
 
   final OwnerController _controller = Get.find<OwnerController>();
   final ImagePicker _picker = ImagePicker();
@@ -81,7 +82,12 @@ class _UpdatePropertyPageState extends State<UpdatePropertyPage> {
     nombreController.text = widget.accommodationModel?.nombre ?? "";
 
     super.initState();
+   
+    
   }
+
+  
+
 
   @override
   Widget build(BuildContext context) {
