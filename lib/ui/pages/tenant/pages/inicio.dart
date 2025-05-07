@@ -19,8 +19,8 @@ class _InicioInquilinoPageState extends State<InicioInquilinoPage> {
   String selectedCategory = '';
 
   Future<void> _onRefresh() async {
-    await tenantController.fetchAccommodations(); // Recargar alojamientos
-    await _profileController.loadUserProfile(); // Recargar perfil de usuario
+    await tenantController.fetchAccommodations();
+    await _profileController.loadUserProfile();
   }
 
   @override
@@ -28,19 +28,93 @@ class _InicioInquilinoPageState extends State<InicioInquilinoPage> {
     super.initState();
     _profileController = Get.find<ProfileController>();
     _profileController.loadUserProfile().then((_) =>
-        _profileController.getFavorites(
-            _profileController.user.value!.id)); // Cargar el usuario al iniciar
-    tenantController.fetchAccommodations(); // Cargar alojamientos al iniciar
+        _profileController.getFavorites(_profileController.user.value!.id));
+    tenantController.fetchAccommodations();
     _searchController.addListener(_onSearchChanged);
   }
 
   void _onSearchChanged() {
     String query = _searchController.text.trim();
     if (query.isEmpty) {
-      tenantController.fetchAccommodations(); // Si no hay texto, cargar todo
+      tenantController.fetchAccommodations();
     } else {
       tenantController.fetchFilteredAccommodations(query: query);
     }
+  }
+
+  void _onCategorySelected(String category) {
+    setState(() {
+      selectedCategory = category;
+    });
+    tenantController.fetchAccommodationsByCategory(selectedCategory);
+  }
+
+  void _showRatingFilterModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext context) {
+        return Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Elija la calificación que desea filtrar',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: List.generate(5, (index) {
+                    int rating = 5 - index;
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 6.0),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.pop(context);
+                          tenantController.filterAccommodationsByRating(rating);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 14, vertical: 10),
+                          decoration: BoxDecoration(
+                            color: Colors.purple.shade50,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: AppColors.primary),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.star,
+                                  color: Colors.amber, size: 20),
+                              const SizedBox(width: 4),
+                              Text(
+                                '$rating',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -55,7 +129,6 @@ class _InicioInquilinoPageState extends State<InicioInquilinoPage> {
               floating: false,
               delegate: _WelcomeBarDelegate(),
             ),
-            // Barra de búsqueda
             SliverPersistentHeader(
               pinned: true,
               floating: false,
@@ -67,15 +140,13 @@ class _InicioInquilinoPageState extends State<InicioInquilinoPage> {
               delegate: _CategoryBarDelegate(
                 selectedCategory: selectedCategory,
                 onCategorySelected: _onCategorySelected,
+                onRatingFilterPressed: () => _showRatingFilterModal(context),
               ),
             ),
-
-            // Lista de alojamientos
             Obx(() {
               if (tenantController.isLoading.value) {
                 return const SliverFillRemaining(
-                  hasScrollBody:
-                      false, // Para centrar correctamente el contenido
+                  hasScrollBody: false,
                   child: Center(
                     child: CircularProgressIndicator(
                       valueColor:
@@ -115,13 +186,6 @@ class _InicioInquilinoPageState extends State<InicioInquilinoPage> {
       ),
     );
   }
-
-  void _onCategorySelected(String category) {
-    setState(() {
-      selectedCategory = category;
-    });
-    tenantController.fetchAccommodationsByCategory(selectedCategory);
-  }
 }
 
 // Delegado para la bienvenida del usuario
@@ -132,6 +196,7 @@ class _WelcomeBarDelegate extends SliverPersistentHeaderDelegate {
   double get maxExtent => 45;
 
   final ProfileController _profileController = Get.find<ProfileController>();
+
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
@@ -198,10 +263,12 @@ class _SearchBarDelegate extends SliverPersistentHeaderDelegate {
 class _CategoryBarDelegate extends SliverPersistentHeaderDelegate {
   final String selectedCategory;
   final Function(String) onCategorySelected;
+  final VoidCallback onRatingFilterPressed;
 
   _CategoryBarDelegate({
     required this.selectedCategory,
     required this.onCategorySelected,
+    required this.onRatingFilterPressed,
   });
 
   @override
@@ -213,17 +280,16 @@ class _CategoryBarDelegate extends SliverPersistentHeaderDelegate {
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
-      color: AppColors.background, // fondo para que se vea bien sobre el scroll
+      color: AppColors.background,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: SingleChildScrollView(
-        // Hace el desplazamiento horizontal
-        scrollDirection: Axis.horizontal, // Desplazamiento horizontal
+        scrollDirection: Axis.horizontal,
         child: Row(
           children: [
             _buildCategoryButton(Icons.apartment, "Departamento"),
-            _buildCategoryButton(Icons.house,
-                "Casa Estudio"), // Aquí se cambia por "Casa Estudio"
+            _buildCategoryButton(Icons.house, "Casa Estudio"),
             _buildCategoryButton(Icons.bed, "Habitación"),
+            _buildRatingFilterButton(context),
           ],
         ),
       ),
@@ -232,8 +298,7 @@ class _CategoryBarDelegate extends SliverPersistentHeaderDelegate {
 
   Widget _buildCategoryButton(IconData icon, String label) {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-          horizontal: 8.0), // Agrego un espacio entre los botones
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: TextButton.icon(
         onPressed: () {
           onCategorySelected(label);
@@ -248,6 +313,25 @@ class _CategoryBarDelegate extends SliverPersistentHeaderDelegate {
           backgroundColor: selectedCategory == label
               ? Colors.purple.shade200
               : Colors.purple.shade50,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRatingFilterButton(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: TextButton.icon(
+        onPressed: onRatingFilterPressed,
+        icon: const Icon(Icons.star, color: AppColors.primary),
+        label: const Text("Calificación",
+            style: TextStyle(color: AppColors.primary)),
+        style: TextButton.styleFrom(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          backgroundColor: Colors.purple.shade50,
         ),
       ),
     );

@@ -364,18 +364,7 @@ class _UpdatePropertyPageState extends State<UpdatePropertyPage> {
                                 () => HomePage(role: UserRole.propietario));
                           });
 
-                          // Limpiar campos
-                          setState(() {
-                            nombreController.clear();
-                            direccionController.clear();
-                            priceController.clear();
-                            descripcionController.clear();
-                            numeroHabitaciones = 1;
-                            disponible = false;
-                            selectedCategory = null;
-                            selectedVentajas.clear();
-                            _selectedImages.clear();
-                          });
+                         
                         }
                       },
                       style: ElevatedButton.styleFrom(
