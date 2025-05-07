@@ -88,7 +88,7 @@ class TenantService extends GetxService {
     }
   }
 
-  /// Filtra alojamientos según una calificación de estrellas (por ejemplo, 2.0 - 2.9)
+  /// Filtra alojamientos según una calificación de estrellas
   Future<List<AccommodationModel>> fetchAccommodationsByRating(
       int stars) async {
     if (stars < 1 || stars > 5) {
