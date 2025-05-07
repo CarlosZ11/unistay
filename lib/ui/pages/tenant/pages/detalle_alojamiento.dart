@@ -330,7 +330,7 @@ class _DetalleAlojamientoState extends State<DetalleAlojamiento> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children:
                         _tenantController.selectedAccommodation.value!.ventajas
-                            .take(4)
+                            .take(9)
                             .map((ventaja) => Padding(
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 4.0),

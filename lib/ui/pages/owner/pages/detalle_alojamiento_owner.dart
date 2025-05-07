@@ -205,7 +205,7 @@ class _DetalleAlojamientoState extends State<DetalleAlojamientoOwner> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: widget.accommodation.ventajas
-                        .take(4)
+                        .take(9)
                         .map((ventaja) => Padding(
                               padding:
                                   const EdgeInsets.symmetric(vertical: 4.0),
