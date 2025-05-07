@@ -57,6 +57,7 @@ class _AccommodationOwnerCardState extends State<AccommodationOwnerCard> {
                   CarouselSlider(
                     options: CarouselOptions(
                       height: 200,
+                      viewportFraction: 1.0,
                       enableInfiniteScroll: true,
                       onPageChanged: (index, reason) {
                         setState(() {
@@ -97,8 +98,8 @@ class _AccommodationOwnerCardState extends State<AccommodationOwnerCard> {
                         return GestureDetector(
                           onTap: () => _controller.animateToPage(entry.key),
                           child: Container(
-                            width: 12.0,
-                            height: 12.0,
+                            width: 16.0,
+                            height: 16.0,
                             margin: const EdgeInsets.symmetric(
                                 vertical: 8.0, horizontal: 4.0),
                             decoration: BoxDecoration(
@@ -106,7 +107,7 @@ class _AccommodationOwnerCardState extends State<AccommodationOwnerCard> {
                                 color: (Theme.of(context).brightness ==
                                             Brightness.dark
                                         ? Colors.white
-                                        : Colors.black)
+                                        : Colors.purple)
                                     .withAlpha(
                                         _current == entry.key ? 230 : 102)),
                           ),
@@ -184,7 +185,7 @@ class _AccommodationOwnerCardState extends State<AccommodationOwnerCard> {
                                 accommodationModel: widget.accommodation));
                           },
                           label: Text('Editar',
-                              style: GoogleFonts.saira(color: Colors.black)),
+                              style: GoogleFonts.saira(color: Colors.white)),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary,
                             shape: const RoundedRectangleBorder(
@@ -194,7 +195,7 @@ class _AccommodationOwnerCardState extends State<AccommodationOwnerCard> {
                               ),
                             ),
                           ),
-                          icon: const Icon(Icons.edit, color: Colors.black),
+                          icon: const Icon(Icons.edit, color: Colors.white),
                         ),
                       ),
                       Expanded(
@@ -233,10 +234,10 @@ class _AccommodationOwnerCardState extends State<AccommodationOwnerCard> {
                                   color: Colors.white)
                               : Text('Eliminar',
                                   style:
-                                      GoogleFonts.saira(color: Colors.black)),
+                                      GoogleFonts.saira(color: Colors.white)),
                           icon: isDeleting
                               ? const SizedBox.shrink()
-                              : const Icon(Icons.delete, color: Colors.black),
+                              : const Icon(Icons.delete, color: Colors.white),
                         ),
                       ),
                     ],

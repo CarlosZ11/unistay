@@ -76,6 +76,7 @@ class _DetalleAlojamientoState extends State<DetalleAlojamiento> {
                 CarouselSlider(
                   options: CarouselOptions(
                     height: 300,
+                    viewportFraction: 1.0,
                     enableInfiniteScroll: true,
                     onPageChanged: (index, reason) {
                       setState(() => _current = index);
@@ -101,8 +102,8 @@ class _DetalleAlojamientoState extends State<DetalleAlojamiento> {
                           .entries
                           .map((entry) {
                         return Container(
-                          width: 12.0,
-                          height: 12.0,
+                          width: 16.0,
+                          height: 16.0,
                           margin: const EdgeInsets.symmetric(
                               vertical: 8.0, horizontal: 4.0),
                           decoration: BoxDecoration(
@@ -110,7 +111,7 @@ class _DetalleAlojamientoState extends State<DetalleAlojamiento> {
                             color: (Theme.of(context).brightness ==
                                         Brightness.dark
                                     ? Colors.white
-                                    : Colors.black)
+                                    : Colors.purple)
                                 .withAlpha(_current == entry.key ? 230 : 102),
                           ),
                         );
@@ -234,8 +235,8 @@ class _DetalleAlojamientoState extends State<DetalleAlojamiento> {
                     },
                     icon: HugeIcon(
                       icon: HugeIcons.strokeRoundedMapsLocation01,
-                      color: Colors.black,
-                      size: 20,
+                      color: Colors.deepPurple,
+                      size: 30,
                     ),
                   ),
                 ],
@@ -385,7 +386,7 @@ class _DetalleAlojamientoState extends State<DetalleAlojamiento> {
 
                         if (_commentController.comments.isEmpty) {
                           return const Center(
-                              child: Text("No hay comentarios aún."));
+                              child: Text("No hay comentarios aún, deja el tuyo acá"));
                         }
 
                         return ListView.builder(
